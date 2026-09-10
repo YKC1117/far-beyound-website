@@ -11,7 +11,7 @@
     $('#homeProducts').innerHTML=d.products.filter(p=>p.featured).slice(0,6).map(productCard).join('');
     $('#homeSolutions').innerHTML=d.solutions.map(solutionCard).join('');
     $('#homeNews').innerHTML=d.news.slice(0,4).map((n,i)=>`<a class="news-row" href="news.html"><div class="news-date"><b>${n.date.slice(8)}</b><span>${n.date.slice(0,7).replace('-',' / ')}</span></div><div class="news-copy"><div><span class="tag">${n.type}</span>${i===0?'<span class="tag tag-new">NEW</span>':''}</div><h3>${n.title}</h3><p>${n.excerpt}</p></div>${icon('arrow')}</a>`).join('');
-    $('#caseStrip').innerHTML=d.cases.map(c=>`<div class="case-pill"><span>${c.name}</span><b>${c.system}</b></div>`).join('');
+    $('#caseStrip').innerHTML=d.cases.map(c=>`<a href="cases.html" class="case-pill"><span>${c.name}</span><b>${c.system}</b></a>`).join('');
   }
 
   function products(){

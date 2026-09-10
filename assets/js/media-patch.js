@@ -35,7 +35,7 @@
       name:'GoDEX GX4200i／GX4300i／GX4600i',subtitle:'工業型條碼列印機',featured:true,status:'販售中',device:'printer',
       intro:'GoDEX GX 系列為工業型條碼列印平台，提供不同解析度配置，適合製造、倉儲與大量標籤輸出環境。',
       highlights:['GX4200i／GX4300i／GX4600i 多解析度系列','適合製造、倉儲與物流高印量作業','GoDEX 驅動、GoLabel 與管理工具支援'],
-      specs:[['系列','GoDEX GX 系列'],['定位','工業型條碼列印機'],['應用','製造、倉儲、物流、產品標示']],
+      specs:[['型號','GX4200i / GX4300i / GX4600i'],['尺寸','465 × 263 × 310 mm'],['重量','13.6 kg'],['列印模式','熱轉列印 / 熱感列印'],['解析度','GX4200i 203 dpi / GX4300i 300 dpi / GX4600i 600 dpi'],['最大列印速度','406.4 / 304.8 / 203.2 mm/s'],['最大列印寬度','108 / 105.7 / 105.6 mm'],['紙張寬度','25.4 – 118 mm'],['碳帶長度','450 m，1 吋軸心'],['記憶體','256 MB Flash / 256 MB SDRAM；顯示螢幕 16 GB'],['通訊介面','USB 2.0、RS-232、10/100 Mbps Ethernet、USB Host ×3']],
       files:[{label:'產品型錄',type:'PDF'},{label:'使用手冊',type:'PDF'}]
     }
   ];
@@ -61,6 +61,7 @@
     FBStore.getData=function(){
       const d=rawGet();
       EXTRA_PRODUCTS.forEach(p=>{if(!d.products.some(x=>x.id===p.id)) d.products.push(JSON.parse(JSON.stringify(p)))});
+      if(!d.solutions.some(x=>x.id==='barcode')) d.solutions.push({id:'barcode',name:'條碼整合系統',en:'Barcode Integration System',icon:'scanner',desc:'整合條碼列印、掃描設備與企業作業流程，建立資料採集、標示與追蹤的一致入口。',points:['條碼列印與掃描設備整合','與 ERP / WMS / 生產流程串接','降低人工輸入與作業錯誤']});
       d.products.forEach(p=>{if(HOME_ORDER.includes(p.id))p.featured=true});
       const orderMap=new Map(HOME_ORDER.map((id,i)=>[id,i]));
       d.products.sort((a,b)=>(orderMap.has(a.id)?orderMap.get(a.id):1000)-(orderMap.has(b.id)?orderMap.get(b.id):1000));

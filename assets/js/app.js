@@ -64,6 +64,7 @@
             </div>
             <a href="downloads.html">下載服務</a>
             <a href="solutions.html">系統方案</a>
+            <a href="cases.html">客戶案例</a>
             <a href="news.html">最新消息</a>
             <a href="contact.html">聯絡我們</a>
           </nav>
@@ -78,7 +79,7 @@
         <div class="mobile-drawer-panel">
           <div class="drawer-head"><b>網站選單</b><button class="icon-btn mobile-menu-close">${icon('close')}</button></div>
           <div class="drawer-links">
-            <a href="index.html">首頁</a><a href="products.html">產品資訊</a><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="news.html">最新消息</a><a href="contact.html">聯絡我們</a>
+            <a href="index.html">首頁</a><a href="products.html">產品資訊</a><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="cases.html">客戶案例</a><a href="news.html">最新消息</a><a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">聯絡我們</a>
           </div>
           <div class="drawer-contact">${d.site.phones.map(p=>`<a href="tel:${p.value.replace(/-/g,'')}">${icon('phone')} ${p.label} ${p.value}</a>`).join('')}</div>
         </div>
@@ -102,7 +103,7 @@
             <p>條碼列印、掃描、RFID、企業行動設備與智慧製造系統整合，協助企業建立穩定且可追蹤的現場作業流程。</p>
           </div>
           <div><h4>產品服務</h4><a href="products.html?category=printers">標籤條碼列印機</a><a href="products.html?category=scanners">條碼掃描器</a><a href="products.html?category=rfid">RFID 設備</a><a href="products.html?category=parts">維修與配件</a></div>
-          <div><h4>支援資源</h4><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="news.html">最新消息</a><a href="contact.html">免費諮詢</a></div>
+          <div><h4>支援資源</h4><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="cases.html">客戶案例</a><a href="news.html">最新消息</a><a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">免費諮詢</a></div>
           <div><h4>聯絡資訊</h4>${d.site.phones.map(p=>`<a href="tel:${p.value.replace(/-/g,'')}">${p.label} ${p.value}</a>`).join('')}<a href="mailto:${d.site.email}">${d.site.email}</a><span>${d.site.address}</span></div>
         </div>
         <div class="container footer-bottom"><span>© ${new Date().getFullYear()} ${d.site.companyEn}. All Rights Reserved.</span><span>新版網站測試環境 · v0.1</span></div>

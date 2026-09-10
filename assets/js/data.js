@@ -4,7 +4,7 @@
   const defaultData = {
     site: {
       companyZh: '萬里資訊股份有限公司',
-      companyEn: 'Far-beyound Informational Co., Ltd.',
+      companyEn: 'FAR-BEYOUND INFORMATION CO.',
       phones: [
         { label: '台北', value: '02-82217759' },
         { label: '台南', value: '06-2360139' }
