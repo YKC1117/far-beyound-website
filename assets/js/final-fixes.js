@@ -3,34 +3,80 @@
   const ICONS={
     phone:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 3.8 9.7 3c.7-.2 1.4.2 1.7.8l1.2 2.8c.3.6.1 1.3-.4 1.7l-1.5 1.2a14 14 0 0 0 3.8 3.8l1.2-1.5c.4-.5 1.1-.7 1.7-.4l2.8 1.2c.7.3 1 .9.8 1.7l-.8 2.6c-.3.9-1.1 1.5-2 1.5C11 18.4 5.6 13 5.6 6c0-1 .6-1.9 1.5-2.2Z"/></svg>',
     line:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 11.1c0-4.1-4.1-7.4-9.1-7.4s-9.1 3.3-9.1 7.4c0 3.7 3.2 6.8 7.6 7.3.3.1.7.2.8.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1.1 1 .6s5.3-3.1 7.2-5.3a6.7 6.7 0 0 0 1.7-5Z"/><path d="M6.8 9v4h2.4M10 9v4M11.4 13V9l2.7 4V9M18.1 9h-2.7v4h2.7M15.4 11h2.3" class="line-detail"/></svg>',
-    mail:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16v11H4z"/><path d="m4.8 7.3 7.2 5.5 7.2-5.5"/></svg>'
+    mail:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16v11H4z"/><path d="m4.8 7.3 7.2 5.5 7.2-5.5"/></svg>',
+    download:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 20h14"/></svg>'
   };
+  const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const params=()=>new URLSearchParams(location.search);
   function style(){if(document.getElementById('fbFinalFixes'))return;const s=document.createElement('style');s.id='fbFinalFixes';s.textContent=`
     .brand-mark{display:grid!important;place-items:center!important;overflow:hidden!important;background:#fff!important;padding:2px!important}.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;border-radius:9px}
     .desktop-nav .nav-group.current>a,.desktop-nav>a.current{color:var(--teal)}.desktop-nav .nav-group.current>a:after,.desktop-nav>a.current:after{transform:scaleX(1)}
     .quick-contact{position:fixed;right:0;top:52%;z-index:88;transform:translateY(-50%);display:grid;gap:1px;filter:drop-shadow(0 10px 24px rgba(20,44,66,.16))}.quick-contact-item{position:relative}.quick-contact-btn{width:58px;min-height:64px;border:0;border-left:1px solid #dbe3e8;background:rgba(255,255,255,.97);color:#17324d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;text-decoration:none;font:inherit;transition:.18s ease;backdrop-filter:blur(12px)}.quick-contact-item:first-child .quick-contact-btn{border-radius:8px 0 0 0}.quick-contact-item:last-child .quick-contact-btn{border-radius:0 0 0 8px}.quick-contact-btn:hover,.quick-contact-item.is-open>.quick-contact-btn{background:#17324d;color:#fff}.quick-contact-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.quick-contact-btn .line-detail{fill:none;stroke:currentColor;stroke-width:1.25}.quick-contact-btn span{font-size:10px;line-height:1.1;font-weight:700;letter-spacing:.03em}.quick-phone-panel{position:absolute;right:67px;top:0;width:226px;background:#fff;border:1px solid #dce4e9;border-radius:8px;padding:10px;box-shadow:0 18px 45px rgba(16,42,67,.16);opacity:0;visibility:hidden;transform:translateX(8px);transition:.18s ease}.quick-contact-item.is-open .quick-phone-panel{opacity:1;visibility:visible;transform:none}.quick-phone-panel:after{content:"";position:absolute;right:-6px;top:25px;width:11px;height:11px;background:#fff;border-top:1px solid #dce4e9;border-right:1px solid #dce4e9;transform:rotate(45deg)}.quick-phone-panel strong{display:block;font-size:13px;color:#17324d;padding:4px 5px 8px}.quick-phone-link{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 9px;border-top:1px solid #edf1f3;color:#334e63;text-decoration:none}.quick-phone-link span{font-size:11px;color:#71808d}.quick-phone-link b{font-size:13px;color:#17324d}.quick-phone-link:hover{background:#f6f9fa}.mobile-contact-bar{display:none}
+    .product-support-card{border:1px solid #dde5ea;background:#f7f9fa;padding:20px 22px}.product-support-card b{display:block;color:#17324d;font-size:15px;margin-bottom:7px}.product-support-card p{margin:0 0 15px;color:#617383;font-size:12px;line-height:1.8}.product-support-actions{display:flex;flex-wrap:wrap;gap:8px}.product-support-actions a{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #ccd8df;background:#fff;color:#17324d;text-decoration:none;font-size:11px;font-weight:700}.product-support-actions a:first-child{background:#17324d;border-color:#17324d;color:#fff}.product-support-actions svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7}.product-files-link{display:grid!important;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;text-decoration:none;color:inherit}.product-files-link .download-icon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7}.product-not-found{padding:90px 0 120px;text-align:center}.product-not-found .eyebrow{display:block;margin-bottom:12px}.product-not-found h1{font-size:34px;color:#17324d;margin:0 0 12px}.product-not-found p{color:#667989;margin:0 0 24px}.product-not-found .btn{display:inline-flex}
     @media(max-width:980px){.quick-contact{display:none}.mobile-contact-bar{position:fixed;left:0;right:0;bottom:0;z-index:90;display:grid;grid-template-columns:repeat(3,1fr);background:rgba(255,255,255,.98);border-top:1px solid #dce4e9;box-shadow:0 -8px 26px rgba(18,46,70,.10);padding-bottom:env(safe-area-inset-bottom)}.mobile-contact-bar a,.mobile-contact-bar button{min-height:58px;border:0;border-right:1px solid #e4e9ed;background:transparent;color:#17324d;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;font:inherit;font-size:11px;font-weight:700}.mobile-contact-bar a:last-child{border-right:0}.mobile-contact-bar svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.mobile-contact-bar .line-detail{stroke-width:1.25}.mobile-contact-phone{position:fixed;left:14px;right:14px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:91;background:#fff;border:1px solid #dce4e9;border-radius:10px;padding:8px;box-shadow:0 18px 48px rgba(17,43,66,.2);display:none}.mobile-contact-phone.is-open{display:block}.mobile-contact-phone a{display:flex;justify-content:space-between;align-items:center;padding:13px 12px;text-decoration:none;color:#17324d;border-bottom:1px solid #edf1f3}.mobile-contact-phone a:last-child{border-bottom:0}.mobile-contact-phone span{font-size:12px;color:#71808d}.mobile-contact-phone b{font-size:14px}body:not([data-page="admin"]){padding-bottom:calc(58px + env(safe-area-inset-bottom))}}
-    @media(max-width:680px){.home-photo-showcase{min-height:215px!important;height:215px!important;padding:9px!important}.home-photo-main img{width:84%!important;height:84%!important}.home-photo-main .cap{padding:9px 11px!important}.home-photo-main .cap b{font-size:15px!important}.hero-copy h1{font-size:36px!important}.hero-trust{font-size:10px!important}.proposal-chip{font-size:9px!important}.home-capability{min-height:76px}.brand-copy strong{font-size:18px!important}}
+    @media(max-width:680px){.home-photo-showcase{min-height:215px!important;height:215px!important;padding:9px!important}.home-photo-main img{width:84%!important;height:84%!important}.home-photo-main .cap{padding:9px 11px!important}.home-photo-main .cap b{font-size:15px!important}.hero-copy h1{font-size:36px!important}.hero-trust{font-size:10px!important}.proposal-chip{font-size:9px!important}.home-capability{min-height:76px}.brand-copy strong{font-size:18px!important}.product-support-card{padding:17px}.product-support-actions{display:grid}.product-support-actions a{justify-content:center}}
   `;document.head.appendChild(s)}
-  function logo(){document.querySelectorAll('.brand-mark').forEach(el=>{if(el.querySelector('img'))return;el.innerHTML=`<img src="${LOGO}" alt="" decoding="sync">`})}
+  function logo(){document.querySelectorAll('.brand-mark').forEach(el=>{if(el.querySelector('img'))return;el.innerHTML=`<img src="${LOGO}" alt="萬里資訊" decoding="sync">`})}
   function currentNav(){const page=document.body.dataset.page||'';const groups=[...document.querySelectorAll('.desktop-nav .nav-group')];let idx=-1;if(['products','product'].includes(page))idx=0;else if(page==='downloads')idx=1;else if(page==='solutions')idx=2;else if(page==='cases')idx=3;else if(['news','news-detail'].includes(page))idx=4;else if(['about','locations','contact','preview-guide'].includes(page))idx=5;if(groups[idx]){groups[idx].classList.add('current');groups[idx].querySelector(':scope>a')?.setAttribute('aria-current','page')}}
   function quickContact(){
     if(document.body.dataset.page==='admin'||document.querySelector('.quick-contact'))return;
     const desktop=document.createElement('aside');desktop.className='quick-contact';desktop.setAttribute('aria-label','快速聯絡');desktop.innerHTML=`
       <div class="quick-contact-item" data-contact-phone><button type="button" class="quick-contact-btn" aria-expanded="false" aria-label="電話聯絡">${ICONS.phone}<span>電話</span></button><div class="quick-phone-panel"><strong>電話聯絡</strong><a class="quick-phone-link" href="tel:0282217759"><span>新北辦公室</span><b>02-82217759</b></a><a class="quick-phone-link" href="tel:062360139"><span>台南辦公室</span><b>06-2360139</b></a></div></div>
-      <div class="quick-contact-item"><a class="quick-contact-btn" href="https://line.me/R/ti/p/@453haosc" target="_blank" rel="noopener" aria-label="LINE 官方帳號">${ICONS.line}<span>LINE</span></a></div>
-      <div class="quick-contact-item"><a class="quick-contact-btn" href="contact.html#inquiryForm" aria-label="線上詢問">${ICONS.mail}<span>詢問</span></a></div>`;
+      <div class="quick-contact-item"><a class="quick-contact-btn" href="https://line.me/R/ti/p/@453haosc" target="_blank" rel="noopener" aria-label="LINE 客服">${ICONS.line}<span>LINE</span></a></div>
+      <div class="quick-contact-item"><a class="quick-contact-btn" href="contact.html#inquiryForm" aria-label="我要詢問">${ICONS.mail}<span>詢問</span></a></div>`;
     document.body.appendChild(desktop);
-    const phoneItem=desktop.querySelector('[data-contact-phone]');const phoneBtn=phoneItem.querySelector('button');
+    const phoneItem=desktop.querySelector('[data-contact-phone]'),phoneBtn=phoneItem.querySelector('button');
     const closePhone=()=>{phoneItem.classList.remove('is-open');phoneBtn.setAttribute('aria-expanded','false')};
     phoneBtn.addEventListener('click',e=>{e.stopPropagation();const open=!phoneItem.classList.contains('is-open');closePhone();if(open){phoneItem.classList.add('is-open');phoneBtn.setAttribute('aria-expanded','true')}});
     phoneItem.addEventListener('mouseenter',()=>{phoneItem.classList.add('is-open');phoneBtn.setAttribute('aria-expanded','true')});
     phoneItem.addEventListener('mouseleave',closePhone);document.addEventListener('click',e=>{if(!phoneItem.contains(e.target))closePhone()});
-
-    const mobile=document.createElement('nav');mobile.className='mobile-contact-bar';mobile.setAttribute('aria-label','快速聯絡');mobile.innerHTML=`<button type="button" data-mobile-phone aria-expanded="false">${ICONS.phone}<span>電話</span></button><a href="https://line.me/R/ti/p/@453haosc" target="_blank" rel="noopener">${ICONS.line}<span>LINE</span></a><a href="contact.html#inquiryForm">${ICONS.mail}<span>線上詢問</span></a>`;document.body.appendChild(mobile);
+    const mobile=document.createElement('nav');mobile.className='mobile-contact-bar';mobile.setAttribute('aria-label','快速聯絡');mobile.innerHTML=`<button type="button" data-mobile-phone aria-expanded="false">${ICONS.phone}<span>撥打電話</span></button><a href="https://line.me/R/ti/p/@453haosc" target="_blank" rel="noopener">${ICONS.line}<span>LINE 詢問</span></a><a href="contact.html#inquiryForm">${ICONS.mail}<span>線上詢問</span></a>`;document.body.appendChild(mobile);
     const mobilePanel=document.createElement('div');mobilePanel.className='mobile-contact-phone';mobilePanel.innerHTML=`<a href="tel:0282217759"><span>新北辦公室</span><b>02-82217759</b></a><a href="tel:062360139"><span>台南辦公室</span><b>06-2360139</b></a>`;document.body.appendChild(mobilePanel);
     const mobileBtn=mobile.querySelector('[data-mobile-phone]');mobileBtn.addEventListener('click',()=>{const open=mobilePanel.classList.toggle('is-open');mobileBtn.setAttribute('aria-expanded',String(open))});
   }
-  function run(){style();logo();currentNav();quickContact()}
-  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,120)});if(document.readyState!=='loading')setTimeout(run,0)
+  function productNotFound(){
+    const main=document.querySelector('main');if(!main)return;
+    document.title='找不到產品｜萬里資訊';
+    main.innerHTML=`<div class="container product-not-found"><span class="eyebrow">PRODUCT INFORMATION</span><h1>找不到此產品</h1><p>此產品網址可能已更新，請回到完整產品目錄重新選擇。</p><a class="btn btn-primary" href="products.html">返回產品資訊</a></div>`;
+  }
+  function productPageQuality(){
+    if(document.body.dataset.page!=='product'||!window.FBStore)return;
+    const d=FBStore.getData(),id=params().get('id')||'',p=d.products.find(x=>x.id===id);
+    if(!p){productNotFound();return}
+    const cat=d.categories.find(c=>c.id===p.category),catName=cat?.name||'產品資訊';
+    let meta=document.querySelector('meta[name="description"]');if(!meta){meta=document.createElement('meta');meta.name='description';document.head.appendChild(meta)}
+    meta.content=(p.intro||`${p.brand} ${p.name}｜${catName}。歡迎洽詢產品規格、選配與相關技術資料。`).replace(/\s+/g,' ').slice(0,155);
+    const hi=document.getElementById('productHighlights');
+    if(hi&&(!Array.isArray(p.highlights)||!p.highlights.length||/原官網產品資料|持續補充/.test(hi.textContent))){
+      const block=hi.closest('.detail-block');block?.querySelector('.eyebrow')&&(block.querySelector('.eyebrow').textContent='PRODUCT INFORMATION');block?.querySelector('h2')&&(block.querySelector('h2').textContent='產品資訊');
+      hi.innerHTML=`<li><span>✓</span><span>品牌：${esc(p.brand||'—')}</span></li><li><span>✓</span><span>分類：${esc(catName)}</span></li><li><span>✓</span><span>如需完整規格、選配或相容性確認，歡迎聯絡萬里資訊。</span></li>`;
+    }
+    const specs=document.getElementById('specTable');
+    if(specs&&(!Array.isArray(p.specs)||!p.specs.length)){
+      const block=specs.closest('.detail-block');block?.querySelector('.eyebrow')&&(block.querySelector('.eyebrow').textContent='BASIC INFORMATION');block?.querySelector('h2')&&(block.querySelector('h2').textContent='基本資料');
+      specs.innerHTML=`<div class="spec-row"><dt>品牌</dt><dd>${esc(p.brand||'—')}</dd></div><div class="spec-row"><dt>產品名稱</dt><dd>${esc(p.name||'—')}</dd></div><div class="spec-row"><dt>產品分類</dt><dd>${esc(catName)}</dd></div><div class="spec-row"><dt>產品類型</dt><dd>${esc(p.type||p.family||'—')}</dd></div>`;
+    }
+    const files=document.getElementById('productFiles');
+    if(files){
+      const valid=Array.isArray(p.files)?p.files:[];
+      if(valid.length){
+        files.innerHTML=valid.map(f=>{
+          const label=esc(f.label||'產品文件'),type=esc(f.type||'文件');
+          if(f.url)return `<a class="download-row product-files-link" href="${esc(f.url)}" target="_blank" rel="noopener"><span class="download-icon">${ICONS.download}</span><span><small>${type}</small><b>${label}</b></span><span class="download-cta">開啟</span></a>`;
+          return `<a class="download-row product-files-link" href="contact.html?item=${encodeURIComponent(p.name)}"><span class="download-icon">${ICONS.download}</span><span><small>${type}</small><b>${label}</b></span><span class="download-cta">洽詢取得</span></a>`;
+        }).join('');
+      }else{
+        files.innerHTML=`<div class="product-support-card"><b>需要產品型錄、驅動或操作資料？</b><p>請提供品牌與型號，我們可協助確認適用的產品資料與下載來源。</p><div class="product-support-actions"><a href="https://line.me/R/ti/p/@453haosc" target="_blank" rel="noopener">${ICONS.line} LINE 詢問</a><a href="contact.html?item=${encodeURIComponent(p.name)}">${ICONS.mail} 線上詢問</a></div></div>`;
+      }
+    }
+  }
+  function contactProductPrefill(){
+    if(document.body.dataset.page!=='contact')return;
+    const item=params().get('item');const select=document.getElementById('subject');if(!item||!select)return;
+    const existing=[...select.options].find(o=>o.value===item||o.textContent===item);
+    if(existing){select.value=existing.value;return}
+    const option=document.createElement('option');option.value=`產品洽詢｜${item}`;option.textContent=`產品洽詢｜${item}`;option.selected=true;select.appendChild(option);
+  }
+  function run(){style();logo();currentNav();quickContact();contactProductPrefill();productPageQuality()}
+  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,120);setTimeout(run,700)});if(document.readyState!=='loading'){setTimeout(run,0);setTimeout(run,700)}
 })();
