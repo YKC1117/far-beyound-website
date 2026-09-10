@@ -7,6 +7,13 @@
     document.querySelectorAll('.header-inner .brand-copy small').forEach(el=>{el.textContent='FAR-BEYOUND INFORMATION'});
     document.querySelectorAll('.footer-brand .brand-copy small').forEach(el=>{el.textContent='FAR-BEYOUND INFORMATION'});
   }
+  function upgradeProductMega(){
+    const menu=document.querySelector('.nav-item.has-mega .mega-menu');
+    if(!menu||menu.dataset.v3==='1')return;
+    menu.dataset.v3='1';
+    const links=(category,brands)=>brands.map(b=>`<a href="products.html?category=${category}&brand=${encodeURIComponent(b[0])}">${b[1]||b[0]}</a>`).join('');
+    menu.innerHTML=`<div class="mega-head"><div><span class="eyebrow">PRODUCT INFORMATION</span><h3>產品與品牌</h3></div><a href="products.html" class="text-link">完整產品目錄 →</a></div><div class="v3-product-mega"><div class="v3-mega-group"><strong>標籤條碼列印機</strong><small>LABEL PRINTERS</small><div class="v3-mega-links">${links('printers',[['Zebra'],['Argox'],['TSC'],['GoDEX'],['TOSHIBA'],['SATO'],['Honeywell','Honeywell (Datamax/Intermec)']])}</div></div><div class="v3-mega-group"><strong>條碼掃描器</strong><small>BARCODE SCANNERS</small><div class="v3-mega-links">${links('scanners',[['Fastech'],['Zebra'],['Honeywell'],['NUMA'],['Datalogic']])}</div></div><div class="v3-mega-group"><strong>自動識別設備</strong><small>AUTO ID</small><div class="v3-mega-minor"><a href="products.html?category=rfid">RFID 設備</a><a href="products.html?category=mobile">行動電腦</a><a href="products.html?category=labels">標籤貼紙與碳帶</a></div></div><div class="v3-mega-group"><strong>服務與軟體</strong><small>SERVICE</small><div class="v3-mega-minor"><a href="products.html?category=printing">標籤貼紙代印</a><a href="products.html?category=software">標籤軟體</a><a href="products.html?category=parts">標籤機維修 / 配件</a></div></div></div>`;
+  }
   function brandFromHref(el){
     try{return new URL(el.href,location.href).searchParams.get('brand')||''}catch(e){return ''}
   }
@@ -44,7 +51,7 @@
       if(i===1 || /測試|提案|PREVIEW|v0\./i.test(el.textContent)) el.textContent='所有其他商標均為各自所有者之財產';
     });
   }
-  function run(){applyBrandIdentity();fixDownloadNavigation();compactHome();cleanFooter()}
+  function run(){applyBrandIdentity();upgradeProductMega();fixDownloadNavigation();compactHome();cleanFooter()}
   document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,150);setTimeout(run,450)});
   if(document.readyState!=='loading')setTimeout(run,0);
   window.addEventListener('farbeyound:datachange',()=>setTimeout(run,100));
