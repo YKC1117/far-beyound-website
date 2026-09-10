@@ -1,0 +1,68 @@
+name: Mirror remaining homepage product images
+
+on:
+  push:
+    paths:
+      - '.github/workflows/mirror-more-products.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  mirror-more:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract product image URLs from current product pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from urllib.parse import urljoin
+          import re, html
+
+          items=[
+            ('https://www.far-beyound.com.tw/product/1/23/34/118','assets/images/products/godex-gx4200i-gx4300i-gx4600i.jpg'),
+            ('https://www.far-beyound.com.tw/product/2/90/91/175','assets/images/products/fastech-ft-yx510.jpg'),
+          ]
+          Path('assets/images/products').mkdir(parents=True,exist_ok=True)
+          for page,out in items:
+            req=Request(page,headers={'User-Agent':'Mozilla/5.0'})
+            raw=urlopen(req,timeout=30).read().decode('utf-8','ignore')
+            raw=html.unescape(raw)
+            candidates=[]
+            for m in re.findall(r'''["']([^"']*storage/upload/product/image/[^"']+\.(?:png|jpg|jpeg|webp))''',raw,re.I):
+              u=urljoin(page,m)
+              if u not in candidates:candidates.append(u)
+            if not candidates:
+              raise RuntimeError(f'No product image found for {page}')
+            img=Request(candidates[0],headers={'User-Agent':'Mozilla/5.0','Referer':page})
+            Path(out).write_bytes(urlopen(img,timeout=30).read())
+            print(page,'->',candidates[0],'->',out)
+          PY
+      - name: Add local image mappings
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('assets/js/media-patch.js')
+          s=p.read_text()
+          needle="    'godex-g500-g530':'assets/images/products/godex-g500-g530.png'"
+          repl="    'godex-g500-g530':'assets/images/products/godex-g500-g530.png',\n    'godex-gx4200i-gx4300i-gx4600i':'assets/images/products/godex-gx4200i-gx4300i-gx4600i.jpg',\n    'fastech-ft-yx510':'assets/images/products/fastech-ft-yx510.jpg'"
+          if "'fastech-ft-yx510':" not in s:
+            s=s.replace(needle,repl)
+          p.write_text(s)
+          PY
+      - name: Commit remaining images
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/images/products assets/js/media-patch.js
+          if git diff --cached --quiet; then
+            echo 'No changes.'
+          else
+            git commit -m 'Mirror GoDEX GX and Fastech product images'
+            git push
+          fi
