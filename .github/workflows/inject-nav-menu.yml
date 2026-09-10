@@ -5,6 +5,7 @@ on:
     paths:
       - 'assets/js/nav-menu.js'
       - 'assets/js/presentation-polish.js'
+      - 'assets/js/final-fixes.js'
       - '.github/workflows/inject-nav-menu.yml'
 
 permissions:
@@ -27,10 +28,9 @@ jobs:
               original=text
               if 'assets/js/app.js' not in text:
                   continue
-              if 'assets/js/nav-menu.js' not in text:
-                  text=text.replace('</body>', '<script src="assets/js/nav-menu.js"></script></body>')
-              if 'assets/js/presentation-polish.js' not in text:
-                  text=text.replace('</body>', '<script src="assets/js/presentation-polish.js"></script></body>')
+              for script in ['assets/js/nav-menu.js','assets/js/presentation-polish.js','assets/js/final-fixes.js']:
+                  if script not in text:
+                      text=text.replace('</body>', f'<script src="{script}"></script></body>')
               if 'rel="icon"' not in text:
                   text=text.replace('</head>', '<link rel="icon" type="image/png" href="assets/images/brand/far-beyound-logo.png"></head>')
               if text != original:
@@ -47,5 +47,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add '*.html'
-          git commit -m 'Load polished presentation on public pages'
+          git commit -m 'Load final UI refinements on public pages'
           git push
