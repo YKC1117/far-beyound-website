@@ -27,12 +27,17 @@ jobs:
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/home.png http://127.0.0.1:8080/index.html
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/products.png http://127.0.0.1:8080/products.html
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/product-zt411.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/downloads.png http://127.0.0.1:8080/downloads.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/solutions.png http://127.0.0.1:8080/solutions.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/cases.png http://127.0.0.1:8080/cases.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/contact.png http://127.0.0.1:8080/contact.html
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/admin.png http://127.0.0.1:8080/admin.html
-      - name: Capture mobile homepage
+      - name: Capture mobile pages
         shell: bash
         run: |
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
       - uses: actions/upload-artifact@v4
         with:
           name: website-screenshots
