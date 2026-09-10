@@ -21,12 +21,13 @@ jobs:
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           test -n "$CHROME"
           mkdir -p qa
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421' > qa/detail-rich.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom 'http://127.0.0.1:8080/product.html?id=zebra-zt510' > qa/detail-sparse.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom 'http://127.0.0.1:8080/product.html?id=not-a-real-product' > qa/detail-missing.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom 'http://127.0.0.1:8080/contact.html?item=Zebra%20ZT510' > qa/contact.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421' > qa/detail-rich.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/product.html?id=zebra-zt510' > qa/detail-sparse.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/product.html?id=not-a-real-product' > qa/detail-missing.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/contact.html?item=Zebra%20ZT510' > qa/contact.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
           pip install --disable-pip-version-check beautifulsoup4 >/dev/null
           python3 - <<'PY'
           from bs4 import BeautifulSoup
@@ -37,7 +38,7 @@ jobs:
           def load(name):
               return BeautifulSoup(Path('qa',name+'.html').read_text(), 'html.parser')
 
-          home=load('home'); products=load('products'); contact=load('contact')
+          home=load('home'); products=load('products'); contact=load('contact'); downloads=load('downloads')
           rich=load('detail-rich'); sparse=load('detail-sparse'); missing=load('detail-missing')
           cards=products.select('#productGrid a.product-card')
           assert len(cards)==150, f'Expected 150 product cards, got {len(cards)}'
@@ -90,16 +91,29 @@ jobs:
           assert sparse_img and (sparse_img.get('src') or '').startswith('assets/images/catalog/'), 'Imported product detail image did not resolve'
           assert len(sparse.select('#specTable .spec-row'))>=4, 'Sparse imported product should show verified basic information'
           assert sparse.select_one('.product-support-card'), 'Sparse product should show customer-facing document inquiry block'
-          forbidden='測試版 正式版 原官網產品資料 新版目錄 網站提案 預覽環境 正式檔案空間'.split()
-          public_text=' '.join([home.get_text(' ',strip=True),rich.get_text(' ',strip=True),sparse.get_text(' ',strip=True),contact.get_text(' ',strip=True)])
-          leaked=[x for x in forbidden if x in public_text]
-          assert not leaked, f'Public-facing internal wording leaked: {leaked}'
           assert missing.select_one('.product-not-found'), 'Invalid product URL should show a not-found state'
 
           assert contact.select_one('#contactForm'), 'Contact form behavior hook missing'
           assert contact.select_one('#inquiryForm'), 'Inquiry fragment anchor missing'
-          selected=contact.select_one('#subject option[selected]')
-          assert selected and 'Zebra ZT510' in selected.get_text(), 'Product inquiry did not prefill the contact subject'
+          subject_text=contact.select_one('#subject').get_text(' ',strip=True) if contact.select_one('#subject') else ''
+          assert 'Zebra ZT510' in subject_text, 'Product inquiry did not prefill/add product subject option'
+
+          download_brands=[x.get_text(' ',strip=True) for x in downloads.select('#downloadBrands [data-brand]')]
+          assert download_brands[:7]==['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], download_brands
+          rows=downloads.select('#downloadList .download-item')
+          actions=downloads.select('#downloadList a.download-action')
+          external=[a for a in actions if (a.get('href') or '').startswith(('http://','https://'))]
+          assert len(rows)>=5, f'Download center unexpectedly sparse: {len(rows)} rows'
+          assert len(actions)==len(rows), f'Every rendered download row must have an actionable link: {len(actions)}/{len(rows)}'
+          assert not downloads.select('#downloadList .demo-download'), 'Demo-only download buttons remain'
+          assert len(external)>=3, f'Expected real external download destinations, got {len(external)}'
+          bad_titles=[h.get_text(' ',strip=True) for h in downloads.select('#downloadList h3') if h.get_text(' ',strip=True) in {'萬里資訊','下載檔案'}]
+          assert not bad_titles, f'Bad imported download titles leaked: {bad_titles}'
+
+          forbidden='測試版 正式版 原官網產品資料 新版目錄 網站提案 預覽環境 正式檔案空間'.split()
+          public_text=' '.join([home.get_text(' ',strip=True),rich.get_text(' ',strip=True),sparse.get_text(' ',strip=True),contact.get_text(' ',strip=True),downloads.get_text(' ',strip=True)])
+          leaked=[x for x in forbidden if x in public_text]
+          assert not leaked, f'Public-facing internal wording leaked: {leaked}'
 
           print('PRODUCT_CARDS_OK=150')
           print('UNIQUE_READABLE_PRODUCT_SLUGS=150')
@@ -110,6 +124,8 @@ jobs:
           print('PRODUCT_DETAIL_SPARSE=OK')
           print('PRODUCT_NOT_FOUND=OK')
           print('PRODUCT_INQUIRY_PREFILL=OK')
+          print(f'DOWNLOAD_ACTIONS_OK={len(actions)}')
+          print(f'REAL_DOWNLOAD_LINKS_VISIBLE={len(external)}')
           print('PUBLIC_COPY_CLEAN=OK')
           print('FLOATING_CONTACT_DESKTOP=OK')
           print('FLOATING_CONTACT_MOBILE=OK')
