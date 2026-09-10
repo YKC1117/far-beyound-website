@@ -7,8 +7,10 @@ on:
       - 'assets/js/presentation-polish.js'
       - 'assets/js/final-fixes.js'
       - 'assets/js/v2-corporate.js'
+      - 'assets/js/v4-polish.js'
       - 'assets/css/v2-corporate.css'
       - 'assets/css/v4-polish.css'
+      - 'assets/css/v4-inner-polish.css'
       - '.github/workflows/inject-nav-menu.yml'
 
 permissions:
@@ -19,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Add public presentation scripts favicon and V4 stylesheet
+      - name: Add public presentation scripts favicon and V4 stylesheets
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -39,7 +41,13 @@ jobs:
                       text=text.replace(marker, marker+'<link rel="stylesheet" href="assets/css/v4-polish.css">')
                   else:
                       text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v4-polish.css"></head>')
-              for script in ['assets/js/nav-menu.js','assets/js/presentation-polish.js','assets/js/final-fixes.js','assets/js/v2-corporate.js']:
+              if 'assets/css/v4-inner-polish.css' not in text:
+                  marker='<link rel="stylesheet" href="assets/css/v4-polish.css">'
+                  if marker in text:
+                      text=text.replace(marker, marker+'<link rel="stylesheet" href="assets/css/v4-inner-polish.css">')
+                  else:
+                      text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v4-inner-polish.css"></head>')
+              for script in ['assets/js/nav-menu.js','assets/js/presentation-polish.js','assets/js/final-fixes.js','assets/js/v2-corporate.js','assets/js/v4-polish.js']:
                   if script not in text:
                       text=text.replace('</body>', f'<script src="{script}"></script></body>')
               if 'rel="icon"' not in text:
@@ -58,5 +66,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add '*.html'
-          git commit -m 'Apply V4 polish across public pages'
+          git commit -m 'Apply V4 inner polish across public pages'
           git push
