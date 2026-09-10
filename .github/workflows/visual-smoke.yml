@@ -1,0 +1,40 @@
+name: Visual smoke screenshots
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start local preview server
+        shell: bash
+        run: |
+          python3 -m http.server 8080 >/tmp/farbeyound-http.log 2>&1 &
+          echo $! > /tmp/farbeyound-http.pid
+          sleep 2
+      - name: Capture desktop pages
+        shell: bash
+        run: |
+          mkdir -p screenshots
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          if [ -z "$CHROME" ]; then echo 'Chrome/Chromium not found'; exit 1; fi
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/home.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/products.png http://127.0.0.1:8080/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/product-zt411.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/admin.png http://127.0.0.1:8080/admin.html
+      - name: Capture mobile homepage
+        shell: bash
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: website-screenshots
+          path: screenshots/
+          retention-days: 3
