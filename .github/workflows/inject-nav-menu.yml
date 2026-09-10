@@ -1,0 +1,43 @@
+name: Inject enhanced navigation
+
+on:
+  push:
+    paths:
+      - 'assets/js/nav-menu.js'
+      - '.github/workflows/inject-nav-menu.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add nav-menu.js to public HTML pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          changed=[]
+          for p in Path('.').glob('*.html'):
+              if p.name in {'admin.html'}:
+                  continue
+              text=p.read_text(encoding='utf-8')
+              if 'assets/js/app.js' not in text or 'assets/js/nav-menu.js' in text:
+                  continue
+              text=text.replace('</body>', '<script src="assets/js/nav-menu.js"></script></body>')
+              p.write_text(text, encoding='utf-8')
+              changed.append(p.name)
+          print('updated:', ', '.join(changed) if changed else 'none')
+          PY
+      - name: Commit HTML wiring
+        run: |
+          if git diff --quiet; then
+            echo 'No changes required'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add '*.html'
+          git commit -m 'Load enhanced dropdown navigation on public pages'
+          git push
