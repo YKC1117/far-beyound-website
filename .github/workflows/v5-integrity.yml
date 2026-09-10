@@ -1,0 +1,87 @@
+name: V5 showcase integrity
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-v5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start preview
+        run: |
+          python3 -m http.server 8080 >/tmp/site-v5.log 2>&1 &
+          sleep 2
+      - name: Verify final showcase pages and utilities
+        run: |
+          set -e
+          for f in index.html products.html product.html downloads.html solutions.html cases.html news.html news-detail.html about.html locations.html contact.html; do
+            grep -q 'assets/css/v5-showcase.css' "$f"
+            grep -q 'assets/js/v5-showcase.js' "$f"
+          done
+
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          test -n "$CHROME"
+          mkdir -p qa-v5
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom http://127.0.0.1:8080/index.html > qa-v5/home.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom http://127.0.0.1:8080/products.html > qa-v5/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom http://127.0.0.1:8080/downloads.html > qa-v5/downloads.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom http://127.0.0.1:8080/contact.html > qa-v5/contact.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom http://127.0.0.1:8080/about.html > qa-v5/about.html
+
+          pip install --disable-pip-version-check beautifulsoup4 >/dev/null
+          python3 - <<'PY'
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+
+          def load(name):
+              return BeautifulSoup(Path('qa-v5',name+'.html').read_text(), 'html.parser')
+
+          home=load('home')
+          products=load('products')
+          downloads=load('downloads')
+          contact=load('contact')
+          about=load('about')
+
+          assert home.select_one('.v5-credibility'), 'Credibility band missing'
+          assert len(home.select('.v5-cred-item')) == 4, 'Credibility items incomplete'
+          assert home.select_one('.v5-case-section'), 'Customer case section missing'
+          assert len(home.select('.v5-case-card')) == 4, 'Customer cases incomplete'
+          assert home.select_one('.v5-process'), 'Service process missing'
+          assert len(home.select('.v5-process-step')) == 4, 'Service process incomplete'
+          assert 'SINCE 1992' in home.get_text(' ', strip=True), 'Company-history cue missing'
+
+          product_search=products.select_one('.v5-catalog-tools[data-kind="products"] .v5-catalog-search')
+          assert product_search, 'Product search utility missing'
+          assert len(products.select('#productGrid .product-card')) == 150, 'Product catalog count changed'
+          assert products.select_one('.v5-page-meta'), 'Product page service-meta row missing'
+
+          assert downloads.select_one('.v5-download-tools .v5-catalog-search'), 'Download search utility missing'
+          assert downloads.select_one('.v5-page-meta'), 'Download page service-meta row missing'
+          assert contact.select_one('.v5-page-meta'), 'Contact page service-meta row missing'
+          assert about.select_one('.v5-page-meta'), 'About page service-meta row missing'
+
+          assert contact.select_one('.quick-contact [data-back-top]'), 'Desktop utility rail TOP missing'
+          assert contact.select_one('#serviceLocations'), 'Contact service locations missing'
+          assert len(contact.select('#serviceLocations .location-mini-action')) == 2, 'Contact map navigation incomplete'
+
+          forbidden=['測試版','正式版','網站提案','預覽環境']
+          text=' '.join(x.get_text(' ',strip=True) for x in [home,products,downloads,contact,about])
+          leaked=[x for x in forbidden if x in text]
+          assert not leaked, f'Internal preview wording leaked: {leaked}'
+
+          print('V5_PUBLIC_WIRING=OK')
+          print('V5_HOME_CREDIBILITY=4')
+          print('V5_HOME_CASES=4')
+          print('V5_HOME_PROCESS=4')
+          print('V5_PRODUCT_SEARCH=OK')
+          print('V5_DOWNLOAD_SEARCH=OK')
+          print('V5_PRODUCT_CARDS=150')
+          print('V5_INNER_PAGE_META=OK')
+          print('V5_CONTACT_MAPS=2')
+          print('V5_PUBLIC_COPY_CLEAN=OK')
+          PY
