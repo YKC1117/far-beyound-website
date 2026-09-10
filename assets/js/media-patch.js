@@ -1,14 +1,14 @@
 (function(){
-  const LOGO='https://s.web66.com.tw/_file/C8/85993/org/logo.png';
+  const LOGO='assets/images/brand/far-beyound-logo.png';
   const IMAGES={
-    'zebra-zt610-zt620':'https://www.far-beyound.com.tw/storage/upload/product/image/2026-08-26/aQDEslOFT5jrf9kqbOOoDuN45aPDEUbndzwjmiEy.jpg',
-    'zebra-zt411-zt421':'https://www.far-beyound.com.tw/storage/upload/product/image/2021-10-08/0rZkyA4qrjSbsC7y9RLWNggSnpJiY7WW8odVoINr.png',
-    'zebra-ds4678-xd':'https://www.far-beyound.com.tw/storage/upload/product/image/2025-02-20/ULR5vobTGwpeUnwI6Qn8BlqcpFal2ZmKG7y5vxyH.jpg',
-    'honeywell-xenon-1900-1902':'https://www.far-beyound.com.tw/storage/upload/product/image/2021-09-22/umU419E5q2zysD3uCSxchjeuXgaG6kIG3C2XoKlq.png',
-    'tsc-mh241-mh341-mh641':'https://www.far-beyound.com.tw/storage/upload/product/image/2022-09-21/AALcQJ8WNLtm6OlspQF6W2XKAUPYP0CIAnnYVbV4.png',
-    'tsc-tx610':'https://www.far-beyound.com.tw/storage/upload/product/image/2022-08-11/q3wKnC3jmDoQQoc5F1GmE9AcBxUQlZOjl1Urn0vF.png',
-    'argox-cx3140-pro':'https://www.far-beyound.com.tw/storage/upload/product/image/2024-07-18/KnWbEeXs4ZDRszWxdDm5whvGqtRtmgWx44H8ZCYi.jpg',
-    'godex-g500-g530':'https://www.far-beyound.com.tw/storage/upload/product/image/2023-12-28/qGRyclx23UP7fnRH7ZsoVoOuZD3YBD37RXdIWC4D.png'
+    'zebra-zt610-zt620':'assets/images/products/zebra-zt610-zt620.jpg',
+    'zebra-zt411-zt421':'assets/images/products/zebra-zt411-zt421.png',
+    'zebra-ds4678-xd':'assets/images/products/zebra-ds4678-xd.jpg',
+    'honeywell-xenon-1900-1902':'assets/images/products/honeywell-xenon-1900-1902.png',
+    'tsc-mh241-mh341-mh641':'assets/images/products/tsc-mh241-mh341-mh641.png',
+    'tsc-tx610':'assets/images/products/tsc-tx610.png',
+    'argox-cx3140-pro':'assets/images/products/argox-cx3140-pro.jpg',
+    'godex-g500-g530':'assets/images/products/godex-g500-g530.png'
   };
 
   const HOME_ORDER=['zebra-zt610-zt620','zebra-ds4678-xd','zebra-zt411-zt421','honeywell-xenon-1900-1902','argox-cx3140-pro','tsc-mh241-mh341-mh641','tsc-tx610','godex-gx4200i-gx4300i-gx4600i','godex-g500-g530','fastech-ft-yx510'];
