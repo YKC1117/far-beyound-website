@@ -1,4 +1,4 @@
-name: Inspect legacy brand assets
+name: Mirror verified brand assets
 
 on:
   push:
@@ -7,63 +7,57 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  inspect:
+  mirror:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install --disable-pip-version-check requests beautifulsoup4 pillow >/dev/null
-      - name: Download homepage brand images
+      - run: pip install --disable-pip-version-check requests beautifulsoup4 >/dev/null
+      - name: Mirror verified brand images
         run: |
           python3 - <<'PY'
           import requests
           from bs4 import BeautifulSoup
           from urllib.parse import urljoin
           from pathlib import Path
-          from PIL import Image, ImageOps, ImageDraw
 
-          url='https://www.far-beyound.com.tw/'
-          r=requests.get(url,headers={'User-Agent':'Mozilla/5.0'},timeout=30)
-          r.raise_for_status()
+          home='https://www.far-beyound.com.tw/'
+          r=requests.get(home,headers={'User-Agent':'Mozilla/5.0'},timeout=30); r.raise_for_status()
           s=BeautifulSoup(r.text,'html.parser')
-          candidates=[]
+          urls=[]
           for img in s.find_all('img'):
               src=img.get('data-src') or img.get('data-original') or img.get('src') or ''
-              full=urljoin(url,src)
-              if '/storage/upload/brand/image/' in full:
-                  candidates.append(full)
-          candidates=list(dict.fromkeys(candidates))
-          print('BRAND_ASSET_COUNT=',len(candidates))
-          out=Path('brand-assets'); out.mkdir(exist_ok=True)
-          thumbs=[]
-          for i,src in enumerate(candidates,1):
-              data=requests.get(src,headers={'User-Agent':'Mozilla/5.0'},timeout=30); data.raise_for_status()
-              ext=Path(src.split('?',1)[0]).suffix or '.png'
-              path=out/f'{i:02d}{ext}'
-              path.write_bytes(data.content)
-              print(f'{i:02d} | {src} | {len(data.content)} bytes')
-              with Image.open(path) as im:
-                  im=im.convert('RGBA')
-                  canvas=Image.new('RGBA',(320,140),'white')
-                  fitted=ImageOps.contain(im,(280,90))
-                  x=(320-fitted.width)//2; y=24+(90-fitted.height)//2
-                  canvas.alpha_composite(fitted,(x,y))
-                  draw=ImageDraw.Draw(canvas)
-                  draw.text((12,8),f'#{i:02d}',fill='black')
-                  thumbs.append(canvas.convert('RGB'))
-          if thumbs:
-              cols=2; rows=(len(thumbs)+cols-1)//cols
-              sheet=Image.new('RGB',(cols*320,rows*140),'white')
-              for i,im in enumerate(thumbs): sheet.paste(im,((i%cols)*320,(i//cols)*140))
-              sheet.save(out/'contact-sheet.jpg',quality=92)
+              full=urljoin(home,src)
+              if '/storage/upload/brand/image/' in full and full not in urls: urls.append(full)
+          names=['zebra','argox','tsc','godex','toshiba','sato','datamax-oneil','honeywell','datalogic','numa']
+          assert len(urls)==len(names)==10, f'Expected 10 verified legacy brand assets, got {len(urls)}'
+          out=Path('assets/images/brands'); out.mkdir(parents=True,exist_ok=True)
+          for name,url in zip(names,urls):
+              data=requests.get(url,headers={'User-Agent':'Mozilla/5.0'},timeout=30); data.raise_for_status()
+              assert len(data.content)>2500, f'{name} image is unexpectedly small'
+              (out/f'{name}.png').write_bytes(data.content)
+              print(name,url,len(data.content))
+          # The legacy Brand Information block has no standalone Fastech logo image,
+          # so keep its brand tile image-based without inventing a counterfeit logo.
+          (out/'fastech.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100" role="img" aria-labelledby="t"><title id="t">Fastech</title><rect width="360" height="100" fill="white"/><text x="180" y="64" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="50" font-weight="700" letter-spacing="3" fill="#17324d">FASTECH</text></svg>''',encoding='utf-8')
           PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: legacy-brand-assets
-          path: brand-assets/
-          retention-days: 3
+      - name: Commit mirrored assets
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/images/brands
+          if git diff --cached --quiet; then
+            echo 'Brand assets already current.'
+          else
+            git commit -m 'Add verified legacy brand logos'
+            git pull --rebase origin main
+            git push origin main
+          fi
