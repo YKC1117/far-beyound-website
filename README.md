@@ -1,43 +1,43 @@
-# 萬里資訊新版官網（測試開發版）
+# 萬里資訊新版官網（主管展示版）
 
-這個 repository 是新版官網的前台與資料結構原型，目標不是拋棄式 Demo，而是作為後續正式網站的可移植基礎。
+這個 repository 是萬里資訊新版官網的前台、內容模型與正式部署基礎。GitHub Pages 僅作為目前預覽環境；正式採用後可移植到公司租用的主機、網域與 MySQL / MariaDB。
 
 ## 目前已完成
 
-- 首頁（RWD）
-- 多層產品入口與產品列表
-- 通用產品詳細頁
-- 下載中心
-- SFIS / WMS / SMT 系統方案
-- 最新消息
-- 聯絡表單流程驗證
+- 首頁 RWD 與正式產品圖片整合
+- 8 大產品／服務分類
+- 多層產品入口、品牌篩選、產品列表與產品詳細頁
+- 下載中心與品牌快速入口
+- SFIS / WMS / SMT / 條碼整合系統方案
+- 客戶案例
+- 最新消息與文章內頁
+- 關於我們、服務據點、聯絡表單
 - 全站搜尋
-- Demo 管理介面：產品新增 / 修改 / 刪除
+- 桌機 Mega Menu / 下拉式導覽
+- 手機折疊式多層導覽
+- 公司 LOGO、代表產品圖與 favicon 本地化
+- 測試管理介面：產品、下載、系統方案、消息、案例與公司資料維護
 - JSON 匯入 / 匯出
-- GitHub Pages 相容的相對路徑
+- 正式 MySQL 資料庫 Schema
+- 正式主機遷移規劃與 301 Redirect 架構
+- GitHub Actions 自動語法、連結與視覺 Smoke Test
 
 ## 測試後台
 
 開啟 `admin.html`。
 
-GitHub Pages 不提供伺服器資料庫，因此目前編輯資料儲存在瀏覽器 localStorage。這可以展示真實操作流程，且資料可匯出 JSON。正式部署時，將把相同資料模型接到 MySQL / MariaDB，並加入登入、權限、檔案上傳與後端 API。
+GitHub Pages 不提供伺服器資料庫，因此目前編輯資料儲存在瀏覽器 localStorage，並可匯出 JSON。正式部署時會把相同資料模型接到 MySQL / MariaDB，並加入登入、權限、檔案上傳與後端 API。
 
 ## 正式部署方向
 
-- 前台：保留目前 HTML / CSS / JS，可直接部署在一般 Linux 主機
-- 後台：PHP / Laravel 或等價框架
+- 前台：保留目前網站結構與視覺元件
+- 後台：PHP / Laravel 或等價伺服器框架
 - 資料庫：MySQL / MariaDB
 - 檔案：主機 storage 或獨立物件儲存
 - SSL：Let's Encrypt / 主機商 SSL
-- SEO：正式上線時補 canonical、sitemap、robots、Open Graph、結構化資料
-- 舊站轉移：保留舊網址對應表並設 301 Redirect
+- SEO：canonical、sitemap、robots、Open Graph、結構化資料
+- 舊站轉移：建立舊網址對應表並設 301 Redirect
 
-## 測試方式
+## 目前定位
 
-可直接開 `index.html`，或以本機 Web Server 啟動：
-
-```bash
-python -m http.server 8080
-```
-
-再開啟 `http://localhost:8080/`。
+此版可作為主管瀏覽新版方向與操作流程的展示版本。正式上線前仍需完成所有舊站產品／文件資料移轉、正式表單寄送、登入權限、正式檔案空間與網域切換。
