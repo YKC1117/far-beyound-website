@@ -12,6 +12,13 @@
 .footer-brand .brand-reg{color:#fff;top:-6px}
 .desktop-nav>a,.nav-item>a{padding-top:36px!important;padding-bottom:36px!important}
 
+/* Product mega menu mirrors the legacy information hierarchy */
+.v3-product-mega{display:grid;grid-template-columns:1.2fr 1fr .8fr .8fr;gap:0;border:1px solid #e1e6ea;border-top:0;background:#fff}
+.v3-mega-group{padding:18px 20px;border-right:1px solid #e4e9ed;min-width:0}.v3-mega-group:last-child{border-right:0}
+.v3-mega-group>strong{display:block;font-size:13px;color:#18324a;margin-bottom:10px}.v3-mega-group>small{display:block;font-size:8px;color:#8b99a5;letter-spacing:.08em;margin:-7px 0 10px}
+.v3-mega-links{display:grid;gap:0}.v3-mega-links a{padding:7px 0;border-bottom:1px solid #eef1f3;color:#516374;font-size:11px}.v3-mega-links a:last-child{border-bottom:0}.v3-mega-links a:hover{color:var(--brand-cyan);padding-left:3px}
+.v3-mega-minor{display:grid;gap:8px}.v3-mega-minor a{display:block;padding:10px 11px;background:#f6f8f9;border-left:2px solid #d9e2e7;font-size:11px;color:#43586a}.v3-mega-minor a:hover{border-left-color:var(--brand-cyan);color:var(--brand-cyan);background:#f1f7f8}
+
 /* Prominent official brand portfolio directly under the hero */
 .brand-portfolio{background:#fff;border-bottom:1px solid var(--brand-line);padding:27px 0 25px}
 .brand-portfolio-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:18px}
@@ -61,6 +68,7 @@ body[data-page="home"] .cta-band{margin-top:0!important}
 
 @media(max-width:1180px) and (min-width:981px){
   .header-inner>.brand{min-width:195px}.header-inner .brand-mark{width:54px!important;height:54px!important;flex-basis:54px!important}.header-inner .brand-copy strong{font-size:20px!important}.desktop-nav>a,.nav-item>a{padding-top:36px!important;padding-bottom:36px!important}
+  .v3-product-mega{grid-template-columns:1.1fr 1fr 1fr}.v3-mega-group:nth-child(4){display:none}
 }
 @media(max-width:980px){
   .header-inner{height:72px!important}.header-inner>.brand{min-width:0}.header-inner .brand-mark{width:48px!important;height:48px!important;flex-basis:48px!important}.header-inner .brand-copy strong{font-size:19px!important}.header-inner .brand-copy small{font-size:8px!important;margin-top:5px!important}.brand-reg{font-size:7px;top:-6px}
