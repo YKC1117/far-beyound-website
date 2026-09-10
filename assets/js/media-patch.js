@@ -67,8 +67,9 @@
       d.products.forEach(p=>{if(HOME_ORDER.includes(p.id))p.featured=true});
       const orderMap=new Map(HOME_ORDER.map((id,i)=>[id,i]));
       d.products.sort((a,b)=>(orderMap.has(a.id)?orderMap.get(a.id):1000)-(orderMap.has(b.id)?orderMap.get(b.id):1000));
-      const replaceBrands=new Set(['Zebra','Argox','GoDEX','TOSHIBA','SATO','Honeywell']);
-      d.downloads=d.downloads.filter(x=>!replaceBrands.has(x.brand)).concat(DOWNLOAD_REPLACEMENTS);
+      DOWNLOAD_REPLACEMENTS.forEach(item=>{
+        if(!d.downloads.some(x=>x.brand===item.brand && x.name===item.name)) d.downloads.push(JSON.parse(JSON.stringify(item)));
+      });
       return d;
     };
   }
