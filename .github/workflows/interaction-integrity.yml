@@ -98,7 +98,8 @@ jobs:
           assert '台南市永康區中華路425號4樓之18' in footer_text, 'Tainan office address missing'
           for a in footer_locations:
               href=a.get('href','')
-              assert href.startswith('https://www.google.com/maps/search/'), f'Footer address is not a Google Maps link: {href}'
+              assert href.startswith('https://www.google.com/maps/dir/'), f'Footer address is not a Google Maps directions link: {href}'
+              assert 'destination=' in href, f'Google Maps destination missing: {href}'
           footer_bottom=home.select('.site-footer .footer-bottom > span')
           assert len(footer_bottom)==1, f'Unexpected extra footer-bottom item remains: {len(footer_bottom)}'
 
@@ -139,7 +140,7 @@ jobs:
           print('CLICKABLE_BRAND_ENTRIES_OK=12')
           print('COMPACT_HOMEPAGE=OK')
           print('NAV_ORDER_OK=PRODUCT,SOLUTIONS,CASES,NEWS,DOWNLOADS,COMPANY')
-          print('FOOTER_OFFICE_MAPS_OK=2')
+          print('FOOTER_OFFICE_DIRECTIONS_OK=2')
           print('FOOTER_EXTRA_ITEM_REMOVED=OK')
           print('BACK_TO_TOP_IN_RIGHT_RAIL=OK')
           print('PRODUCT_DETAIL_RICH=OK')
