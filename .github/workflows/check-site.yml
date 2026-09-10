@@ -1,0 +1,81 @@
+name: Validate website
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -e
+          for file in assets/js/*.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
+
+      - name: Validate local HTML references
+        shell: bash
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          import sys
+
+          root=Path('.').resolve()
+          errors=[]
+
+          class Parser(HTMLParser):
+            def __init__(self,file):
+              super().__init__(); self.file=file
+            def handle_starttag(self,tag,attrs):
+              attrs=dict(attrs)
+              for key in ('href','src'):
+                value=attrs.get(key)
+                if not value: continue
+                if value.startswith(('#','mailto:','tel:','javascript:','data:')): continue
+                u=urlsplit(value)
+                if u.scheme or u.netloc: continue
+                path=u.path
+                if not path: continue
+                target=(self.file.parent/path).resolve()
+                try: target.relative_to(root)
+                except ValueError:
+                  errors.append(f'{self.file}: reference escapes repository: {value}'); continue
+                if not target.exists(): errors.append(f'{self.file}: missing local reference: {value}')
+
+          for file in Path('.').glob('*.html'):
+            text=file.read_text(encoding='utf-8')
+            if '<meta name="viewport"' not in text:
+              errors.append(f'{file}: missing viewport meta')
+            if '<title>' not in text:
+              errors.append(f'{file}: missing title')
+            p=Parser(file); p.feed(text)
+
+          if errors:
+            print('\n'.join(errors)); sys.exit(1)
+          print('HTML references OK')
+          PY
+
+      - name: Check required production files
+        shell: bash
+        run: |
+          test -f robots.txt
+          test -f database/schema.sql
+          test -f PRODUCTION.md
+          test -f assets/images/brand/far-beyound-logo.png
+          test -f assets/images/products/zebra-zt610-zt620.jpg
+          test -f assets/images/products/zebra-zt411-zt421.png
+          test -f assets/images/products/zebra-ds4678-xd.jpg
+          echo 'Required project files OK'
