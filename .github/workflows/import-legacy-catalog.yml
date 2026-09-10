@@ -1,0 +1,44 @@
+name: Import legacy official catalog
+
+on:
+  push:
+    paths:
+      - 'tools/import_legacy_catalog.py'
+      - '.github/workflows/import-legacy-catalog.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: legacy-catalog-import
+  cancel-in-progress: true
+
+jobs:
+  import-catalog:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install importer dependencies
+        run: pip install --disable-pip-version-check requests beautifulsoup4
+      - name: Crawl current official website
+        run: python tools/import_legacy_catalog.py
+      - name: Commit catalog and mirrored product images
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/legacy-catalog.js assets/images/catalog
+          if git diff --cached --quiet; then
+            echo 'Catalog already current.'
+          else
+            git commit -m 'Sync products from current official website'
+            git push
+          fi
