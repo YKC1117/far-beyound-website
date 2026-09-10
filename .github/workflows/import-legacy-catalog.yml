@@ -40,5 +40,6 @@ jobs:
             echo 'Catalog already current.'
           else
             git commit -m 'Sync products from current official website'
-            git push
+            git pull --rebase origin main
+            git push origin main
           fi
