@@ -1,0 +1,4 @@
+# GitHub Pages preview environment
+# Remove this restriction only when the official production site is approved and launched.
+User-agent: *
+Disallow: /
