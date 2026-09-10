@@ -23,12 +23,31 @@ jobs:
         run: |
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           if [ -z "$CHROME" ]; then echo 'Chrome/Chromium not found'; exit 1; fi
-          mkdir -p qa
+          mkdir -p qa qa/brands
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom 'http://127.0.0.1:8080/products.html?category=printers' > qa/printers.html
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom 'http://127.0.0.1:8080/products.html?category=scanners' > qa/scanners.html
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
+          i=0
+          while IFS='|' read -r category brand; do
+            i=$((i+1))
+            encoded=$(python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$brand")
+            "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=2500 --dump-dom "http://127.0.0.1:8080/products.html?category=${category}&brand=${encoded}" > "qa/brands/${i}.html"
+          done <<'EOF'
+          printers|Zebra
+          printers|Argox
+          printers|TSC
+          printers|GoDEX
+          printers|TOSHIBA
+          printers|SATO
+          printers|Honeywell
+          scanners|Fastech
+          scanners|Zebra
+          scanners|Honeywell
+          scanners|NUMA
+          scanners|Datalogic
+          EOF
           pip install --disable-pip-version-check beautifulsoup4 >/dev/null
           python3 - <<'PY'
           from bs4 import BeautifulSoup
@@ -81,12 +100,35 @@ jobs:
               if not (img.get('alt') or '').strip():
                   bad_alts.append(token or str(i))
 
-          brand_link_errors=[x.get_text(' ',strip=True) for x in home_brand_links if not (x.get('href') or '').strip()]
+          brand_link_errors=[]
+          brand_image_errors=[]
+          for a in home_brand_links:
+              name=a.get_text(' ',strip=True)
+              href=(a.get('href') or '').strip()
+              if not href or not parse_qs(urlparse(href).query).get('brand'):
+                  brand_link_errors.append(name)
+              img=a.select_one('img.brand-logo-img')
+              if not img or not (img.get('src') or '').strip() or not (img.get('alt') or '').strip():
+                  brand_image_errors.append(f'{name}: missing image/src/alt')
+                  continue
+              src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
+              p=Path(src)
+              minimum=200 if p.suffix.lower()=='.svg' else 2500
+              if not p.is_file() or p.stat().st_size < minimum:
+                  brand_image_errors.append(f'{name}: missing/invalid {src}')
+
+          empty_brand_pages=[]
+          for p in sorted(Path('qa/brands').glob('*.html'),key=lambda x:int(x.stem)):
+              s=BeautifulSoup(p.read_text(),'html.parser')
+              if not s.select('#productGrid .product-card'):
+                  empty_brand_pages.append(p.stem)
 
           print('CATALOG_COUNT_TEXT=', count_text)
           print('CATALOG_CARD_COUNT=', card_count)
           print('UNIQUE_PRODUCT_URL_TOKENS=', len(set(tokens)))
           print('PRODUCTS_WITH_LOCAL_IMAGES=', card_count-len(missing_images)-len(missing_image_files))
+          print('CLICKABLE_BRAND_LOGOS=', len(home_brand_links)-len(brand_link_errors)-len(brand_image_errors))
+          print('NONEMPTY_BRAND_DESTINATIONS=', 12-len(empty_brand_pages))
           print('PRINTER_BRANDS=', ' > '.join(printer_brands))
           print('SCANNER_BRANDS=', ' > '.join(scanner_brands))
           print('DOWNLOAD_BRANDS=', ' > '.join(download_brands))
@@ -101,7 +143,10 @@ jobs:
           assert not missing_images, f'Product cards missing images: {missing_images[:10]}'
           assert not missing_image_files, f'Product image files missing/invalid: {missing_image_files[:10]}'
           assert not bad_alts, f'Product images missing alt text: {bad_alts[:10]}'
+          assert len(home_brand_links)==12, f'Expected 12 homepage brand entries, got {len(home_brand_links)}'
           assert not brand_link_errors, f'Homepage brands missing links: {brand_link_errors}'
+          assert not brand_image_errors, f'Homepage brands missing valid local images: {brand_image_errors}'
+          assert not empty_brand_pages, f'Brand destinations with no products: {empty_brand_pages}'
           assert printer_brands == ['全部品牌','Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], printer_brands
           assert scanner_brands == ['全部品牌','Fastech','Zebra','Honeywell','NUMA','Datalogic'], scanner_brands
           assert download_brands[:7] == ['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], download_brands
