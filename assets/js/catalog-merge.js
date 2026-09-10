@@ -9,36 +9,59 @@
     COMMON.forEach(x=>{s=s.replace(x.toLowerCase().replace(/[／/|｜・·()（）\-\s]/g,''),'')});
     return s;
   }
-  function matchExisting(products,p){
-    const pk=key(p.name);
-    return products.find(x=>{
-      const xk=key(x.name);
-      if(!pk||!xk) return false;
-      return xk===pk || (xk.length>5 && pk.includes(xk)) || (pk.length>5 && xk.includes(pk));
-    });
+  function isMatch(a,b){
+    const ak=key(a),bk=key(b);
+    if(!ak||!bk)return false;
+    return ak===bk || (ak.length>5&&bk.includes(ak)) || (bk.length>5&&ak.includes(bk));
   }
   function categoryIndex(d,id){const n=(d.categories||[]).findIndex(c=>c.id===id);return n<0?999:n}
   function brandIndex(cat,brand){
     const order=window.FBLegacyCatalog?.brandOrder?.[cat]||[];
     const n=order.indexOf(brand); return n<0?999:n;
   }
+  function enrichOfficial(catalogProducts,existing){
+    const used=new Set();
+    return catalogProducts.map(source=>{
+      const p=JSON.parse(JSON.stringify(source));
+      const idx=existing.findIndex((x,i)=>!used.has(i) && x.category===p.category && x.brand===p.brand && isMatch(x.name,p.name));
+      if(idx<0)return p;
+      used.add(idx);
+      const curated=existing[idx];
+      // The official catalog is authoritative for placement/order/source/image.
+      // Earlier hand-curated records only enrich copy/specs/files/featured status.
+      return {
+        ...p,
+        id: curated.id || p.id,
+        name: curated.name || p.name,
+        subtitle: curated.subtitle || p.subtitle,
+        family: curated.family || p.family,
+        type: curated.type || p.type,
+        status: curated.status || p.status,
+        device: curated.device || p.device,
+        intro: curated.intro || p.intro,
+        highlights: curated.highlights?.length ? curated.highlights : p.highlights,
+        specs: curated.specs?.length ? curated.specs : p.specs,
+        files: curated.files?.length ? curated.files : p.files,
+        featured: !!curated.featured,
+        image: p.image || curated.image || '',
+        category: p.category,
+        brand: p.brand,
+        brandOrder: p.brandOrder,
+        legacyOrder: p.legacyOrder,
+        legacyUrl: p.legacyUrl
+      };
+    });
+  }
   FBStore.getData=function(){
     const d=rawGet();
     const catalog=window.FBLegacyCatalog;
     if(!catalog || !Array.isArray(catalog.products)) return d;
 
-    catalog.products.forEach(p=>{
-      const found=matchExisting(d.products,p);
-      if(found){
-        if(p.image) found.image=p.image;
-        found.brandOrder=p.brandOrder;
-        found.legacyOrder=p.legacyOrder;
-        found.legacyUrl=p.legacyUrl;
-        if(!found.family && p.family) found.family=p.family;
-      } else {
-        d.products.push(JSON.parse(JSON.stringify(p)));
-      }
-    });
+    const existing=(d.products||[]).slice();
+    const official=enrichOfficial(catalog.products,existing);
+    // Keep only products explicitly created from the demo admin in addition to the official inventory.
+    const custom=existing.filter(x=>/^product-\d+$/.test(String(x.id||'')));
+    d.products=[...official,...custom];
 
     d.products.sort((a,b)=>{
       const ca=categoryIndex(d,a.category), cb=categoryIndex(d,b.category);
