@@ -1,0 +1,37 @@
+name: Inspect legacy brand assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-brand-assets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --disable-pip-version-check requests beautifulsoup4 >/dev/null
+      - name: Print homepage image candidates
+        run: |
+          python3 - <<'PY'
+          import requests
+          from bs4 import BeautifulSoup
+          from urllib.parse import urljoin
+          url='https://www.far-beyound.com.tw/'
+          r=requests.get(url,headers={'User-Agent':'Mozilla/5.0'},timeout=30)
+          r.raise_for_status()
+          s=BeautifulSoup(r.text,'html.parser')
+          for i,img in enumerate(s.find_all('img'),1):
+              src=img.get('data-src') or img.get('data-original') or img.get('src') or ''
+              alt=img.get('alt') or ''
+              title=img.get('title') or ''
+              parent=(img.parent.get_text(' ',strip=True)[:80] if img.parent else '')
+              print(f'{i:03d} | {urljoin(url,src)} | alt={alt!r} | title={title!r} | parent={parent!r}')
+          PY
