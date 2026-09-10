@@ -18,26 +18,74 @@ jobs:
           python3 -m http.server 8080 >/tmp/farbeyound-http.log 2>&1 &
           echo $! > /tmp/farbeyound-http.pid
           sleep 2
+      - name: Validate rendered official catalog and brand order
+        shell: bash
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          if [ -z "$CHROME" ]; then echo 'Chrome/Chromium not found'; exit 1; fi
+          mkdir -p qa
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom 'http://127.0.0.1:8080/products.html?category=printers' > qa/printers.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom 'http://127.0.0.1:8080/products.html?category=scanners' > qa/scanners.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
+          pip install --disable-pip-version-check beautifulsoup4 >/dev/null
+          python3 - <<'PY'
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+
+          def soup(name): return BeautifulSoup(Path(f'qa/{name}.html').read_text(), 'html.parser')
+          allp=soup('products')
+          printers=soup('printers')
+          scanners=soup('scanners')
+          downloads=soup('downloads')
+          home=soup('home')
+
+          count_text=(allp.select_one('#productCount').get_text(' ',strip=True) if allp.select_one('#productCount') else '')
+          card_count=len(allp.select('#productGrid .product-card'))
+          printer_brands=[x.get_text(' ',strip=True) for x in printers.select('#brandTabs .brand-chip')]
+          scanner_brands=[x.get_text(' ',strip=True) for x in scanners.select('#brandTabs .brand-chip')]
+          download_brands=[x.get_text(' ',strip=True) for x in downloads.select('#downloadBrands .download-brand')]
+          home_brands=[x.get_text(' ',strip=True) for x in home.select('.brand-portfolio .brand-wordmark')]
+          registered=len(home.select('.header-inner .brand-reg'))
+
+          print('CATALOG_COUNT_TEXT=', count_text)
+          print('CATALOG_CARD_COUNT=', card_count)
+          print('PRINTER_BRANDS=', ' > '.join(printer_brands))
+          print('SCANNER_BRANDS=', ' > '.join(scanner_brands))
+          print('DOWNLOAD_BRANDS=', ' > '.join(download_brands))
+          print('HOME_BRANDS=', ' > '.join(home_brands))
+          print('HEADER_REGISTERED_MARK=', registered)
+
+          assert card_count == 150, f'Expected 150 rendered catalog items, got {card_count}'
+          assert count_text.startswith('150 '), f'Expected product count text 150, got {count_text!r}'
+          assert printer_brands == ['全部品牌','Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], printer_brands
+          assert scanner_brands == ['全部品牌','Fastech','Zebra','Honeywell','NUMA','Datalogic'], scanner_brands
+          assert download_brands[:7] == ['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], download_brands
+          assert home_brands == ['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell','Fastech','Zebra','Honeywell','NUMA','Datalogic'], home_brands
+          assert registered >= 1, 'Registered trademark mark not rendered in header'
+          PY
       - name: Capture desktop pages
         shell: bash
         run: |
           mkdir -p screenshots
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           if [ -z "$CHROME" ]; then echo 'Chrome/Chromium not found'; exit 1; fi
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/home.png http://127.0.0.1:8080/index.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/products.png http://127.0.0.1:8080/products.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/product-zt411.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/downloads.png http://127.0.0.1:8080/downloads.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/solutions.png http://127.0.0.1:8080/solutions.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/cases.png http://127.0.0.1:8080/cases.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/contact.png http://127.0.0.1:8080/contact.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --screenshot=screenshots/admin.png http://127.0.0.1:8080/admin.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/home.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/products.png http://127.0.0.1:8080/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/printers.png 'http://127.0.0.1:8080/products.html?category=printers'
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/product-zt411.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/downloads.png http://127.0.0.1:8080/downloads.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/solutions.png http://127.0.0.1:8080/solutions.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/cases.png http://127.0.0.1:8080/cases.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/contact.png http://127.0.0.1:8080/contact.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/admin.png http://127.0.0.1:8080/admin.html
       - name: Capture mobile pages
         shell: bash
         run: |
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=2500 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=2500 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
       - uses: actions/upload-artifact@v4
         with:
           name: website-screenshots
