@@ -8,7 +8,9 @@
     'tsc-mh241-mh341-mh641':'assets/images/products/tsc-mh241-mh341-mh641.png',
     'tsc-tx610':'assets/images/products/tsc-tx610.png',
     'argox-cx3140-pro':'assets/images/products/argox-cx3140-pro.jpg',
-    'godex-g500-g530':'assets/images/products/godex-g500-g530.png'
+    'godex-g500-g530':'assets/images/products/godex-g500-g530.png',
+    'godex-gx4200i-gx4300i-gx4600i':'assets/images/products/godex-gx4200i-gx4300i-gx4600i.jpg',
+    'fastech-ft-yx510':'assets/images/products/fastech-ft-yx510.jpg'
   };
 
   const HOME_ORDER=['zebra-zt610-zt620','zebra-ds4678-xd','zebra-zt411-zt421','honeywell-xenon-1900-1902','argox-cx3140-pro','tsc-mh241-mh341-mh641','tsc-tx610','godex-gx4200i-gx4300i-gx4600i','godex-g500-g530','fastech-ft-yx510'];
