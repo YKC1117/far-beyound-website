@@ -47,6 +47,9 @@
       }
       const root=slug;let n=2;while(used.has(slug))slug=`${root}-${n++}`;
       p.slug=slug;used.add(slug);
+      // Official items expose the readable brand/model slug as their public id.
+      // sourceId retains the imported/curated identifier for migration diagnostics.
+      if(p.legacyUrl){p.sourceId=p.id;p.id=slug;}
     });
   }
   function categoryIndex(d,id){const n=(d.categories||[]).findIndex(c=>c.id===id);return n<0?999:n}
