@@ -33,6 +33,7 @@ jobs:
           python3 - <<'PY'
           from bs4 import BeautifulSoup
           from pathlib import Path
+          from urllib.parse import urlparse, parse_qs, unquote
 
           def soup(name): return BeautifulSoup(Path(f'qa/{name}.html').read_text(), 'html.parser')
           allp=soup('products')
@@ -42,15 +43,50 @@ jobs:
           home=soup('home')
 
           count_text=(allp.select_one('#productCount').get_text(' ',strip=True) if allp.select_one('#productCount') else '')
-          card_count=len(allp.select('#productGrid .product-card'))
+          cards=allp.select('#productGrid .product-card')
+          card_count=len(cards)
           printer_brands=[x.get_text(' ',strip=True) for x in printers.select('#brandTabs .brand-chip')]
           scanner_brands=[x.get_text(' ',strip=True) for x in scanners.select('#brandTabs .brand-chip')]
           download_brands=[x.get_text(' ',strip=True) for x in downloads.select('#downloadBrands .download-brand')]
-          home_brands=[x.get_text(' ',strip=True) for x in home.select('.brand-portfolio .brand-wordmark')]
+          home_brand_links=home.select('.brand-portfolio .brand-wordmark')
+          home_brands=[x.get_text(' ',strip=True) for x in home_brand_links]
           registered=len(home.select('.header-inner .brand-reg'))
+
+          tokens=[]
+          missing_links=[]
+          legacy_tokens=[]
+          missing_images=[]
+          missing_image_files=[]
+          bad_alts=[]
+          for i,card in enumerate(cards,1):
+              href=(card.get('href') or '').strip()
+              token=parse_qs(urlparse(href).query).get('id',[''])[0]
+              if not href or not token:
+                  missing_links.append(i)
+              else:
+                  tokens.append(token)
+                  if token.startswith('legacy-'):
+                      legacy_tokens.append(token)
+              img=card.select_one('img')
+              if not img or not (img.get('src') or '').strip():
+                  missing_images.append(token or str(i))
+                  continue
+              src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
+              if src.startswith(('http://','https://','data:')):
+                  missing_image_files.append(f'{token}: external image not mirrored locally')
+              else:
+                  p=Path(src)
+                  if not p.is_file() or p.stat().st_size < 2500:
+                      missing_image_files.append(f'{token}: {src}')
+              if not (img.get('alt') or '').strip():
+                  bad_alts.append(token or str(i))
+
+          brand_link_errors=[x.get_text(' ',strip=True) for x in home_brand_links if not (x.get('href') or '').strip()]
 
           print('CATALOG_COUNT_TEXT=', count_text)
           print('CATALOG_CARD_COUNT=', card_count)
+          print('UNIQUE_PRODUCT_URL_TOKENS=', len(set(tokens)))
+          print('PRODUCTS_WITH_LOCAL_IMAGES=', card_count-len(missing_images)-len(missing_image_files))
           print('PRINTER_BRANDS=', ' > '.join(printer_brands))
           print('SCANNER_BRANDS=', ' > '.join(scanner_brands))
           print('DOWNLOAD_BRANDS=', ' > '.join(download_brands))
@@ -59,6 +95,13 @@ jobs:
 
           assert card_count == 150, f'Expected 150 rendered catalog items, got {card_count}'
           assert count_text.startswith('150 '), f'Expected product count text 150, got {count_text!r}'
+          assert not missing_links, f'Product cards missing links: {missing_links[:10]}'
+          assert len(tokens)==150 and len(set(tokens))==150, f'Expected 150 unique product URL tokens, got {len(tokens)} / {len(set(tokens))}'
+          assert not legacy_tokens, f'Public product URLs still expose legacy ids: {legacy_tokens[:10]}'
+          assert not missing_images, f'Product cards missing images: {missing_images[:10]}'
+          assert not missing_image_files, f'Product image files missing/invalid: {missing_image_files[:10]}'
+          assert not bad_alts, f'Product images missing alt text: {bad_alts[:10]}'
+          assert not brand_link_errors, f'Homepage brands missing links: {brand_link_errors}'
           assert printer_brands == ['全部品牌','Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], printer_brands
           assert scanner_brands == ['全部品牌','Fastech','Zebra','Honeywell','NUMA','Datalogic'], scanner_brands
           assert download_brands[:7] == ['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], download_brands
