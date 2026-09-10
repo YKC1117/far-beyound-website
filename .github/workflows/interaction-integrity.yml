@@ -1,0 +1,90 @@
+name: Interaction and catalog integrity
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start preview
+        run: |
+          python3 -m http.server 8080 >/tmp/site.log 2>&1 &
+          sleep 2
+      - name: Verify rendered interactions
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          test -n "$CHROME"
+          mkdir -p qa
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3500 --dump-dom http://127.0.0.1:8080/contact.html > qa/contact.html
+          pip install --disable-pip-version-check beautifulsoup4 >/dev/null
+          python3 - <<'PY'
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+          from urllib.parse import urlparse, parse_qs, unquote
+          import re
+
+          def load(name):
+              return BeautifulSoup(Path('qa',name+'.html').read_text(), 'html.parser')
+
+          home=load('home'); products=load('products'); contact=load('contact')
+          cards=products.select('#productGrid a.product-card')
+          assert len(cards)==150, f'Expected 150 product cards, got {len(cards)}'
+
+          tokens=[]; bad=[]
+          for card in cards:
+              href=(card.get('href') or '').strip()
+              token=parse_qs(urlparse(href).query).get('id',[''])[0]
+              brand=(card.select_one('.product-meta span').get_text(' ',strip=True) if card.select_one('.product-meta span') else '')
+              img=card.select_one('.official-product-photo img') or card.select_one('img')
+              if not token or token.startswith('legacy-'): bad.append(f'bad token: {token}')
+              if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',token): bad.append(f'non-readable slug: {token}')
+              ascii_brand=re.sub(r'[^a-z0-9]+','-',brand.lower()).strip('-')
+              if ascii_brand and not token.startswith(ascii_brand+'-') and token!=ascii_brand:
+                  bad.append(f'{brand} token does not lead with brand: {token}')
+              if not img or not (img.get('src') or '').strip():
+                  bad.append(f'missing image: {token}')
+              else:
+                  src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
+                  p=Path(src)
+                  if not p.is_file() or p.stat().st_size<2500: bad.append(f'invalid local image: {token} -> {src}')
+              tokens.append(token)
+          assert len(set(tokens))==150, 'Product public slugs are not unique'
+          assert not bad, '\n'.join(bad[:30])
+
+          brands=home.select('.brand-portfolio a.brand-wordmark')
+          assert len(brands)==12, f'Expected 12 brand entries, got {len(brands)}'
+          for a in brands:
+              assert parse_qs(urlparse(a.get('href','')).query).get('brand'), f'Brand has no destination: {a.get_text(" ",strip=True)}'
+              img=a.select_one('img.brand-logo-img')
+              assert img and img.get('src') and img.get('alt'), f'Brand has no logo: {a.get_text(" ",strip=True)}'
+
+          rail=home.select_one('.quick-contact')
+          mobile=home.select_one('.mobile-contact-bar')
+          assert rail, 'Desktop floating contact rail missing'
+          assert mobile, 'Mobile contact bar missing'
+          rail_links=[a.get('href','') for a in rail.select('a')]
+          mobile_links=[a.get('href','') for a in mobile.select('a')]
+          expected_line='https://line.me/R/ti/p/@453haosc'
+          assert expected_line in rail_links and expected_line in mobile_links, 'LINE link missing or incorrect'
+          assert 'contact.html#inquiryForm' in rail_links and 'contact.html#inquiryForm' in mobile_links, 'Inquiry link missing'
+          phones=[a.get('href','') for a in home.select('a[href^="tel:"]')]
+          assert 'tel:0282217759' in phones and 'tel:062360139' in phones, 'Office phone links missing'
+          assert contact.select_one('#contactForm'), 'Contact form behavior hook missing'
+          assert contact.select_one('#inquiryForm'), 'Inquiry fragment anchor missing'
+
+          print('PRODUCT_CARDS_OK=150')
+          print('UNIQUE_READABLE_PRODUCT_SLUGS=150')
+          print('LOCAL_PRODUCT_IMAGES_OK=150')
+          print('CLICKABLE_BRAND_ENTRIES_OK=12')
+          print('FLOATING_CONTACT_DESKTOP=OK')
+          print('FLOATING_CONTACT_MOBILE=OK')
+          print('PHONE_LINE_INQUIRY_LINKS=OK')
+          PY
