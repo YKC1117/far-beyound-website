@@ -42,7 +42,7 @@
       item('contact.html','聯絡我們','產品、耗材與系統洽詢')
     ].join(''),'about.html','了解萬里資訊')}</div>`;
 
-    return productMega+downloads+sols+caseNav+newsNav+company;
+    return productMega+sols+caseNav+newsNav+downloads+company;
   }
 
   function mobileNav(d){
@@ -54,10 +54,10 @@
     function group(title,href,links){return `<details class="mobile-nav-group"><summary><span>${title}</span><span>＋</span></summary><div class="mobile-nav-sub"><a class="mobile-nav-all" href="${href}">查看全部 ${title}</a>${links}</div></details>`}
     return `<a href="index.html">首頁</a>`+
       group('產品資訊','products.html',cats.map(c=>`<a href="products.html?category=${encodeURIComponent(c.id)}">${esc(c.name)}</a>`).join(''))+
-      group('下載服務','downloads.html',brands.map(b=>`<a href="downloads.html?brand=${encodeURIComponent(b)}">${esc(b)}</a>`).join(''))+
       group('系統方案','solutions.html',solutions.map(s=>`<a href="solutions.html#${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join(''))+
       group('客戶案例','cases.html',cases.map(c=>`<a href="cases.html">${esc(c.name)}<small>${esc(c.system||'')}</small></a>`).join(''))+
       group('最新消息','news.html',news.map(n=>{const slug=slugMap[n.title];return `<a href="${slug?`news-detail.html?id=${slug}`:'news.html'}">${esc(n.title)}</a>`}).join(''))+
+      group('下載服務','downloads.html',brands.map(b=>`<a href="downloads.html?brand=${encodeURIComponent(b)}">${esc(b)}</a>`).join(''))+
       group('公司資訊','about.html',`<a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">聯絡我們</a>`);
   }
 
