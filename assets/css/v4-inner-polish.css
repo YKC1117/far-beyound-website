@@ -1,0 +1,144 @@
+/* V4 inner-page polish — restrained B2B styling layered on top of the preserved baseline. */
+
+/* Product details: align the content panels with the flatter product catalogue. */
+body[data-page="product"] .detail-block{
+  border-radius:3px!important;
+  border:1px solid #d8e1e7!important;
+  box-shadow:none!important;
+  background:#fff!important;
+  position:relative;
+  overflow:hidden;
+}
+body[data-page="product"] .detail-block:before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:#d3e0e5;
+}
+body[data-page="product"] .detail-block:hover:before{background:#148da7}
+body[data-page="product"] .detail-block h2{color:#15324d;letter-spacing:-.02em}
+body[data-page="product"] .download-row{border-radius:0!important}
+body[data-page="product"] .product-support-card{border-radius:2px!important;background:#f7f9fa!important}
+body[data-page="product"] .product-support-actions a{border-radius:2px!important}
+
+/* Contact: remove the oversized rounded-card look and strengthen information hierarchy. */
+body[data-page="contact"] #serviceLocations{border-bottom:1px solid #e0e6ea}
+body[data-page="contact"] .location-mini-grid{gap:12px!important}
+body[data-page="contact"] .location-mini{
+  position:relative;
+  border-radius:3px!important;
+  padding:22px 24px!important;
+  border:1px solid #d8e1e7!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  overflow:hidden;
+  transition:border-color .18s ease,background .18s ease,transform .18s ease;
+}
+body[data-page="contact"] .location-mini:before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:#148da7;
+}
+body[data-page="contact"] .location-mini:hover{
+  border-color:#aebdc8!important;
+  background:#fafcfd!important;
+  transform:translateY(-1px);
+}
+body[data-page="contact"] .location-mini small{font-size:10px!important;letter-spacing:.11em!important}
+body[data-page="contact"] .location-mini b{font-size:24px!important;color:#15324d!important;margin:5px 0 6px!important}
+body[data-page="contact"] .location-mini span{font-size:12px!important;line-height:1.7!important}
+body[data-page="contact"] .location-mini-action{
+  display:inline-flex!important;
+  align-items:center;
+  width:auto!important;
+  margin-top:11px!important;
+  color:#148da7!important;
+  font-size:10px!important;
+  font-weight:800;
+  letter-spacing:.03em;
+}
+body[data-page="contact"] .location-mini.is-map-link{cursor:pointer}
+body[data-page="contact"] .location-mini.is-map-link:focus-visible{outline:2px solid #148da7;outline-offset:3px}
+
+body[data-page="contact"] .contact-grid{gap:48px!important;align-items:start}
+body[data-page="contact"] .contact-copy h2{color:#15324d!important;letter-spacing:-.025em!important}
+body[data-page="contact"] .contact-copy>p{line-height:1.85!important}
+body[data-page="contact"] .contact-cards{gap:7px!important;margin-top:24px!important}
+body[data-page="contact"] .contact-card{
+  border-radius:2px!important;
+  border:1px solid #dbe3e8!important;
+  background:#fff!important;
+  padding:13px 14px!important;
+  box-shadow:none!important;
+  transition:border-color .16s ease,background .16s ease;
+}
+body[data-page="contact"] .contact-card:hover{border-color:#afbec9!important;background:#f8fafb!important}
+body[data-page="contact"] .contact-card>.icon{width:18px!important;height:18px!important}
+
+body[data-page="contact"] .contact-form{
+  position:relative;
+  border-radius:3px!important;
+  border:1px solid #d7e0e6!important;
+  border-top:3px solid #148da7!important;
+  background:#fff!important;
+  box-shadow:0 10px 26px rgba(17,43,67,.055)!important;
+  padding:30px!important;
+}
+body[data-page="contact"] .form-section-label{
+  color:#148da7!important;
+  font-size:10px!important;
+  letter-spacing:.12em!important;
+  padding-bottom:8px;
+  border-bottom:1px solid #edf1f3;
+  margin-bottom:2px;
+}
+body[data-page="contact"] .field label{color:#43596c!important;font-weight:700!important}
+body[data-page="contact"] .field input,
+body[data-page="contact"] .field select,
+body[data-page="contact"] .field textarea{
+  border-radius:2px!important;
+  border-color:#cfd9e0!important;
+  background:#fff!important;
+  transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+body[data-page="contact"] .field input:hover,
+body[data-page="contact"] .field select:hover,
+body[data-page="contact"] .field textarea:hover{border-color:#aebdc8!important}
+body[data-page="contact"] .field input:focus,
+body[data-page="contact"] .field select:focus,
+body[data-page="contact"] .field textarea:focus{
+  border-color:#148da7!important;
+  box-shadow:0 0 0 2px rgba(20,141,167,.10)!important;
+  background:#fff!important;
+}
+body[data-page="contact"] .budget-options label{
+  border-radius:2px!important;
+  border-color:#d7e0e6!important;
+  transition:border-color .15s ease,background .15s ease;
+}
+body[data-page="contact"] .budget-options label:hover{border-color:#9fb4c2!important;background:#f8fafb!important}
+body[data-page="contact"] .form-success{border-radius:2px!important}
+body[data-page="contact"] .contact-form>.btn{border-radius:2px!important;min-width:128px}
+
+/* Downloads and news: keep the same flat panel language. */
+body[data-page="downloads"] .download-sidebar,
+body[data-page="downloads"] .download-content,
+body[data-page="news"] .news-card,
+body[data-page="news-detail"] .news-detail-card{
+  border-radius:3px!important;
+  box-shadow:none!important;
+}
+body[data-page="downloads"] .download-item{border-radius:2px!important;transition:border-color .16s ease,background .16s ease}
+body[data-page="downloads"] .download-item:hover{border-color:#acbcc7!important;background:#fafcfd!important}
+body[data-page="downloads"] .download-brand{border-radius:2px!important}
+
+@media(max-width:680px){
+  body[data-page="contact"] .location-mini{padding:18px!important}
+  body[data-page="contact"] .location-mini b{font-size:21px!important}
+  body[data-page="contact"] .contact-grid{gap:30px!important}
+  body[data-page="contact"] .contact-form{padding:20px!important}
+  body[data-page="product"] .detail-block{padding:21px!important}
+}
