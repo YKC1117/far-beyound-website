@@ -4,7 +4,9 @@
       const hero=document.querySelector('.page-hero p');
       if(hero)hero.textContent='依品牌快速找到標籤機驅動程式、標籤軟體、工具程式與技術文件。';
     }
-    document.querySelectorAll('.footer-bottom span').forEach(el=>{if(/新版網站|v0\./i.test(el.textContent))el.textContent='網站提案預覽環境';});
+    document.querySelectorAll('.footer-bottom span').forEach(el=>{
+      if(/新版網站|網站提案|預覽環境|preview|v0\./i.test(el.textContent))el.textContent='所有其他商標均為各自所有者之財產';
+    });
   }
   function addBackTop(){
     if(document.querySelector('.back-top'))return;
@@ -16,7 +18,7 @@
   function contactNote(){
     if(document.body.dataset.page!=='contact')return;
     const success=document.getElementById('formSuccess');
-    if(success)success.innerHTML='<b>資料填寫完成</b><br>目前為網站提案預覽環境；正式上線後表單將送至公司指定信箱或管理後台。';
+    if(success)success.innerHTML='<b>感謝您的詢問</b><br>我們將依您提供的聯絡資料與需求內容協助確認後續。';
   }
   function run(){cleanCopy();addBackTop();contactNote()}
   document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,100)});
