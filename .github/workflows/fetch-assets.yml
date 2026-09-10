@@ -1,0 +1,44 @@
+name: Mirror approved website assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fetch-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  mirror-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download current company and product assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/images/brand assets/images/products
+          curl -fL --retry 3 'https://s.web66.com.tw/_file/C8/85993/org/logo.png' -o assets/images/brand/far-beyound-logo.png
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2026-08-26/aQDEslOFT5jrf9kqbOOoDuN45aPDEUbndzwjmiEy.jpg' -o assets/images/products/zebra-zt610-zt620.jpg
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2021-10-08/0rZkyA4qrjSbsC7y9RLWNggSnpJiY7WW8odVoINr.png' -o assets/images/products/zebra-zt411-zt421.png
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2025-02-20/ULR5vobTGwpeUnwI6Qn8BlqcpFal2ZmKG7y5vxyH.jpg' -o assets/images/products/zebra-ds4678-xd.jpg
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2021-09-22/umU419E5q2zysD3uCSxchjeuXgaG6kIG3C2XoKlq.png' -o assets/images/products/honeywell-xenon-1900-1902.png
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2022-09-21/AALcQJ8WNLtm6OlspQF6W2XKAUPYP0CIAnnYVbV4.png' -o assets/images/products/tsc-mh241-mh341-mh641.png
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2022-08-11/q3wKnC3jmDoQQoc5F1GmE9AcBxUQlZOjl1Urn0vF.png' -o assets/images/products/tsc-tx610.png
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2024-07-18/KnWbEeXs4ZDRszWxdDm5whvGqtRtmgWx44H8ZCYi.jpg' -o assets/images/products/argox-cx3140-pro.jpg
+          curl -fL --retry 3 'https://www.far-beyound.com.tw/storage/upload/product/image/2023-12-28/qGRyclx23UP7fnRH7ZsoVoOuZD3YBD37RXdIWC4D.png' -o assets/images/products/godex-g500-g530.png
+
+      - name: Commit mirrored assets
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/images
+          if git diff --cached --quiet; then
+            echo 'No asset changes to commit.'
+          else
+            git commit -m 'Mirror official company and product images'
+            git push
+          fi
