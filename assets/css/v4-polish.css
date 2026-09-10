@@ -1,0 +1,152 @@
+/* V4 — premium corporate polish. Additive only; V2/V3 remain the structural baseline. */
+:root{
+  --v4-navy:#15324d;
+  --v4-navy-deep:#102a42;
+  --v4-cyan:#148da7;
+  --v4-line:#d9e2e8;
+  --v4-soft:#f3f6f8;
+  --v4-shadow:0 16px 42px rgba(17,43,67,.10);
+  --v4-shadow-soft:0 8px 24px rgba(17,43,67,.07);
+}
+
+::selection{background:#d7eef2;color:#102a42}
+a,button{outline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--v4-cyan);outline-offset:3px}
+
+/* Header: keep the current information architecture, but make scrolling feel intentional. */
+.site-header{transition:box-shadow .22s ease,background .22s ease}
+.header-inner,.header-inner .brand-mark,.header-inner .brand-copy strong,.header-inner .brand-copy small,.desktop-nav>.nav-item>a{transition:height .22s ease,width .22s ease,font-size .22s ease,padding .22s ease,transform .22s ease}
+.site-header.scrolled{background:rgba(255,255,255,.985)!important;box-shadow:0 8px 28px rgba(17,43,67,.10)!important}
+@media(min-width:981px){
+  .site-header.scrolled .header-inner{height:74px!important}
+  .site-header.scrolled .header-inner .brand-mark{width:48px!important;height:48px!important;flex-basis:48px!important}
+  .site-header.scrolled .header-inner .brand-copy strong{font-size:21px!important}
+  .site-header.scrolled .header-inner .brand-copy small{font-size:8.5px!important;margin-top:5px!important}
+  .site-header.scrolled .desktop-nav>.nav-item>a{padding-top:27px!important;padding-bottom:27px!important}
+}
+.desktop-nav>.nav-item>a{letter-spacing:.01em}
+.desktop-nav>.nav-item>a:after{height:2px!important;bottom:0!important}
+.header-actions .btn-primary{box-shadow:0 7px 18px rgba(20,141,167,.16)!important}
+.header-actions .btn-primary:hover{box-shadow:0 9px 22px rgba(20,141,167,.22)!important}
+
+/* Hero: preserve the flat corporate composition, add depth only to the product photography. */
+.hero.v2-home-hero{background:#f3f6f8!important}
+.hero.v2-home-hero .hero-copy .eyebrow{position:relative;padding-left:18px!important}
+.hero.v2-home-hero .hero-copy .eyebrow:before{content:"";position:absolute;left:0;top:50%;width:10px;height:2px;background:var(--v4-cyan);transform:translateY(-50%)}
+.hero.v2-home-hero .hero-copy h1{max-width:640px!important;letter-spacing:-.03em!important}
+.hero.v2-home-hero .hero-copy>p{max-width:620px!important;color:#536779!important}
+.hero.v2-home-hero .hero-actions .btn{min-height:48px!important;padding-left:21px!important;padding-right:21px!important}
+.hero.v2-home-hero .hero-actions .btn-primary{box-shadow:0 10px 24px rgba(20,141,167,.18)!important}
+.hero.v2-home-hero .hero-actions .btn-primary:hover{box-shadow:0 12px 28px rgba(20,141,167,.24)!important;transform:translateY(-1px)!important}
+.hero.v2-home-hero .hero-trust span{position:relative}
+.hero.v2-home-hero .hero-trust span:before{content:"";display:inline-block;width:4px;height:4px;margin:0 7px 2px 0;background:#8ba0b1}
+
+.v2-stage-main,.v2-stage-side>a{transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;background:#fff!important}
+.v2-stage-main{box-shadow:var(--v4-shadow)!important;border-color:#d4dde4!important}
+.v2-stage-side>a{box-shadow:0 5px 18px rgba(17,43,67,.045)!important}
+.v2-stage-main img,.v2-stage-side img{transition:transform .28s ease,filter .28s ease}
+.v2-stage-main:hover{border-color:#aabac6!important;transform:translateY(-2px)}
+.v2-stage-main:hover img{transform:scale(1.018)}
+.v2-stage-side>a:hover{border-color:#aabac6!important;box-shadow:var(--v4-shadow-soft)!important;transform:translateY(-2px)}
+.v2-stage-side>a:hover img{transform:scale(1.025)}
+.v2-stage-caption{border-top:3px solid var(--v4-cyan)}
+.v2-stage-label{letter-spacing:.13em!important;color:#718492!important}
+
+/* Brand portfolio: quieter at rest, sharper on interaction. */
+.brand-portfolio{box-shadow:inset 0 1px #fff}
+.brand-portfolio-title small{letter-spacing:.16em!important}
+.brand-wordmark{position:relative;transition:background .18s ease,box-shadow .18s ease,transform .18s ease!important}
+.brand-wordmark:after{content:"";position:absolute;left:18%;right:18%;bottom:0;height:2px;background:var(--v4-cyan);transform:scaleX(0);transition:transform .18s ease;transform-origin:center}
+.brand-wordmark:hover{background:#f7fafb!important;box-shadow:none!important}
+.brand-wordmark:hover:after{transform:scaleX(1)}
+.brand-wordmark:hover .brand-logo-img{transform:translateY(-1px)}
+.brand-logo-img{transition:transform .18s ease,opacity .18s ease}
+
+/* Service strip: keep the numbered editorial style and make the hover state more deliberate. */
+.v2-service-item{position:relative;transition:background .18s ease,color .18s ease!important}
+.v2-service-item:before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--v4-cyan);transform:scaleX(0);transition:transform .18s ease}
+.v2-service-item:hover:before{transform:scaleX(1)}
+.v2-service-item:hover b{color:var(--v4-cyan)}
+.v2-service-no{font-variant-numeric:tabular-nums}
+
+/* Section rhythm and typography. */
+body:not([data-page="admin"]) .section-head{position:relative}
+body:not([data-page="admin"]) .section-head h2{color:var(--v4-navy-deep);letter-spacing:-.025em!important}
+body:not([data-page="admin"]) .section-head .eyebrow{letter-spacing:.14em!important}
+body:not([data-page="admin"]) .section-head>div:after{content:"";display:block;width:36px;height:2px;background:var(--v4-cyan);margin-top:13px}
+.section-dark .section-head h2{color:var(--v4-navy-deep)!important}
+
+/* Product cards: no SaaS float effect; use photography, border and spacing. */
+.product-card{position:relative;transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease!important}
+.product-card:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--v4-cyan);transform:scaleX(0);transform-origin:left;transition:transform .2s ease}
+.product-card:hover{transform:translateY(-2px)!important;box-shadow:var(--v4-shadow-soft)!important;border-color:#aebdc8!important}
+.product-card:hover:after{transform:scaleX(1)}
+.product-card-visual img{transition:transform .26s ease}
+.product-card:hover .product-card-visual img{transform:scale(1.022)}
+.product-meta span{border-radius:2px!important;border:1px solid #e0e6ea;background:#f5f7f8!important;color:#617283!important;padding:3px 7px!important}
+.product-meta span:first-child{background:#eef7f8!important;border-color:#d5e9ec!important;color:#117d94!important}
+.card-link,.text-link{transition:color .18s ease,gap .18s ease}
+.product-card:hover .card-link{gap:10px}
+
+/* Solutions and news: restrained editorial hierarchy. */
+body[data-page="home"] .section-dark{background:#edf2f5!important;border-top:1px solid #dbe3e8;border-bottom:1px solid #dbe3e8}
+body[data-page="home"] .solution-card{background:#fff!important;border:1px solid #d9e2e8!important;box-shadow:none!important;position:relative;overflow:hidden}
+body[data-page="home"] .solution-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#cbd8df;transition:background .18s ease}
+body[data-page="home"] .solution-card:hover{transform:translateY(-2px)!important;background:#fff!important;box-shadow:var(--v4-shadow-soft)!important;border-color:#afbec9!important}
+body[data-page="home"] .solution-card:hover:before{background:var(--v4-cyan)}
+body[data-page="home"] .solution-card h3{color:var(--v4-navy-deep)!important}
+body[data-page="home"] .solution-card p{color:#657787!important}
+body[data-page="home"] .solution-card small,body[data-page="home"] .solution-card .card-link{color:#13869e!important}
+.news-row{transition:background .16s ease,padding .16s ease}
+.news-row:hover{background:#f8fafb!important;padding-left:13px!important;padding-right:13px!important}
+
+/* CTA and footer: stronger corporate ending, without gradients or decorative clutter. */
+.cta-band{background:var(--v4-navy)!important;border-radius:3px!important;box-shadow:0 18px 42px rgba(17,43,67,.12)!important;position:relative;overflow:hidden}
+.cta-band:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--v4-cyan)}
+.cta-band .btn{border-radius:2px!important;position:relative}
+.site-footer{border-top:4px solid #1a8da5}
+.site-footer .footer-grid{column-gap:36px}
+.site-footer h4{letter-spacing:.04em}
+.footer-location{transition:background .18s ease,border-color .18s ease,transform .18s ease!important}
+.footer-location:hover{transform:translateX(2px)}
+
+/* Floating utility rail: keep it fixed, make it feel like one composed control. */
+.quick-contact{box-shadow:0 12px 32px rgba(17,43,67,.12)!important;border:1px solid #e0e6eb!important;overflow:hidden}
+.quick-contact-item+.quick-contact-item{border-top:1px solid #e5eaee}
+.quick-contact-btn{transition:background .16s ease,color .16s ease!important}
+.quick-contact-btn:hover{background:#eef7f8!important;color:var(--v4-cyan)!important}
+
+/* Inner pages: cleaner entry and content focus. */
+.page-hero{position:relative;overflow:hidden}
+.page-hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--v4-cyan) 0 14%,#dce4e9 14% 100%)}
+.catalog-head{border-bottom:1px solid var(--v4-line);padding-bottom:14px;margin-bottom:20px}
+.filter-wrap{box-shadow:0 5px 16px rgba(17,43,67,.035)}
+
+@media(max-width:980px){
+  .hero.v2-home-hero .hero-inner{gap:34px!important}
+  .v2-stage-main{box-shadow:0 10px 30px rgba(17,43,67,.08)!important}
+  .brand-wordmark:hover{transform:none}
+}
+
+@media(max-width:600px){
+  .hero.v2-home-hero .hero-inner{padding-top:34px!important;padding-bottom:38px!important}
+  .hero.v2-home-hero .hero-copy h1{font-size:38px!important;line-height:1.2!important}
+  .hero.v2-home-hero .hero-copy>p{font-size:14px!important;line-height:1.8!important}
+  .hero.v2-home-hero .hero-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important}
+  .hero.v2-home-hero .hero-actions .btn{padding-left:10px!important;padding-right:10px!important;font-size:13px!important}
+  .hero.v2-home-hero .hero-trust{display:grid!important;grid-template-columns:1fr 1fr!important;row-gap:9px!important}
+  .hero.v2-home-hero .hero-trust span{border-right:0!important;padding:0!important}
+  .v2-stage-main{min-height:320px!important;padding-bottom:66px!important}
+  .v2-stage-main img{height:210px!important}
+  .v2-stage-side>a{min-height:158px!important}
+  .v2-stage-side img{height:99px!important}
+  .brand-portfolio-head>p{font-size:10px!important}
+  .v2-service-item{min-height:84px!important;padding:15px 14px!important}
+  .v2-service-item small{line-height:1.55!important}
+  .cta-band{padding:28px 24px!important}
+  .news-row:hover{padding-left:8px!important;padding-right:8px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
