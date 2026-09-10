@@ -34,49 +34,18 @@
     const mobilePanel=document.createElement('div');mobilePanel.className='mobile-contact-phone';mobilePanel.innerHTML=`<a href="tel:0282217759"><span>新北辦公室</span><b>02-82217759</b></a><a href="tel:062360139"><span>台南辦公室</span><b>06-2360139</b></a>`;document.body.appendChild(mobilePanel);
     const mobileBtn=mobile.querySelector('[data-mobile-phone]');mobileBtn.addEventListener('click',()=>{const open=mobilePanel.classList.toggle('is-open');mobileBtn.setAttribute('aria-expanded',String(open))});
   }
-  function productNotFound(){
-    const main=document.querySelector('main');if(!main)return;
-    document.title='找不到產品｜萬里資訊';
-    main.innerHTML=`<div class="container product-not-found"><span class="eyebrow">PRODUCT INFORMATION</span><h1>找不到此產品</h1><p>此產品網址可能已更新，請回到完整產品目錄重新選擇。</p><a class="btn btn-primary" href="products.html">返回產品資訊</a></div>`;
-  }
+  function productNotFound(){const main=document.querySelector('main');if(!main)return;document.title='找不到產品｜萬里資訊';main.innerHTML=`<div class="container product-not-found"><span class="eyebrow">PRODUCT INFORMATION</span><h1>找不到此產品</h1><p>此產品網址可能已更新，請回到完整產品目錄重新選擇。</p><a class="btn btn-primary" href="products.html">返回產品資訊</a></div>`}
+  function verifiedBasicSpecs(p,catName){return `<div class="spec-row"><dt>品牌</dt><dd>${esc(p.brand||'—')}</dd></div><div class="spec-row"><dt>產品名稱</dt><dd>${esc(p.name||'—')}</dd></div><div class="spec-row"><dt>產品分類</dt><dd>${esc(catName)}</dd></div><div class="spec-row"><dt>產品類型</dt><dd>${esc(p.type||p.family||'—')}</dd></div>`}
   function productPageQuality(){
     if(document.body.dataset.page!=='product'||!window.FBStore)return;
-    const d=FBStore.getData(),id=params().get('id')||'',p=d.products.find(x=>x.id===id);
-    if(!p){productNotFound();return}
+    const d=FBStore.getData(),id=params().get('id')||'',p=d.products.find(x=>x.id===id);if(!p){productNotFound();return}
     const cat=d.categories.find(c=>c.id===p.category),catName=cat?.name||'產品資訊';
-    let meta=document.querySelector('meta[name="description"]');if(!meta){meta=document.createElement('meta');meta.name='description';document.head.appendChild(meta)}
-    meta.content=(p.intro||`${p.brand} ${p.name}｜${catName}。歡迎洽詢產品規格、選配與相關技術資料。`).replace(/\s+/g,' ').slice(0,155);
-    const hi=document.getElementById('productHighlights');
-    if(hi&&(!Array.isArray(p.highlights)||!p.highlights.length||/原官網產品資料|持續補充/.test(hi.textContent))){
-      const block=hi.closest('.detail-block');block?.querySelector('.eyebrow')&&(block.querySelector('.eyebrow').textContent='PRODUCT INFORMATION');block?.querySelector('h2')&&(block.querySelector('h2').textContent='產品資訊');
-      hi.innerHTML=`<li><span>✓</span><span>品牌：${esc(p.brand||'—')}</span></li><li><span>✓</span><span>分類：${esc(catName)}</span></li><li><span>✓</span><span>如需完整規格、選配或相容性確認，歡迎聯絡萬里資訊。</span></li>`;
-    }
-    const specs=document.getElementById('specTable');
-    if(specs&&(!Array.isArray(p.specs)||!p.specs.length)){
-      const block=specs.closest('.detail-block');block?.querySelector('.eyebrow')&&(block.querySelector('.eyebrow').textContent='BASIC INFORMATION');block?.querySelector('h2')&&(block.querySelector('h2').textContent='基本資料');
-      specs.innerHTML=`<div class="spec-row"><dt>品牌</dt><dd>${esc(p.brand||'—')}</dd></div><div class="spec-row"><dt>產品名稱</dt><dd>${esc(p.name||'—')}</dd></div><div class="spec-row"><dt>產品分類</dt><dd>${esc(catName)}</dd></div><div class="spec-row"><dt>產品類型</dt><dd>${esc(p.type||p.family||'—')}</dd></div>`;
-    }
-    const files=document.getElementById('productFiles');
-    if(files){
-      const valid=Array.isArray(p.files)?p.files:[];
-      if(valid.length){
-        files.innerHTML=valid.map(f=>{
-          const label=esc(f.label||'產品文件'),type=esc(f.type||'文件');
-          if(f.url)return `<a class="download-row product-files-link" href="${esc(f.url)}" target="_blank" rel="noopener"><span class="download-icon">${ICONS.download}</span><span><small>${type}</small><b>${label}</b></span><span class="download-cta">開啟</span></a>`;
-          return `<a class="download-row product-files-link" href="contact.html?item=${encodeURIComponent(p.name)}"><span class="download-icon">${ICONS.download}</span><span><small>${type}</small><b>${label}</b></span><span class="download-cta">洽詢取得</span></a>`;
-        }).join('');
-      }else{
-        files.innerHTML=`<div class="product-support-card"><b>需要產品型錄、驅動或操作資料？</b><p>請提供品牌與型號，我們可協助確認適用的產品資料與下載來源。</p><div class="product-support-actions"><a href="https://line.me/R/ti/p/@453haosc" target="_blank" rel="noopener">${ICONS.line} LINE 詢問</a><a href="contact.html?item=${encodeURIComponent(p.name)}">${ICONS.mail} 線上詢問</a></div></div>`;
-      }
-    }
+    let meta=document.querySelector('meta[name="description"]');if(!meta){meta=document.createElement('meta');meta.name='description';document.head.appendChild(meta)}meta.content=(p.intro||`${p.brand} ${p.name}｜${catName}。歡迎洽詢產品規格、選配與相關技術資料。`).replace(/\s+/g,' ').slice(0,155);
+    const hi=document.getElementById('productHighlights');if(hi&&(!Array.isArray(p.highlights)||!p.highlights.length||/原官網產品資料|持續補充/.test(hi.textContent))){const block=hi.closest('.detail-block');if(block?.querySelector('.eyebrow'))block.querySelector('.eyebrow').textContent='PRODUCT INFORMATION';if(block?.querySelector('h2'))block.querySelector('h2').textContent='產品資訊';hi.innerHTML=`<li><span>✓</span><span>品牌：${esc(p.brand||'—')}</span></li><li><span>✓</span><span>分類：${esc(catName)}</span></li><li><span>✓</span><span>如需完整規格、選配或相容性確認，歡迎聯絡萬里資訊。</span></li>`}
+    const specs=document.getElementById('specTable');const sparseSpecs=!Array.isArray(p.specs)||p.specs.length<3||p.specs.some(row=>/原官網|品牌\s*\/\s*分類/.test(String(row?.[0]||'')));if(specs&&sparseSpecs){const block=specs.closest('.detail-block');if(block?.querySelector('.eyebrow'))block.querySelector('.eyebrow').textContent='BASIC INFORMATION';if(block?.querySelector('h2'))block.querySelector('h2').textContent='基本資料';specs.innerHTML=verifiedBasicSpecs(p,catName)}
+    const files=document.getElementById('productFiles');if(files){const valid=Array.isArray(p.files)?p.files:[];if(valid.length){files.innerHTML=valid.map(f=>{const label=esc(f.label||'產品文件'),type=esc(f.type||'文件');return f.url?`<a class="download-row product-files-link" href="${esc(f.url)}" target="_blank" rel="noopener"><span class="download-icon">${ICONS.download}</span><span><small>${type}</small><b>${label}</b></span><span class="download-cta">開啟</span></a>`:`<a class="download-row product-files-link" href="contact.html?item=${encodeURIComponent(p.name)}"><span class="download-icon">${ICONS.download}</span><span><small>${type}</small><b>${label}</b></span><span class="download-cta">洽詢取得</span></a>`}).join('')}else{files.innerHTML=`<div class="product-support-card"><b>需要產品型錄、驅動或操作資料？</b><p>請提供品牌與型號，我們可協助確認適用的產品資料與下載來源。</p><div class="product-support-actions"><a href="https://line.me/R/ti/p/@453haosc" target="_blank" rel="noopener">${ICONS.line} LINE 詢問</a><a href="contact.html?item=${encodeURIComponent(p.name)}">${ICONS.mail} 線上詢問</a></div></div>`}}
   }
-  function contactProductPrefill(){
-    if(document.body.dataset.page!=='contact')return;
-    const item=params().get('item');const select=document.getElementById('subject');if(!item||!select)return;
-    const existing=[...select.options].find(o=>o.value===item||o.textContent===item);
-    if(existing){select.value=existing.value;return}
-    const option=document.createElement('option');option.value=`產品洽詢｜${item}`;option.textContent=`產品洽詢｜${item}`;option.selected=true;select.appendChild(option);
-  }
+  function contactProductPrefill(){if(document.body.dataset.page!=='contact')return;const item=params().get('item'),select=document.getElementById('subject');if(!item||!select)return;const existing=[...select.options].find(o=>o.value===item||o.textContent===item);if(existing){select.value=existing.value;return}const option=document.createElement('option');option.value=`產品洽詢｜${item}`;option.textContent=`產品洽詢｜${item}`;option.selected=true;select.appendChild(option)}
   function run(){style();logo();currentNav();quickContact();contactProductPrefill();productPageQuality()}
   document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,120);setTimeout(run,700)});if(document.readyState!=='loading'){setTimeout(run,0);setTimeout(run,700)}
 })();
