@@ -129,6 +129,12 @@
     copy.prepend(meta);
   }
 
+  function corporateWording(){
+    document.querySelectorAll('a,button').forEach(el=>{
+      if(el.textContent.trim()==='免費諮詢')el.textContent='需求洽詢';
+    });
+  }
+
   function labelExternalLinks(){
     document.querySelectorAll('a[target="_blank"]').forEach(a=>{
       if(!a.getAttribute('aria-label')&&a.textContent.trim())a.setAttribute('aria-label',`${a.textContent.trim()}（另開新視窗）`);
@@ -141,6 +147,7 @@
     pageMeta();
     productSearch();
     downloadSearch();
+    corporateWording();
     labelExternalLinks();
   }
 
