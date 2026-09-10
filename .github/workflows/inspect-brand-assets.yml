@@ -17,21 +17,53 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install --disable-pip-version-check requests beautifulsoup4 >/dev/null
-      - name: Print homepage image candidates
+      - run: pip install --disable-pip-version-check requests beautifulsoup4 pillow >/dev/null
+      - name: Download homepage brand images
         run: |
           python3 - <<'PY'
           import requests
           from bs4 import BeautifulSoup
           from urllib.parse import urljoin
+          from pathlib import Path
+          from PIL import Image, ImageOps, ImageDraw
+
           url='https://www.far-beyound.com.tw/'
           r=requests.get(url,headers={'User-Agent':'Mozilla/5.0'},timeout=30)
           r.raise_for_status()
           s=BeautifulSoup(r.text,'html.parser')
-          for i,img in enumerate(s.find_all('img'),1):
+          candidates=[]
+          for img in s.find_all('img'):
               src=img.get('data-src') or img.get('data-original') or img.get('src') or ''
-              alt=img.get('alt') or ''
-              title=img.get('title') or ''
-              parent=(img.parent.get_text(' ',strip=True)[:80] if img.parent else '')
-              print(f'{i:03d} | {urljoin(url,src)} | alt={alt!r} | title={title!r} | parent={parent!r}')
+              full=urljoin(url,src)
+              if '/storage/upload/brand/image/' in full:
+                  candidates.append(full)
+          candidates=list(dict.fromkeys(candidates))
+          print('BRAND_ASSET_COUNT=',len(candidates))
+          out=Path('brand-assets'); out.mkdir(exist_ok=True)
+          thumbs=[]
+          for i,src in enumerate(candidates,1):
+              data=requests.get(src,headers={'User-Agent':'Mozilla/5.0'},timeout=30); data.raise_for_status()
+              ext=Path(src.split('?',1)[0]).suffix or '.png'
+              path=out/f'{i:02d}{ext}'
+              path.write_bytes(data.content)
+              print(f'{i:02d} | {src} | {len(data.content)} bytes')
+              with Image.open(path) as im:
+                  im=im.convert('RGBA')
+                  canvas=Image.new('RGBA',(320,140),'white')
+                  fitted=ImageOps.contain(im,(280,90))
+                  x=(320-fitted.width)//2; y=24+(90-fitted.height)//2
+                  canvas.alpha_composite(fitted,(x,y))
+                  draw=ImageDraw.Draw(canvas)
+                  draw.text((12,8),f'#{i:02d}',fill='black')
+                  thumbs.append(canvas.convert('RGB'))
+          if thumbs:
+              cols=2; rows=(len(thumbs)+cols-1)//cols
+              sheet=Image.new('RGB',(cols*320,rows*140),'white')
+              for i,im in enumerate(thumbs): sheet.paste(im,((i%cols)*320,(i//cols)*140))
+              sheet.save(out/'contact-sheet.jpg',quality=92)
           PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: legacy-brand-assets
+          path: brand-assets/
+          retention-days: 3
