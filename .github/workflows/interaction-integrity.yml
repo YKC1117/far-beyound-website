@@ -74,6 +74,11 @@ jobs:
           brand_note=home.select_one('.brand-portfolio-head>p')
           assert brand_note and '現有官網' not in brand_note.get_text(), 'Homepage still exposes migration/internal wording'
 
+          nav_labels=[a.get_text(' ',strip=True).replace('⌄','').strip() for a in home.select('.desktop-nav > .nav-item > a')]
+          assert nav_labels[:6]==['產品資訊','系統方案','客戶案例','最新消息','下載服務','公司資訊'], nav_labels
+          mobile_labels=[s.select_one('span').get_text(' ',strip=True) for s in home.select('.drawer-links .mobile-nav-group > summary')]
+          assert mobile_labels[:6]==['產品資訊','系統方案','客戶案例','最新消息','下載服務','公司資訊'], mobile_labels
+
           rail=home.select_one('.quick-contact'); mobile=home.select_one('.mobile-contact-bar')
           assert rail, 'Desktop floating contact rail missing'
           assert mobile, 'Mobile contact bar missing'
@@ -83,6 +88,19 @@ jobs:
           assert 'contact.html#inquiryForm' in rail_links and 'contact.html#inquiryForm' in mobile_links, 'Inquiry link missing'
           phones=[a.get('href','') for a in home.select('a[href^="tel:"]')]
           assert 'tel:0282217759' in phones and 'tel:062360139' in phones, 'Office phone links missing'
+          assert rail.select_one('[data-back-top] .quick-contact-btn'), 'Back-to-top button is not integrated into right rail'
+          assert not home.select_one('.back-top'), 'Legacy standalone back-to-top button remains'
+
+          footer_locations=home.select('.site-footer a.footer-location')
+          assert len(footer_locations)==2, f'Expected two footer office locations, got {len(footer_locations)}'
+          footer_text=' '.join(x.get_text(' ',strip=True) for x in footer_locations)
+          assert '新北市中和區中山路二段351號10樓之1' in footer_text, 'Taipei office address missing'
+          assert '台南市永康區中華路425號4樓之18' in footer_text, 'Tainan office address missing'
+          for a in footer_locations:
+              href=a.get('href','')
+              assert href.startswith('https://www.google.com/maps/search/'), f'Footer address is not a Google Maps link: {href}'
+          footer_bottom=home.select('.site-footer .footer-bottom > span')
+          assert len(footer_bottom)==1, f'Unexpected extra footer-bottom item remains: {len(footer_bottom)}'
 
           rich_img=rich.select_one('.product-detail-visual img')
           assert rich_img and 'zebra-zt411' in (rich_img.get('src') or ''), 'Rich product detail image did not resolve'
@@ -120,6 +138,10 @@ jobs:
           print('LOCAL_PRODUCT_IMAGES_OK=150')
           print('CLICKABLE_BRAND_ENTRIES_OK=12')
           print('COMPACT_HOMEPAGE=OK')
+          print('NAV_ORDER_OK=PRODUCT,SOLUTIONS,CASES,NEWS,DOWNLOADS,COMPANY')
+          print('FOOTER_OFFICE_MAPS_OK=2')
+          print('FOOTER_EXTRA_ITEM_REMOVED=OK')
+          print('BACK_TO_TOP_IN_RIGHT_RAIL=OK')
           print('PRODUCT_DETAIL_RICH=OK')
           print('PRODUCT_DETAIL_SPARSE=OK')
           print('PRODUCT_NOT_FOUND=OK')
