@@ -2,7 +2,7 @@
   let sanitizing=false;
   const TAIPEI_ADDRESS='新北市中和區中山路二段351號10樓之1';
   const TAINAN_ADDRESS='台南市永康區中華路425號4樓之18';
-  const mapUrl=address=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  const mapUrl=address=>`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
 
   function sanitizePublicText(){
     if(document.body.dataset.page==='admin'||sanitizing)return;
