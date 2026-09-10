@@ -1,0 +1,71 @@
+/* V3 — compact, brand-led corporate refinement */
+:root{--brand-blue:#17324d;--brand-cyan:#168da7;--brand-line:#dce3e8;--brand-soft:#f5f7f8}
+
+/* Brand identity: company mark must lead the header */
+.header-inner{height:92px!important;gap:28px!important}
+.header-inner>.brand{min-width:225px;gap:14px!important}
+.header-inner .brand-mark{width:62px!important;height:62px!important;flex:0 0 62px!important;border-radius:8px!important;padding:4px!important;background:#fff!important;border:1px solid #d9e1e6!important}
+.header-inner .brand-mark img{width:100%!important;height:100%!important;object-fit:contain!important;border-radius:5px!important}
+.header-inner .brand-copy strong{font-size:24px!important;line-height:1!important;letter-spacing:.07em!important;color:#102a43!important;white-space:nowrap}
+.header-inner .brand-copy small{font-size:9.5px!important;letter-spacing:.16em!important;margin-top:7px!important;color:#6d7e8d!important;white-space:nowrap}
+.brand-reg{font-size:9px;line-height:1;vertical-align:top;position:relative;top:-8px;margin-left:3px;letter-spacing:0;color:#17324d;font-weight:700}
+.footer-brand .brand-reg{color:#fff;top:-6px}
+.desktop-nav>a,.nav-item>a{padding-top:36px!important;padding-bottom:36px!important}
+
+/* Prominent official brand portfolio directly under the hero */
+.brand-portfolio{background:#fff;border-bottom:1px solid var(--brand-line);padding:27px 0 25px}
+.brand-portfolio-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:18px}
+.brand-portfolio-title{display:flex;align-items:baseline;gap:13px}
+.brand-portfolio-title small{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--brand-cyan)}
+.brand-portfolio-title h2{font-size:19px;line-height:1.25;margin:0;color:#183149;font-weight:700;letter-spacing:.02em}
+.brand-portfolio-head>p{margin:0;color:#71808d;font-size:11px}
+.brand-family{display:grid;grid-template-columns:138px 1fr;align-items:center;border-top:1px solid #e6eaed;min-height:65px}
+.brand-family:last-child{border-bottom:1px solid #e6eaed}
+.brand-family-label{font-size:11px;color:#607283;font-weight:600;line-height:1.45}
+.brand-family-label small{display:block;color:#99a5af;font-size:8px;letter-spacing:.09em;margin-top:2px}
+.brand-wordmarks{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;min-height:64px;border-left:1px solid #e6eaed}
+.brand-family.scanner .brand-wordmarks{grid-template-columns:repeat(5,minmax(0,1fr))}
+.brand-wordmark{height:64px;display:grid;place-items:center;border-right:1px solid #e6eaed;color:#263d51;font-size:16px;font-weight:700;letter-spacing:-.01em;transition:.16s;background:#fff}
+.brand-wordmark:hover{background:#f6f9fa;color:var(--brand-cyan)}
+.brand-wordmark.zebra{font-weight:800;letter-spacing:.01em}.brand-wordmark.argox{letter-spacing:.04em}.brand-wordmark.tsc{letter-spacing:.08em}.brand-wordmark.godex{letter-spacing:.03em}.brand-wordmark.toshiba{letter-spacing:.05em}.brand-wordmark.sato{letter-spacing:.12em}.brand-wordmark.honeywell{font-size:15px}.brand-wordmark.fastech{letter-spacing:.08em}.brand-wordmark.numa{letter-spacing:.11em}.brand-wordmark.datalogic{font-size:14px}
+
+/* Homepage density: shorter, editorial rather than endless landing page */
+body[data-page="home"] .section{padding:54px 0!important}
+body[data-page="home"] .section-head{margin-bottom:22px!important;padding-top:17px!important}
+body[data-page="home"] .section-head h2{font-size:30px!important}
+body[data-page="home"] .category-card{min-height:142px!important;padding:18px 19px!important}
+body[data-page="home"] .category-body{margin-top:10px!important}
+body[data-page="home"] .category-body p{display:none}
+body[data-page="home"] .product-card-visual{height:205px!important}
+body[data-page="home"] .product-card-body{padding:15px 17px 17px!important}
+body[data-page="home"] .solution-card{min-height:235px!important;padding:20px 20px!important}
+body[data-page="home"] .solution-card p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+body[data-page="home"] .news-row{padding:15px 8px!important}
+body[data-page="home"] #homeNews .news-row:nth-child(n+4){display:none!important}
+body[data-page="home"] .cta-band{margin-top:0!important}
+
+/* Clean official product photographs mirrored from legacy site */
+.official-product-photo{position:relative;width:100%;height:100%;display:grid;place-items:center;background:#fff;overflow:hidden}
+.official-product-photo img{width:90%;height:88%;object-fit:contain;mix-blend-mode:multiply}
+.official-product-photo span{position:absolute;left:11px;bottom:10px;padding:3px 7px;border:1px solid #d9e0e5;background:rgba(255,255,255,.94);color:#526474;font-size:8px;font-weight:700;letter-spacing:.06em}
+.product-detail-visual .official-product-photo img{width:92%;height:92%}
+
+/* Product brand filters: editorial tabs, not pill-heavy AI UI */
+.brand-tabs{gap:0!important;border-bottom:1px solid #dce3e8!important}
+.brand-chip{border-radius:0!important;border:0!important;border-bottom:2px solid transparent!important;background:transparent!important;padding:10px 14px!important;font-size:11px!important}
+.brand-chip.active{color:var(--brand-cyan)!important;border-bottom-color:var(--brand-cyan)!important;background:transparent!important}
+.filter-chip{border-radius:2px!important}
+
+/* Remove any late-injected duplicate V1/V2 marketing sections */
+#brandShowcase,#aboutBand{display:none!important}
+
+@media(max-width:1180px) and (min-width:981px){
+  .header-inner>.brand{min-width:195px}.header-inner .brand-mark{width:54px!important;height:54px!important;flex-basis:54px!important}.header-inner .brand-copy strong{font-size:20px!important}.desktop-nav>a,.nav-item>a{padding-top:36px!important;padding-bottom:36px!important}
+}
+@media(max-width:980px){
+  .header-inner{height:72px!important}.header-inner>.brand{min-width:0}.header-inner .brand-mark{width:48px!important;height:48px!important;flex-basis:48px!important}.header-inner .brand-copy strong{font-size:19px!important}.header-inner .brand-copy small{font-size:8px!important;margin-top:5px!important}.brand-reg{font-size:7px;top:-6px}
+  .brand-portfolio{padding:21px 0}.brand-portfolio-head{display:block}.brand-portfolio-head>p{margin-top:6px}.brand-family{grid-template-columns:1fr}.brand-family-label{padding:11px 2px 8px}.brand-wordmarks{border-left:0;grid-template-columns:repeat(4,1fr)!important}.brand-family.scanner .brand-wordmarks{grid-template-columns:repeat(3,1fr)!important}.brand-wordmark{height:52px;border-top:1px solid #e6eaed;font-size:13px}
+}
+@media(max-width:600px){
+  .container{width:min(calc(100% - 28px),var(--container))!important}.header-inner .brand-mark{width:44px!important;height:44px!important;flex-basis:44px!important}.header-inner .brand-copy strong{font-size:17px!important;letter-spacing:.05em!important}.header-inner .brand-copy small{font-size:7px!important;letter-spacing:.12em!important}.brand-portfolio-title{display:block}.brand-portfolio-title small{display:block;margin-bottom:5px}.brand-portfolio-title h2{font-size:18px}.brand-wordmarks,.brand-family.scanner .brand-wordmarks{grid-template-columns:repeat(2,1fr)!important}.brand-wordmark{height:48px;font-size:12px}body[data-page="home"] .section{padding:42px 0!important}
+}
