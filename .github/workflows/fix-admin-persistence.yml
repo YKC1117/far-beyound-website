@@ -1,0 +1,36 @@
+name: Preserve preview admin data edits
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-admin-persistence.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Change official-data augmentation to add-only defaults
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('assets/js/media-patch.js')
+          s=p.read_text()
+          old="""      const replaceBrands=new Set(['Zebra','Argox','GoDEX','TOSHIBA','SATO','Honeywell']);\n      d.downloads=d.downloads.filter(x=>!replaceBrands.has(x.brand)).concat(DOWNLOAD_REPLACEMENTS);"""
+          new="""      DOWNLOAD_REPLACEMENTS.forEach(item=>{\n        if(!d.downloads.some(x=>x.brand===item.brand && x.name===item.name)) d.downloads.push(JSON.parse(JSON.stringify(item)));\n      });"""
+          if old not in s:
+            raise SystemExit('Target persistence block not found')
+          p.write_text(s.replace(old,new))
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/media-patch.js
+          git commit -m 'Preserve admin-edited download records'
+          git push
