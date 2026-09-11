@@ -6,6 +6,7 @@ on:
     paths:
       - 'assets/js/final-fixes.js'
       - 'assets/js/contact-youtube-upgrade.js'
+      - 'assets/js/desktop-phone-popover.js'
       - '*.html'
       - '.github/workflows/phone-interaction.yml'
   workflow_dispatch:
@@ -46,12 +47,14 @@ jobs:
           try:
               driver.get('http://127.0.0.1:8080/index.html')
               button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.quick-contact-item[data-contact-phone] .quick-contact-btn')))
+              popover = wait.until(EC.presence_of_element_located((By.ID, 'fbDesktopPhonePopover')))
 
               button.click()
               wait.until(lambda d: button.get_attribute('aria-expanded') == 'true')
+              wait.until(lambda d: popover.get_attribute('aria-hidden') == 'false')
+              wait.until(EC.visibility_of(popover))
 
-              panel = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.quick-contact-item[data-contact-phone] .quick-phone-panel')))
-              links = panel.find_elements(By.CSS_SELECTOR, 'a.quick-phone-link[href^="tel:"]')
+              links = popover.find_elements(By.CSS_SELECTOR, 'a[href^="tel:"]')
               hrefs = [a.get_attribute('href') for a in links]
               labels = [a.text for a in links]
 
@@ -64,6 +67,7 @@ jobs:
 
               button.click()
               wait.until(lambda d: button.get_attribute('aria-expanded') == 'false')
+              wait.until(lambda d: popover.get_attribute('aria-hidden') == 'true')
               print('DESKTOP PHONE INTERACTION PASSED')
           finally:
               driver.quit()
