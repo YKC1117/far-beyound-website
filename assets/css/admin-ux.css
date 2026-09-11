@@ -20,6 +20,15 @@ body[data-page="admin"] .admin-fold-btn:hover{border-color:#b5ccd4;background:#f
 body[data-page="admin"] .admin-fold-btn span{display:inline-block;min-width:12px;margin-left:4px;font-size:14px}
 body[data-page="admin"] .admin-panel.is-folded>*:not(.admin-panel-head){display:none!important}
 body[data-page="admin"] .admin-panel.is-folded .admin-panel-head{border-bottom:0}
+body[data-page="admin"] .admin-panel.is-folded{box-shadow:0 5px 16px rgba(24,49,67,.035)}
+body[data-page="admin"] .admin-lowfreq-host{margin:0 0 18px}
+body[data-page="admin"] .admin-group-fold{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border:1px solid #dfe7ec;border-radius:14px;background:#fff;box-shadow:0 6px 18px rgba(24,49,67,.035)}
+body[data-page="admin"] .admin-group-fold>div{display:grid;gap:3px}
+body[data-page="admin"] .admin-group-fold b{color:#28465a;font-size:13px}
+body[data-page="admin"] .admin-group-fold small{color:#82939d;font-size:10px;line-height:1.45}
+body[data-page="admin"] .admin-lowfreq-host:not(.is-group-folded)>.admin-group-fold{margin-bottom:12px;background:#f9fbfc}
+body[data-page="admin"] .admin-lowfreq-host.is-group-folded>*:not(.admin-group-fold){display:none!important}
+body[data-page="admin"] .admin-lowfreq-host.is-group-folded>.admin-group-fold{border-style:dashed;background:#fbfcfd}
 body[data-page="admin"] .admin-nav-section{padding:16px 12px 4px;color:#7899ad;font-size:9px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
 body[data-page="admin"] .admin-nav a.admin-important{background:rgba(45,177,196,.13);color:#effcff}
 body[data-page="admin"] .admin-nav a.admin-important:after{content:'常用';margin-left:auto;padding:2px 5px;border-radius:999px;background:rgba(255,255,255,.12);font-size:8px;color:#bfeef5}
@@ -44,4 +53,4 @@ body[data-page="admin"] .admin-maintenance-copy b{display:block;color:#5b4933;fo
 body[data-page="admin"] .btn-danger-soft{border:1px solid #e4c9c5;background:#fff;color:#a63f34}
 body[data-page="admin"] .btn-danger-soft:hover{background:#fff3f1;border-color:#dbaaa3}
 @media(max-width:1000px){body[data-page="admin"] .admin-product-tools{grid-template-columns:1fr 1fr}body[data-page="admin"] .admin-product-count{justify-self:end}}
-@media(max-width:780px){body[data-page="admin"] .admin-section-jump{top:0;overflow-x:auto;flex-wrap:nowrap}body[data-page="admin"] .admin-section-jump:before{display:none}body[data-page="admin"] .admin-step-badge{grid-template-columns:auto auto}body[data-page="admin"] .admin-step-badge>small{grid-column:1/-1}body[data-page="admin"] .admin-head-actions{width:100%;justify-content:flex-start}body[data-page="admin"] .admin-product-tools{grid-template-columns:1fr}body[data-page="admin"] .admin-product-count{justify-self:start}body[data-page="admin"] .admin-maintenance-body{align-items:flex-start;flex-direction:column}}
+@media(max-width:780px){body[data-page="admin"] .admin-section-jump{top:0;overflow-x:auto;flex-wrap:nowrap}body[data-page="admin"] .admin-section-jump:before{display:none}body[data-page="admin"] .admin-step-badge{grid-template-columns:auto auto}body[data-page="admin"] .admin-step-badge>small{grid-column:1/-1}body[data-page="admin"] .admin-head-actions{width:100%;justify-content:flex-start}body[data-page="admin"] .admin-product-tools{grid-template-columns:1fr}body[data-page="admin"] .admin-product-count{justify-self:start}body[data-page="admin"] .admin-maintenance-body{align-items:flex-start;flex-direction:column}body[data-page="admin"] .admin-group-fold{align-items:flex-start}body[data-page="admin"] .admin-group-fold small{max-width:230px}}
