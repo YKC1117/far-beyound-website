@@ -44,6 +44,7 @@
   }
 
   function downloads(){
+    if(!$('#downloadBrands')) return;
     const d=FBStore.getData(); const brands=[...new Set(d.downloads.map(x=>x.brand))]; let active=qs('brand')||brands[0]||'';
     $('#downloadBrands').innerHTML=brands.map(b=>`<button class="download-brand ${active===b?'active':''}" data-brand="${e(b)}">${e(b)}</button>`).join('');
     function draw(){
@@ -72,7 +73,11 @@
   function contact(){
     const d=FBStore.getData(); const item=qs('item')||'';
     $('#contactCards').innerHTML=d.site.phones.map(p=>`<a class="contact-card" href="tel:${e(String(p.value||'').replace(/[^0-9+]/g,''))}">${icon('phone')}<span><small>${e(p.label)}辦公室</small><b>${e(p.value)}</b></span></a>`).join('')+`<a class="contact-card" href="mailto:${e(d.site.email)}">${icon('mail')}<span><small>E-mail</small><b>${e(d.site.email)}</b></span></a>`;
-    if(item) $('#subject').value=item;
+    if(item){
+      const subject=$('#subject');
+      if(subject && ![...subject.options].some(o=>o.value===item))subject.add(new Option(item,item,true,true));
+      else if(subject)subject.value=item;
+    }
     const sent=qs('sent'), error=qs('error'), email=qs('email');
     if(sent==='1'){
       const box=$('#formSuccess');
@@ -84,9 +89,36 @@
       history.replaceState(null,'',location.pathname+location.hash);
     }
     $('#contactForm').addEventListener('submit',ev=>{
+      ev.preventDefault();
+      const form=ev.currentTarget;
       const required=$$('#contactForm [required]'); const bad=required.find(x=>!x.value.trim());
-      if(bad){ev.preventDefault();bad.focus();toast('請先完成必填欄位');return}
-      const btn=$('#contactForm button[type="submit"]'); if(btn){btn.disabled=true;btn.textContent='送出中…'}
+      if(bad){bad.focus();toast('請先完成必填欄位');return}
+      const fd=new FormData(form);
+      if(String(fd.get('website')||'').trim())return;
+      const subjectText=String(fd.get('subject')||'一般詢問').trim()||'一般詢問';
+      const company=String(fd.get('company')||'').trim();
+      const contactName=String(fd.get('contact_name')||'').trim();
+      const mailSubject=`網站洽詢｜${subjectText}${company?`｜${company}`:''}`;
+      const body=[
+        '萬里資訊您好：','',
+        `服務單位：${company}`,
+        `部門：${String(fd.get('department')||'').trim()}`,
+        `姓名：${contactName}`,
+        `職稱：${String(fd.get('job_title')||'').trim()}`,
+        `電話：${String(fd.get('phone')||'').trim()}`,
+        `分機：${String(fd.get('extension')||'').trim()}`,
+        `手機：${String(fd.get('mobile')||'').trim()}`,
+        `E-mail：${String(fd.get('email')||'').trim()}`,
+        `洽詢項目：${subjectText}`,
+        `預算範圍：${String(fd.get('budget')||'').trim()}`,'',
+        '需求說明：',String(fd.get('message')||'').trim()
+      ].join('\n');
+      const btn=$('#contactForm button[type="submit"]');
+      if(btn){btn.disabled=true;btn.textContent='開啟郵件程式…'}
+      const box=$('#formSuccess');
+      if(box){box.textContent=`已建立寄給 ${d.site.email} 的詢問郵件草稿，請在郵件程式中確認後按「寄出」。`;box.classList.add('show')}
+      location.href=`mailto:${d.site.email}?subject=${enc(mailSubject)}&body=${enc(body)}`;
+      setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent='送出詢問'}},1200);
     });
   }
 
