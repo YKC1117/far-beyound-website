@@ -2,7 +2,7 @@
   'use strict';
   if(window.__fbAdminHomeHero)return;window.__fbAdminHomeHero=true;
   const $=(s,p=document)=>p.querySelector(s),$$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+  const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const DEFAULT={enabled:true,autoplay:true,interval:3500,showControls:true,showCredibility:false,eyebrow:'萬里資訊股份有限公司',title:'企業條碼設備與\n自動識別整合服務',accentLine:1,intro:'從標籤列印、條碼掃描、RFID、企業行動電腦，到標籤耗材、設備維修與現場系統整合，依實際作業需求提供完整服務。',primaryText:'查看產品資訊',primaryUrl:'products.html',secondaryText:'了解系統方案',secondaryUrl:'solutions.html',productIds:['fastech-ft-yx510','zebra-zt610-zt620','zebra-zt411-zt421','zebra-ds4678-xd','honeywell-xenon-1900-1902','tsc-mh241-mh341-mh641']};
   let order=[];
   function toast(t){window.FBPages?.toast?FBPages.toast(t):alert(t)}
