@@ -75,7 +75,7 @@ jobs:
               active=doc.select_one('.desktop-nav > .nav-item.current > a')
               return active.get_text(' ',strip=True).replace('⌄','').strip() if active else ''
 
-          assert active_label(contact)=='聯絡我們', f'Contact active nav wrong: {active_label(contact)}'
+          assert active_label(contact)=='公司資訊', f'Contact active nav wrong: {active_label(contact)}'
           assert active_label(solutions)=='系統方案', f'Solutions active nav wrong: {active_label(solutions)}'
           assert active_label(downloads)=='下載服務', f'Downloads active nav wrong: {active_label(downloads)}'
 
@@ -86,7 +86,7 @@ jobs:
 
           print('V4_FILES_WIRED=OK')
           print('V4_CONTACT_DIRECTIONS=2')
-          print('V4_ACTIVE_NAV_CONTACT=CONTACT')
+          print('V4_ACTIVE_NAV_CONTACT=COMPANY')
           print('V4_ACTIVE_NAV_SOLUTIONS=SOLUTIONS')
           print('V4_ACTIVE_NAV_DOWNLOADS=DOWNLOADS')
           print('V4_INTEGRATED_TOP=OK')
