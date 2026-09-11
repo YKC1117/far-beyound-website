@@ -11,7 +11,8 @@
   };
   const growth=(now,prev)=>!prev?(now>0?100:0):((now-prev)/prev)*100;
   const priority=(now,prev)=>{
-    const g=growth(now,prev);
+    const g=growth(now,prev), sample=now+prev;
+    if(sample<5) return {score:10,label:'資料不足',reason:'樣本太少，暫不作 SEO 投資判斷'};
     if(now>=10 && g>=30) return {score:100,label:'優先處理',reason:'高關注＋成長快'};
     if(now>=10) return {score:85,label:'優先強化',reason:'站內關注度高'};
     if(prev>=8 && g<=-25) return {score:80,label:'檢查下滑',reason:'流量明顯下降'};
@@ -43,22 +44,37 @@
     return [...map.values()].map(x=>({...x,...priority(x.views,x.previous_views)})).sort((a,b)=>b.score-a.score||b.views-a.views);
   }
 
+  function downloadCsv(products,brands,days){
+    const quote=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+    const lines=[['統計期間','類型','品牌','商品/型號','本期有效瀏覽','前期有效瀏覽','變化','SEO判斷','原因'].map(quote).join(',')];
+    products.forEach(x=>lines.push([`近${days}天`,'商品',x.brand||'',x.model||x.product_id,x.views,x.previous_views,pct(x.views,x.previous_views),x.label,x.reason].map(quote).join(',')));
+    brands.forEach(x=>lines.push([`近${days}天`,'品牌',x.brand,'',x.views,x.previous_views,pct(x.views,x.previous_views),x.label,x.reason].map(quote).join(',')));
+    const blob=new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`far-beyound-seo-${days}days-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }
+
+  let lastProducts=[],lastBrands=[],lastDays=30;
+
   function build(){
     const anchor=document.getElementById('adminStats');
     if(!anchor||document.getElementById('adminAnalytics')) return;
     const el=document.createElement('section');
     el.id='adminAnalytics';
     el.className='admin-panel';
-    el.innerHTML=`<div class="admin-panel-head"><div><span class="eyebrow">TRAFFIC / SEO</span><h2>流量／SEO 分析</h2><p>先用站內有效瀏覽判斷品牌與商品需求；Google SEO、AI SEO 等有公司權限後再接入，不會混用或假造數據。</p></div><div><select id="analyticsPeriod"><option value="7">本週</option><option value="30" selected>近 30 天</option></select></div></div>
+    el.innerHTML=`<div class="admin-panel-head"><div><span class="eyebrow">TRAFFIC / SEO</span><h2>流量／SEO 分析</h2><p>先用站內有效瀏覽判斷品牌與商品需求；Google SEO、AI SEO 等有公司權限後再接入，不會混用或假造數據。</p></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select id="analyticsPeriod"><option value="7">本週</option><option value="30" selected>近 30 天</option></select><button id="analyticsExport" type="button" class="btn btn-secondary btn-sm">匯出統表 CSV</button></div></div>
       <div id="analyticsSummary" class="admin-stats"></div>
       <div id="analyticsStatus" class="admin-usage-note">正在讀取統計資料…</div>
       <h3 style="margin:20px 0 10px">SEO 優先商品</h3>
-      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>品牌／商品</th><th>本期點閱</th><th>前期</th><th>變化</th><th>SEO 優先判斷</th></tr></thead><tbody id="analyticsRows"></tbody></table></div>
+      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>品牌／商品</th><th>本期點閱</th><th>前期</th><th>變化</th><th>SEO 優先判斷</th><th>查看</th></tr></thead><tbody id="analyticsRows"></tbody></table></div>
       <h3 style="margin:24px 0 10px">品牌排行</h3>
       <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>品牌</th><th>商品數</th><th>本期點閱</th><th>前期</th><th>變化</th><th>建議</th></tr></thead><tbody id="analyticsBrandRows"></tbody></table></div>
-      <div class="admin-usage-note"><b>Google SEO：</b>尚未連接公司 Search Console / GA4 權限。<br><b>AI SEO：</b>尚未連接可驗證的 AI 導流資料，因此目前不顯示提及次數或 AI 點擊，避免誤判。</div>`;
+      <div class="admin-usage-note"><b>判讀保護：</b>本期＋前期少於 5 次有效瀏覽時，統一標記「資料不足」，避免剛啟用統計就誤判 SEO 投資方向。<br><b>Google SEO：</b>尚未連接公司 Search Console / GA4 權限。<br><b>AI SEO：</b>尚未連接可驗證的 AI 導流資料，因此目前不顯示提及次數或 AI 點擊，避免誤判。</div>`;
     anchor.after(el);
     document.getElementById('analyticsPeriod').addEventListener('change',refresh);
+    document.getElementById('analyticsExport').addEventListener('click',()=>downloadCsv(lastProducts,lastBrands,lastDays));
     refresh();
   }
 
@@ -76,23 +92,26 @@
         return {...x,views,previous_views,...priority(views,previous_views)};
       }).sort((a,b)=>b.score-a.score||b.views-a.views);
       const brands=aggregateBrands(rows);
+      lastProducts=products;lastBrands=brands;lastDays=days;
       const total=products.reduce((n,x)=>n+x.views,0);
       const prevTotal=products.reduce((n,x)=>n+x.previous_views,0);
-      const topBrand=brands[0];
-      const top=products[0];
+      const topBrand=brands.find(x=>x.score>10)||brands[0];
+      const top=products.find(x=>x.score>10)||products[0];
       const urgent=products.filter(x=>x.score>=80).length;
-      sum.innerHTML=`<div class="admin-stat"><b>${total}</b><span>本期有效瀏覽</span></div><div class="admin-stat"><b>${pct(total,prevTotal)}</b><span>較前一期</span></div><div class="admin-stat"><b>${esc(topBrand?.brand||'—')}</b><span>優先品牌</span></div><div class="admin-stat"><b>${esc(top?.model||top?.product_id||'—')}</b><span>優先商品</span></div><div class="admin-stat"><b>${urgent}</b><span>需優先檢查項目</span></div>`;
+      const mature=products.filter(x=>(x.views+x.previous_views)>=5).length;
+      sum.innerHTML=`<div class="admin-stat"><b>${total}</b><span>本期有效瀏覽</span></div><div class="admin-stat"><b>${pct(total,prevTotal)}</b><span>較前一期</span></div><div class="admin-stat"><b>${esc(topBrand?.brand||'—')}</b><span>優先品牌</span></div><div class="admin-stat"><b>${esc(top?.model||top?.product_id||'—')}</b><span>優先商品</span></div><div class="admin-stat"><b>${urgent}</b><span>需優先檢查項目</span></div><div class="admin-stat"><b>${mature}</b><span>已有足夠樣本商品</span></div>`;
       if(!products.length){
-        body.innerHTML='<tr><td colspan="5">目前還沒有點閱資料，從統計啟用後開始累積。</td></tr>';
+        body.innerHTML='<tr><td colspan="6">目前還沒有點閱資料，從統計啟用後開始累積。</td></tr>';
         brandBody.innerHTML='<tr><td colspan="6">目前還沒有品牌統計。</td></tr>';
       }else{
-        body.innerHTML=products.map(x=>`<tr><td><b>${esc(x.brand||'')}</b><br><span>${esc(x.model||x.product_id)}</span></td><td>${x.views}</td><td>${x.previous_views}</td><td>${pct(x.views,x.previous_views)}</td><td><b>${esc(x.label)}</b><br><span>${esc(x.reason)}</span></td></tr>`).join('');
+        body.innerHTML=products.map(x=>`<tr><td><b>${esc(x.brand||'')}</b><br><span>${esc(x.model||x.product_id)}</span></td><td>${x.views}</td><td>${x.previous_views}</td><td>${pct(x.views,x.previous_views)}</td><td><b>${esc(x.label)}</b><br><span>${esc(x.reason)}</span></td><td><a class="btn btn-secondary btn-sm" target="_blank" rel="noopener" href="product.html?id=${encodeURIComponent(x.product_id)}">開啟商品</a></td></tr>`).join('');
         brandBody.innerHTML=brands.map(x=>`<tr><td><b>${esc(x.brand)}</b></td><td>${x.products}</td><td>${x.views}</td><td>${x.previous_views}</td><td>${pct(x.views,x.previous_views)}</td><td><b>${esc(x.label)}</b><br><span>${esc(x.reason)}</span></td></tr>`).join('');
       }
       status.textContent=`已讀取近 ${days} 天資料。這裡是有效瀏覽，不等同不重複訪客；SEO 優先級是站內需求訊號，不代表 Google 排名。`;
     }catch(e){
+      lastProducts=[];lastBrands=[];lastDays=days;
       status.textContent='統計資料暫時讀取失敗，前台點閱記錄不受影響。';
-      if(body) body.innerHTML='<tr><td colspan="5">目前無法載入統計。</td></tr>';
+      if(body) body.innerHTML='<tr><td colspan="6">目前無法載入統計。</td></tr>';
       if(brandBody) brandBody.innerHTML='<tr><td colspan="6">目前無法載入品牌統計。</td></tr>';
     }
   }
