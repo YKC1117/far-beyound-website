@@ -6,6 +6,10 @@
     const after=afterHref?container.querySelector(`a[href="${afterHref}"]`):null;
     if(after)after.after(a);else container.appendChild(a);
   }
+  function loadPasswordModule(){
+    if(document.querySelector('script[data-admin-password]'))return;
+    const s=document.createElement('script');s.src='assets/js/admin-password.js?v=20260911-2354';s.dataset.adminPassword='1';document.body.appendChild(s);
+  }
   function fixAnalyticsNote(){
     const box=document.getElementById('adminAnalytics');
     if(!box)return;
@@ -25,13 +29,18 @@
     const products=document.getElementById('products');
     const analytics=document.getElementById('adminAnalytics');
     const inquiries=document.getElementById('adminInquiries');
+    const password=document.getElementById('adminPassword');
     if(main&&products&&analytics&&products.nextElementSibling!==analytics)products.after(analytics);
     if(main&&analytics&&inquiries&&analytics.nextElementSibling!==inquiries)analytics.after(inquiries);
+    if(main&&inquiries&&password&&inquiries.nextElementSibling!==password)inquiries.after(password);
     addLink(document.querySelector('.admin-nav'),'#adminInquiries','網站詢問紀錄','#adminAnalytics');
+    addLink(document.querySelector('.admin-nav'),'#adminPassword','後台密碼','#adminInquiries');
     addLink(document.querySelector('.admin-section-jump'),'#adminInquiries','網站詢問','#adminAnalytics');
+    addLink(document.querySelector('.admin-section-jump'),'#adminPassword','後台密碼','#adminInquiries');
+    const version=document.querySelector('.admin-version-note');if(version)version.textContent='後台介面更新：2026/09/11 23:54';
     fixAnalyticsNote();
   }
-  const run=()=>{arrange();setTimeout(arrange,150);setTimeout(arrange,600);setTimeout(arrange,1500)};
+  const run=()=>{loadPasswordModule();arrange();setTimeout(arrange,150);setTimeout(arrange,600);setTimeout(arrange,1500)};
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run,{once:true}):run();
   window.addEventListener('farbeyound:datachange',()=>setTimeout(arrange,100));
 })();
