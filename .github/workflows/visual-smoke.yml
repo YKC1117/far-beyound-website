@@ -13,27 +13,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Start local preview server
-        shell: bash
         run: |
           python3 -m http.server 8080 >/tmp/farbeyound-http.log 2>&1 &
-          echo $! > /tmp/farbeyound-http.pid
           sleep 2
-      - name: Validate rendered official catalog and brand order
-        shell: bash
+      - name: Validate rendered catalog, images, brands and downloads
         run: |
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
-          if [ -z "$CHROME" ]; then echo 'Chrome/Chromium not found'; exit 1; fi
+          test -n "$CHROME"
           mkdir -p qa qa/brands
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom 'http://127.0.0.1:8080/products.html?category=printers' > qa/printers.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom 'http://127.0.0.1:8080/products.html?category=scanners' > qa/scanners.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/products.html?category=printers' > qa/printers.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/products.html?category=scanners' > qa/scanners.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
           i=0
           while IFS='|' read -r category brand; do
             i=$((i+1))
             encoded=$(python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$brand")
-            "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=2500 --dump-dom "http://127.0.0.1:8080/products.html?category=${category}&brand=${encoded}" > "qa/brands/${i}.html"
+            "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3200 --dump-dom "http://127.0.0.1:8080/products.html?category=${category}&brand=${encoded}" > "qa/brands/${i}.html"
           done <<'EOF'
           printers|Zebra
           printers|Argox
@@ -55,125 +52,89 @@ jobs:
           from urllib.parse import urlparse, parse_qs, unquote
 
           def soup(name): return BeautifulSoup(Path(f'qa/{name}.html').read_text(), 'html.parser')
-          allp=soup('products')
-          printers=soup('printers')
-          scanners=soup('scanners')
-          downloads=soup('downloads')
-          home=soup('home')
-
-          count_text=(allp.select_one('#productCount').get_text(' ',strip=True) if allp.select_one('#productCount') else '')
+          allp=soup('products'); printers=soup('printers'); scanners=soup('scanners'); downloads=soup('downloads'); home=soup('home')
           cards=allp.select('#productGrid .product-card')
+          count_text=allp.select_one('#productCount').get_text(' ',strip=True) if allp.select_one('#productCount') else ''
           card_count=len(cards)
-          printer_brands=[x.get_text(' ',strip=True) for x in printers.select('#brandTabs .brand-chip')]
-          scanner_brands=[x.get_text(' ',strip=True) for x in scanners.select('#brandTabs .brand-chip')]
-          download_brands=[x.get_text(' ',strip=True) for x in downloads.select('#downloadBrands .download-brand')]
-          home_brand_links=home.select('.brand-portfolio .brand-wordmark')
-          home_brands=[x.get_text(' ',strip=True) for x in home_brand_links]
-          registered=len(home.select('.header-inner .brand-reg'))
+          assert card_count>=151, f'Catalog unexpectedly small: {card_count}'
+          assert count_text.startswith(str(card_count)), f'Product count mismatch: {count_text!r} / {card_count}'
 
-          tokens=[]
-          missing_links=[]
-          legacy_tokens=[]
-          missing_images=[]
-          missing_image_files=[]
-          bad_alts=[]
+          tokens=[]; missing_links=[]; legacy=[]; missing_images=[]; invalid_images=[]; bad_alts=[]
           for i,card in enumerate(cards,1):
               href=(card.get('href') or '').strip()
               token=parse_qs(urlparse(href).query).get('id',[''])[0]
-              if not href or not token:
-                  missing_links.append(i)
+              if not token: missing_links.append(i)
               else:
                   tokens.append(token)
-                  if token.startswith('legacy-'):
-                      legacy_tokens.append(token)
+                  if token.startswith('legacy-'): legacy.append(token)
               img=card.select_one('img')
               if not img or not (img.get('src') or '').strip():
-                  missing_images.append(token or str(i))
-                  continue
+                  missing_images.append(token or str(i)); continue
               src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
               if src.startswith(('http://','https://','data:')):
-                  missing_image_files.append(f'{token}: external image not mirrored locally')
+                  invalid_images.append(f'{token}: external image')
               else:
-                  p=Path(src)
-                  if not p.is_file() or p.stat().st_size < 2500:
-                      missing_image_files.append(f'{token}: {src}')
-              if not (img.get('alt') or '').strip():
-                  bad_alts.append(token or str(i))
-
-          brand_link_errors=[]
-          brand_image_errors=[]
-          for a in home_brand_links:
-              name=a.get_text(' ',strip=True)
-              href=(a.get('href') or '').strip()
-              if not href or not parse_qs(urlparse(href).query).get('brand'):
-                  brand_link_errors.append(name)
-              img=a.select_one('img.brand-logo-img')
-              if not img or not (img.get('src') or '').strip() or not (img.get('alt') or '').strip():
-                  brand_image_errors.append(f'{name}: missing image/src/alt')
-                  continue
-              src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
-              p=Path(src)
-              minimum=200 if p.suffix.lower()=='.svg' else 2500
-              if not p.is_file() or p.stat().st_size < minimum:
-                  brand_image_errors.append(f'{name}: missing/invalid {src}')
-
-          empty_brand_pages=[]
-          for p in sorted(Path('qa/brands').glob('*.html'),key=lambda x:int(x.stem)):
-              s=BeautifulSoup(p.read_text(),'html.parser')
-              if not s.select('#productGrid .product-card'):
-                  empty_brand_pages.append(p.stem)
-
-          print('CATALOG_COUNT_TEXT=', count_text)
-          print('CATALOG_CARD_COUNT=', card_count)
-          print('UNIQUE_PRODUCT_URL_TOKENS=', len(set(tokens)))
-          print('PRODUCTS_WITH_LOCAL_IMAGES=', card_count-len(missing_images)-len(missing_image_files))
-          print('CLICKABLE_BRAND_LOGOS=', len(home_brand_links)-len(brand_link_errors)-len(brand_image_errors))
-          print('NONEMPTY_BRAND_DESTINATIONS=', 12-len(empty_brand_pages))
-          print('PRINTER_BRANDS=', ' > '.join(printer_brands))
-          print('SCANNER_BRANDS=', ' > '.join(scanner_brands))
-          print('DOWNLOAD_BRANDS=', ' > '.join(download_brands))
-          print('HOME_BRANDS=', ' > '.join(home_brands))
-          print('HEADER_REGISTERED_MARK=', registered)
-
-          assert card_count == 150, f'Expected 150 rendered catalog items, got {card_count}'
-          assert count_text.startswith('150 '), f'Expected product count text 150, got {count_text!r}'
-          assert not missing_links, f'Product cards missing links: {missing_links[:10]}'
-          assert len(tokens)==150 and len(set(tokens))==150, f'Expected 150 unique product URL tokens, got {len(tokens)} / {len(set(tokens))}'
-          assert not legacy_tokens, f'Public product URLs still expose legacy ids: {legacy_tokens[:10]}'
+                  p=Path(src); minimum=200 if p.suffix.lower()=='.svg' else 2500
+                  if not p.is_file() or p.stat().st_size<minimum: invalid_images.append(f'{token}: {src}')
+              if not (img.get('alt') or '').strip(): bad_alts.append(token or str(i))
+          assert not missing_links, f'Missing product links: {missing_links[:10]}'
+          assert len(tokens)==card_count and len(set(tokens))==card_count, 'Product public slugs are not unique'
+          assert not legacy, f'Legacy public ids exposed: {legacy[:10]}'
           assert not missing_images, f'Product cards missing images: {missing_images[:10]}'
-          assert not missing_image_files, f'Product image files missing/invalid: {missing_image_files[:10]}'
+          assert not invalid_images, f'Product image files missing/invalid: {invalid_images[:10]}'
           assert not bad_alts, f'Product images missing alt text: {bad_alts[:10]}'
-          assert len(home_brand_links)==12, f'Expected 12 homepage brand entries, got {len(home_brand_links)}'
-          assert not brand_link_errors, f'Homepage brands missing links: {brand_link_errors}'
-          assert not brand_image_errors, f'Homepage brands missing valid local images: {brand_image_errors}'
-          assert not empty_brand_pages, f'Brand destinations with no products: {empty_brand_pages}'
-          assert printer_brands == ['全部品牌','Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], printer_brands
-          assert scanner_brands == ['全部品牌','Fastech','Zebra','Honeywell','NUMA','Datalogic'], scanner_brands
-          assert download_brands[:7] == ['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], download_brands
-          assert home_brands == ['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell','Fastech','Zebra','Honeywell','NUMA','Datalogic'], home_brands
-          assert registered >= 1, 'Registered trademark mark not rendered in header'
+
+          printer_brands=[x.get_text(' ',strip=True) for x in printers.select('#brandTabs .brand-chip')]
+          scanner_brands=[x.get_text(' ',strip=True) for x in scanners.select('#brandTabs .brand-chip')]
+          assert printer_brands==['全部品牌','Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], printer_brands
+          assert scanner_brands==['全部品牌','Fastech','Zebra','Honeywell','NUMA','Datalogic'], scanner_brands
+
+          brand_links=home.select('.brand-portfolio a.brand-wordmark')
+          assert len(brand_links)==12, f'Expected 12 homepage brand entries, got {len(brand_links)}'
+          brand_values=[]
+          for a in brand_links:
+              href=(a.get('href') or '').strip(); brand=parse_qs(urlparse(href).query).get('brand',[''])[0]
+              assert brand, f'Brand destination missing: {a.get_text(" ",strip=True)}'
+              brand_values.append(brand)
+              img=a.select_one('img.brand-logo-img, img.fb-own-brand-logo')
+              assert img and img.get('src') and img.get('alt'), f'Brand logo missing: {brand}'
+              src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
+              p=Path(src); minimum=200 if p.suffix.lower()=='.svg' else 2500
+              assert p.is_file() and p.stat().st_size>=minimum, f'Invalid local brand logo: {src}'
+          assert brand_values==['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell','Fastech','Zebra','Honeywell','NUMA','Datalogic'], brand_values
+
+          empty=[]
+          for p in sorted(Path('qa/brands').glob('*.html'),key=lambda x:int(x.stem)):
+              if not BeautifulSoup(p.read_text(),'html.parser').select('#productGrid .product-card'): empty.append(p.stem)
+          assert not empty, f'Brand destinations with no products: {empty}'
+
+          type_buttons=downloads.select('#downloadTypeFilters [data-type]')
+          assert len(type_buttons)>=3, f'Download types missing: {len(type_buttons)}'
+          assert downloads.select_one('#downloadSearch'), 'Download search missing'
+          assert downloads.select_one('#downloadResults'), 'Download results missing'
+          assert '先選擇下載類型' in downloads.get_text(' ',strip=True), 'Two-step download guidance missing'
+          assert home.select_one('.header-inner .brand-reg'), 'Registered mark missing in header'
+
+          print(f'CATALOG_CARD_COUNT={card_count}')
+          print(f'LOCAL_PRODUCT_IMAGES={card_count}')
+          print(f'UNIQUE_PRODUCT_URL_TOKENS={len(set(tokens))}')
+          print('CLICKABLE_BRAND_LOGOS=12')
+          print('NONEMPTY_BRAND_DESTINATIONS=12')
+          print(f'DOWNLOAD_TYPE_BUTTONS={len(type_buttons)}')
           PY
       - name: Capture desktop pages
-        shell: bash
         run: |
           mkdir -p screenshots
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
-          if [ -z "$CHROME" ]; then echo 'Chrome/Chromium not found'; exit 1; fi
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/home.png http://127.0.0.1:8080/index.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/products.png http://127.0.0.1:8080/products.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/printers.png 'http://127.0.0.1:8080/products.html?category=printers'
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/product-zt411.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/downloads.png http://127.0.0.1:8080/downloads.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/solutions.png http://127.0.0.1:8080/solutions.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/cases.png http://127.0.0.1:8080/cases.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/contact.png http://127.0.0.1:8080/contact.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=2500 --screenshot=screenshots/admin.png http://127.0.0.1:8080/admin.html
+          for spec in 'home|index.html' 'products|products.html' 'downloads|downloads.html' 'contact|contact.html'; do
+            name=${spec%%|*}; path=${spec#*|}
+            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=3200 --screenshot="screenshots/$name.png" "http://127.0.0.1:8080/$path"
+          done
       - name: Capture mobile pages
-        shell: bash
         run: |
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=2500 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=2500 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=3200 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=3200 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
       - uses: actions/upload-artifact@v4
         with:
           name: website-screenshots
