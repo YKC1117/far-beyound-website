@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+<title id="title">UROVO 企業行動電腦系列示意圖</title>
+<desc id="desc">以耐用型手持行動電腦、條碼掃描光束與倉儲圖示呈現 UROVO 企業行動終端用途。</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7fafc"/><stop offset="1" stop-color="#e5edf3"/></linearGradient>
+  <linearGradient id="device" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#313c49"/><stop offset="1" stop-color="#121a22"/></linearGradient>
+  <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8f4f1"/><stop offset="1" stop-color="#eff9fa"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#17242e" flood-opacity=".2"/></filter>
+</defs>
+<rect width="1200" height="800" fill="url(#bg)"/>
+<circle cx="1000" cy="130" r="185" fill="#d9ebee" opacity=".65"/><circle cx="140" cy="675" r="210" fill="#dbe5ed" opacity=".7"/>
+<g opacity=".36" stroke="#8da5b5" stroke-width="4" fill="none"><path d="M80 570h250v110H80zM115 570V460h180v110M145 500h45v35h-45m70-35h45v35h-45M890 540h220v135H890zM930 540V435h140v105M956 475h40v34h-40m61-34h35v34h-35"/></g>
+<g filter="url(#shadow)" transform="translate(420 92)">
+  <path d="M125 35h230c38 0 67 29 67 67v480c0 38-29 68-67 68H125c-38 0-67-30-67-68V102c0-38 29-67 67-67Z" fill="url(#device)" stroke="#566473" stroke-width="5"/>
+  <path d="M145 16h188l34 35H110Z" fill="#4a5663"/>
+  <rect x="91" y="103" width="298" height="324" rx="22" fill="url(#screen)" stroke="#66798a" stroke-width="4"/>
+  <rect x="118" y="132" width="244" height="46" rx="12" fill="#176f7b"/><text x="240" y="163" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="800" fill="#fff">WAREHOUSE TASK</text>
+  <rect x="120" y="205" width="105" height="18" rx="9" fill="#8eb7bd"/><rect x="120" y="238" width="205" height="13" rx="7" fill="#bdced2"/><rect x="120" y="265" width="168" height="13" rx="7" fill="#ccd9dc"/>
+  <rect x="118" y="307" width="244" height="84" rx="14" fill="#fff" stroke="#c7d7dc"/>
+  <g fill="#173c50"><rect x="139" y="326" width="5" height="46"/><rect x="151" y="326" width="10" height="46"/><rect x="168" y="326" width="4" height="46"/><rect x="179" y="326" width="8" height="46"/><rect x="194" y="326" width="4" height="46"/><rect x="205" y="326" width="11" height="46"/><rect x="223" y="326" width="5" height="46"/><rect x="235" y="326" width="9" height="46"/><rect x="251" y="326" width="4" height="46"/><rect x="262" y="326" width="12" height="46"/><rect x="281" y="326" width="5" height="46"/><rect x="293" y="326" width="9" height="46"/></g>
+  <g fill="#3a4855"><rect x="103" y="462" width="60" height="48" rx="10"/><rect x="179" y="462" width="60" height="48" rx="10"/><rect x="255" y="462" width="60" height="48" rx="10"/><rect x="331" y="462" width="45" height="48" rx="10"/><rect x="103" y="526" width="60" height="48" rx="10"/><rect x="179" y="526" width="60" height="48" rx="10"/><rect x="255" y="526" width="60" height="48" rx="10"/><rect x="331" y="526" width="45" height="48" rx="10"/></g>
+  <circle cx="240" cy="613" r="18" fill="#657583"/>
+</g>
+<g transform="translate(140 165)"><path d="M0 60h210" stroke="#e15252" stroke-width="8" stroke-linecap="round"/><path d="M15 36h175" stroke="#e15252" stroke-width="3" stroke-linecap="round" opacity=".55"/><text x="0" y="108" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#657887">1D / 2D BARCODE</text></g>
+<g transform="translate(825 220)"><rect width="225" height="150" rx="20" fill="#fff" stroke="#cbd8e0" stroke-width="3"/><path d="M40 104V62l72-34 72 34v42" fill="#e8f1f4" stroke="#5e7686" stroke-width="5"/><path d="M64 104V75h96v29M80 90h24m16 0h24" stroke="#5e7686" stroke-width="5"/><text x="112" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="800" fill="#587080">WAREHOUSE</text></g>
+<g transform="translate(815 430)"><rect width="245" height="110" rx="20" fill="#163f51"/><circle cx="50" cy="55" r="23" fill="#49a79f"/><path d="M39 55l8 8 16-19" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><text x="88" y="49" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#fff">UROVO</text><text x="88" y="76" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#bcd5dc">ENTERPRISE MOBILE</text></g>
+<text x="600" y="748" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="3" fill="#405968">倉儲 · 物流 · 製造現場企業行動終端</text>
+</svg>
