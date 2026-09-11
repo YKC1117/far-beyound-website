@@ -38,7 +38,7 @@
     if(buttons[0]){buttons[0].textContent=c.primaryText||DEFAULT.primaryText;buttons[0].href=c.primaryUrl||DEFAULT.primaryUrl}
     if(buttons[1]){buttons[1].textContent=c.secondaryText||DEFAULT.secondaryText;buttons[1].href=c.secondaryUrl||DEFAULT.secondaryUrl}
   }
-  function patchCredibility(c){const strip=document.querySelector('.v5-credibility');if(strip)strip.style.display=c.showCredibility?'':'none'}
+  function patchCredibility(c){const strip=document.querySelector('.v5-credibility');if(strip)strip.style.display=c.showCredibility?'block':'none'}
   function selected(c){const map=productMap();const ids=(c.productIds||DEFAULT.productIds).filter(id=>map.has(id));return ids.map(id=>map.get(id)).filter(Boolean)}
   function tile(p,kind){
     const src=photo(p),img=src?`<img src="${esc(src)}" alt="${esc(p.name||'產品')}" loading="eager">`:'<div class="home-hero-fallback">PRODUCT</div>';
