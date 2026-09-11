@@ -1,0 +1,142 @@
+name: Import official product documents
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/legacy-catalog.js'
+      - '.github/workflows/import-product-docs.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install parser dependencies
+        run: python -m pip install --disable-pip-version-check requests beautifulsoup4 >/dev/null
+      - name: Import document and social links
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from urllib.parse import urljoin
+          from datetime import datetime, timezone
+          import json, re, requests
+          from bs4 import BeautifulSoup
+
+          source_path=Path('assets/js/legacy-catalog.js')
+          raw=source_path.read_text(encoding='utf-8')
+          match=re.search(r'window\.FBLegacyCatalog\s*=\s*(\{.*\})\s*;?\s*$',raw,re.S)
+          if not match:
+              raise SystemExit('Could not parse legacy catalog')
+          catalog=json.loads(match.group(1))
+          products=catalog.get('products',[])
+          root=catalog.get('source','https://www.far-beyound.com.tw').rstrip('/')
+          now=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+          HEADERS={'User-Agent':'Mozilla/5.0 Far-Beyound website migration/1.0'}
+          KEYS=('型錄','使用手冊','手冊下載','快速參考','快速指南','規格書','操作手冊','說明書')
+
+          def normalize_label(text):
+              t=' '.join(text.split())
+              if '型錄' in t: return '產品型錄'
+              if '快速參考' in t or '快速指南' in t: return '快速參考指南'
+              if '使用手冊' in t or '操作手冊' in t or '手冊下載' in t: return '使用手冊'
+              if '規格書' in t: return '產品規格書'
+              if '說明書' in t: return '說明書'
+              return t.replace('下載','').strip() or '技術文件'
+
+          def fetch_product(p):
+              url=p.get('legacyUrl') or ''
+              if not url: return url,[]
+              try:
+                  r=requests.get(url,headers=HEADERS,timeout=18)
+                  r.raise_for_status()
+                  soup=BeautifulSoup(r.text,'html.parser')
+                  rows=[]; seen=set()
+                  for a in soup.find_all('a',href=True):
+                      text=' '.join(a.stripped_strings)
+                      if not text or not any(k in text for k in KEYS):
+                          continue
+                      href=urljoin(url,a['href'].strip())
+                      if not href.startswith(('http://','https://')):
+                          continue
+                      sig=href.split('#',1)[0]
+                      if sig in seen: continue
+                      seen.add(sig)
+                      rows.append({
+                          'label':normalize_label(text),
+                          'type':'PDF' if '.pdf' in href.lower() else '文件',
+                          'url':href
+                      })
+                  return url,rows
+              except Exception as exc:
+                  print('WARN',url,type(exc).__name__,str(exc)[:120])
+                  return url,[]
+
+          docs={}
+          with ThreadPoolExecutor(max_workers=6) as pool:
+              futures=[pool.submit(fetch_product,p) for p in products]
+              for future in as_completed(futures):
+                  url,rows=future.result()
+                  if url and rows:
+                      docs[url]=rows
+
+          # Discover an official YouTube URL from the current public homepage if one is present.
+          youtube=''
+          try:
+              r=requests.get(root+'/',headers=HEADERS,timeout=18)
+              r.raise_for_status()
+              html=r.text
+              soup=BeautifulSoup(html,'html.parser')
+              candidates=[]
+              for tag in soup.find_all(True):
+                  for attr in ('href','src','data-href','data-url'):
+                      value=(tag.get(attr) or '').strip()
+                      if 'youtube.com' in value.lower() or 'youtu.be' in value.lower():
+                          candidates.append(urljoin(root+'/',value))
+              if not candidates:
+                  candidates=re.findall(r'https?://[^\s\"\'<>]*(?:youtube\.com|youtu\.be)[^\s\"\'<>]*',html,re.I)
+              if candidates:
+                  # Prefer a channel/profile URL over an individual embed/video when available.
+                  candidates=list(dict.fromkeys(candidates))
+                  candidates.sort(key=lambda u: (0 if any(x in u for x in ('/channel/','/@','/user/','/c/')) else 1,len(u)))
+                  youtube=candidates[0]
+                  print('YOUTUBE',youtube)
+              else:
+                  print('YOUTUBE not found on official homepage')
+          except Exception as exc:
+              print('WARN homepage',type(exc).__name__,str(exc)[:120])
+
+          docs_js='// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBProductDocs = '+json.dumps({
+              'generatedAt':now,
+              'source':root,
+              'items':dict(sorted(docs.items()))
+          },ensure_ascii=False,indent=2)+';\n'
+          Path('assets/js/product-docs.js').write_text(docs_js,encoding='utf-8')
+
+          social_js='// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBSocialLinks = '+json.dumps({
+              'generatedAt':now,
+              'youtube':youtube
+          },ensure_ascii=False,indent=2)+';\n'
+          Path('assets/js/site-social.js').write_text(social_js,encoding='utf-8')
+
+          print('PRODUCTS',len(products))
+          print('PRODUCT_PAGES_WITH_DOCUMENTS',len(docs))
+          print('DOCUMENT_LINKS',sum(len(v) for v in docs.values()))
+          PY
+      - name: Commit imported resources
+        run: |
+          if git diff --quiet -- assets/js/product-docs.js assets/js/site-social.js; then
+            echo 'No resource changes'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/product-docs.js assets/js/site-social.js
+          git commit -m 'Import official product document links'
+          git push
