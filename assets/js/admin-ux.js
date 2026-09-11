@@ -2,7 +2,7 @@
   'use strict';
   if(window.__fbAdminUx)return;window.__fbAdminUx=true;
   const $=(s,p=document)=>p.querySelector(s),$$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const ORDER=['homeHeroAdmin','adminStats','siteControlAdmin','contentControlAdmin','siteStructureAdmin','products','adminExtended','resourceAdmin'];
+  const ORDER=['homeHeroAdmin','adminStats','siteControlAdmin','contentControlAdmin','siteStructureAdmin','products','adminExtended','resourceAdmin','adminMaintenance'];
   const META={
     homeHeroAdmin:{step:'01',tag:'最常用',hint:'首頁第一眼看到的內容與產品輪播'},
     siteControlAdmin:{step:'02',tag:'首頁',hint:'控制首頁各區塊與共用功能顯示'},
@@ -57,9 +57,18 @@
     document.addEventListener('submit',e=>{if(e.target.closest('.admin-main')){dirty=false;setTimeout(()=>{if(pill){pill.textContent='目前無未儲存變更';pill.classList.remove('dirty')}},50)}},true);
     window.addEventListener('beforeunload',e=>{if(!dirty)return;e.preventDefault();e.returnValue=''});
   }
+  function safeReset(){
+    const btn=$('#resetBtn');if(!btn||btn.dataset.safeReady)return;btn.dataset.safeReady='1';
+    btn.onclick=()=>{
+      if(!confirm('恢復預設會清除這台瀏覽器目前所有後台修改。\n\n建議先按「取消」，使用上方「匯出備份」保存 JSON。\n\n仍要繼續嗎？'))return;
+      const typed=prompt('這是不可復原的操作。若確定要恢復，請輸入「恢復」：','');
+      if(typed!=='恢復'){if(typed!==null)alert('文字不符，已取消恢復。');return}
+      window.FBStore?.resetData?.();dirty=false;location.reload();
+    };
+  }
   function init(){
     if(document.body.dataset.page!=='admin')return;
-    reorder();decorate();collapsible();
+    reorder();decorate();collapsible();safeReset();
     if(!window.__fbAdminNavReady){window.__fbAdminNavReady=true;activeNav();dirtyState()}
   }
   document.addEventListener('DOMContentLoaded',()=>{[60,250,700,1300].forEach(t=>setTimeout(init,t))});
