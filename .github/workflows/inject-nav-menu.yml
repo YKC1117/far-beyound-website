@@ -14,6 +14,7 @@ on:
       - 'assets/js/product-resources.js'
       - 'assets/js/site-social.js'
       - 'assets/js/contact-youtube-upgrade.js'
+      - 'assets/js/desktop-phone-popover.js'
       - 'assets/css/v2-corporate.css'
       - 'assets/css/v4-polish.css'
       - 'assets/css/v4-inner-polish.css'
@@ -39,6 +40,8 @@ jobs:
           version=subprocess.check_output(['git','rev-parse','--short','HEAD'], text=True).strip()
           phone_script='assets/js/contact-youtube-upgrade.js'
           phone_versioned=f'{phone_script}?v={version}'
+          desktop_phone_script='assets/js/desktop-phone-popover.js'
+          desktop_phone_versioned=f'{desktop_phone_script}?v={version}'
 
           for p in Path('.').glob('*.html'):
               if p.name in {'admin.html'}:
@@ -78,16 +81,26 @@ jobs:
                   'assets/js/product-docs.js',
                   'assets/js/site-social.js',
                   'assets/js/product-resources.js',
-                  phone_script
+                  phone_script,
+                  desktop_phone_script
               ]:
                   if script not in text:
-                      src=phone_versioned if script==phone_script else script
+                      if script==phone_script:
+                          src=phone_versioned
+                      elif script==desktop_phone_script:
+                          src=desktop_phone_versioned
+                      else:
+                          src=script
                       text=text.replace('</body>', f'<script src="{src}"></script></body>')
 
-              # Always version the final phone/contact script so browsers cannot keep an old broken copy.
               text=re.sub(
                   r'assets/js/contact-youtube-upgrade\.js(?:\?v=[^"\']*)?',
                   phone_versioned,
+                  text
+              )
+              text=re.sub(
+                  r'assets/js/desktop-phone-popover\.js(?:\?v=[^"\']*)?',
+                  desktop_phone_versioned,
                   text
               )
 
@@ -107,5 +120,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add '*.html'
-          git commit -m 'Version contact controls across public pages'
+          git commit -m 'Wire independent desktop phone popover across public pages'
           git push
