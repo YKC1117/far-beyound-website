@@ -1,3 +1,4 @@
+body[data-page="home"] .v5-credibility{display:none}
 body[data-page="home"] .v2-hero-products{position:relative;padding-bottom:44px}
 body[data-page="home"] .hero-rotate-card,body[data-page="home"] .hero-rotate-side{transition:opacity .32s ease,transform .32s ease,border-color .18s ease,box-shadow .18s ease}
 body[data-page="home"] .hero-rotate-card.is-entering,body[data-page="home"] .hero-rotate-side.is-entering{animation:fbHeroIn .34s ease both}
