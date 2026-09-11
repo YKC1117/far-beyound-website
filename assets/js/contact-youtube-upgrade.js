@@ -7,6 +7,15 @@
     {label:'台南辦公室', display:'06-2360139', tel:'062360139'}
   ];
 
+  function loadMobileExperience(){
+    if(document.querySelector('link[data-mobile-experience]')) return;
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='assets/css/mobile-experience.css?v=20260911b';
+    link.dataset.mobileExperience='1';
+    document.head.appendChild(link);
+  }
+
   function addStyle(){
     if(document.getElementById('fbContactYoutubeUpgradeStyle')) return;
     const style=document.createElement('style');
@@ -27,6 +36,10 @@
     const btn=oldBtn.cloneNode(true);
     btn.dataset.clickPanelReady='1';
     oldBtn.replaceWith(btn);
+    const btnLabel=btn.querySelector('span');
+    if(btnLabel)btnLabel.textContent='電話';
+    btn.setAttribute('aria-label','電話聯絡');
+
     panel.id='mobilePhonePanel';
     panel.innerHTML=PHONE_ROWS.map(p=>`<a href="tel:${p.tel}"><span>${p.label}</span><b>${p.display}</b></a>`).join('');
     btn.setAttribute('aria-controls',panel.id);
@@ -60,6 +73,7 @@
   }
 
   function run(){
+    loadMobileExperience();
     addStyle();
     upgradeMobilePhone();
     addYoutubeFooter();
