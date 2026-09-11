@@ -61,6 +61,22 @@
       group('公司資訊','about.html',`<a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">聯絡我們</a>`);
   }
 
+  function markCurrent(desktop){
+    const page=document.body.dataset.page||'';
+    const target={
+      products:'products.html',product:'products.html',downloads:'downloads.html',solutions:'solutions.html',cases:'cases.html',
+      news:'news.html','news-detail':'news.html',about:'about.html',locations:'about.html',contact:'about.html','preview-guide':'about.html'
+    }[page]||'';
+    [...desktop.children].forEach(node=>{
+      const a=node.querySelector(':scope > a');
+      const href=(a?.getAttribute('href')||'').split('?')[0].split('#')[0];
+      const active=!!target&&href===target;
+      node.classList.toggle('current',active);
+      a?.classList.toggle('current',active);
+      if(active)a?.setAttribute('aria-current','page');else a?.removeAttribute('aria-current');
+    });
+  }
+
   function styles(){
     if(document.getElementById('navEnhancedStyles'))return;
     const s=document.createElement('style');s.id='navEnhancedStyles';s.textContent=`
@@ -87,7 +103,11 @@
     const desktop=document.querySelector('.desktop-nav');
     const mobile=document.querySelector('.drawer-links');
     if(!d||!desktop||!mobile)return false;
-    styles();desktop.innerHTML=desktopNav(d);mobile.innerHTML=mobileNav(d);return true;
+    styles();
+    desktop.innerHTML=desktopNav(d);
+    mobile.innerHTML=mobileNav(d);
+    markCurrent(desktop);
+    return true;
   }
 
   function start(){let tries=0;const timer=setInterval(()=>{tries++;if(apply()||tries>20)clearInterval(timer)},40)}
