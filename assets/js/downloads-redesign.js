@@ -28,7 +28,7 @@
     const data=FBStore.getData();
     const items=(data.downloads||[]).slice();
     const brands=[...new Set(items.map(x=>x.brand).filter(Boolean))];
-    let activeType='all',activeBrand='all',query='';
+    let activeType='all',activeBrand='all',query='',filterStage='type';
 
     const typeBox=document.getElementById('downloadTypeFilters');
     const brandBox=document.getElementById('downloadBrandFilters');
@@ -39,20 +39,43 @@
     const search=document.getElementById('downloadSearch');
     if(!typeBox||!brandBox||!listBox||!countBox||!titleBox||!descBox||!search)return;
 
+    const typeSection=typeBox.closest('.filter-section');
+    const brandSection=brandBox.closest('.filter-section');
+    const filterTitle=typeSection?.querySelector('.filter-title');
+    if(brandSection)brandSection.classList.add('legacy-brand-section');
+
     function matches(x){
       const q=query.trim().toLowerCase();
       return (activeType==='all'||typeOf(x)===activeType)&&(activeBrand==='all'||x.brand===activeBrand)&&(!q||textOf(x).includes(q));
     }
     function filtered(){return items.filter(matches)}
-    function countType(id){return items.filter(x=>(id==='all'||typeOf(x)===id)&&(activeBrand==='all'||x.brand===activeBrand)&&(!query.trim()||textOf(x).includes(query.trim().toLowerCase()))).length}
+    function countType(id){return items.filter(x=>(id==='all'||typeOf(x)===id)&&(!query.trim()||textOf(x).includes(query.trim().toLowerCase()))).length}
     function countBrand(b){return items.filter(x=>(b==='all'||x.brand===b)&&(activeType==='all'||typeOf(x)===activeType)&&(!query.trim()||textOf(x).includes(query.trim().toLowerCase()))).length}
-    function btn(label,count,active,attr,value){return `<button class="filter-btn ${active?'active':''}" ${attr}="${esc(value)}"><span>${esc(label)}</span><span class="count">${count}</span></button>`}
+    function btn(label,count,active,attr,value,extra=''){return `<button class="filter-btn ${active?'active':''} ${extra}" ${attr}="${esc(value)}"><span>${esc(label)}</span><span class="count">${count}</span></button>`}
+
     function renderFilters(){
-      typeBox.innerHTML=TYPES.filter(t=>t.id==='all'||items.some(x=>typeOf(x)===t.id)).map(t=>btn(t.name,countType(t.id),activeType===t.id,'data-type',t.id)).join('');
-      brandBox.innerHTML=btn('全部品牌',countBrand('all'),activeBrand==='all','data-brand','all')+brands.filter(b=>countBrand(b)>0).map(b=>btn(b,countBrand(b),activeBrand===b,'data-brand',b)).join('');
-      typeBox.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{activeType=b.dataset.type;render()});
-      brandBox.querySelectorAll('[data-brand]').forEach(b=>b.onclick=()=>{activeBrand=b.dataset.brand;render()});
+      if(brandSection)brandSection.style.display='none';
+      if(filterStage==='type'||activeType==='all'){
+        if(filterTitle)filterTitle.textContent='下載類型';
+        typeBox.classList.remove('brand-step');
+        typeBox.innerHTML=TYPES.filter(t=>t.id==='all'||items.some(x=>typeOf(x)===t.id)).map(t=>btn(t.name,countType(t.id),activeType===t.id,'data-type',t.id)).join('');
+        typeBox.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{
+          activeType=b.dataset.type;
+          activeBrand='all';
+          filterStage=activeType==='all'?'type':'brand';
+          render();
+        });
+        return;
+      }
+
+      if(filterTitle)filterTitle.textContent=`${typeName(activeType)}｜選擇品牌`;
+      typeBox.classList.add('brand-step');
+      const availableBrands=brands.filter(b=>countBrand(b)>0);
+      typeBox.innerHTML=`<button class="filter-back" type="button" data-back-type>← 返回下載類型</button>${btn('全部品牌',countBrand('all'),activeBrand==='all','data-brand','all','all-brands')}${availableBrands.map(b=>btn(b,countBrand(b),activeBrand===b,'data-brand',b)).join('')}`;
+      typeBox.querySelector('[data-back-type]').onclick=()=>{activeType='all';activeBrand='all';filterStage='type';render()};
+      typeBox.querySelectorAll('[data-brand]').forEach(b=>b.onclick=()=>{activeBrand=b.dataset.brand;render()});
     }
+
     function card(x){
       const meta=[]; if(x.version)meta.push(`版本 ${esc(x.version)}`); if(x.updated)meta.push(`更新 ${esc(x.updated)}`); if(x.size)meta.push(esc(x.size));
       const href=x.url?esc(x.url):`contact.html?item=${encodeURIComponent(x.name||'下載資料')}`;
@@ -65,8 +88,11 @@
       countBox.textContent=`共 ${rows.length} 項`;
       const typeLabel=activeType==='all'?'全部類型':typeName(activeType);
       titleBox.textContent=activeBrand==='all'?typeLabel:`${activeBrand}｜${typeLabel}`;
-      descBox.textContent=query.trim()?`搜尋「${query.trim()}」的結果`:'選擇類型或品牌，可快速縮小下載範圍。';
-      if(!rows.length){listBox.innerHTML='<div class="download-empty"><b>沒有找到符合條件的下載項目</b><span>請調整品牌、類型或搜尋關鍵字。</span></div>';return}
+      if(query.trim())descBox.textContent=`搜尋「${query.trim()}」的結果`;
+      else if(activeType==='all')descBox.textContent='先選擇下載類型，再進一步選擇品牌。';
+      else if(activeBrand==='all')descBox.textContent='已選擇下載類型，請從左側再選擇品牌，或查看此類型全部品牌。';
+      else descBox.textContent=`目前顯示 ${activeBrand} 的${typeLabel}。`;
+      if(!rows.length){listBox.innerHTML='<div class="download-empty"><b>沒有找到符合條件的下載項目</b><span>請返回下載類型或調整搜尋關鍵字。</span></div>';return}
       if(activeType==='all'){
         listBox.innerHTML=TYPES.filter(t=>t.id!=='all').map(t=>{const r=rows.filter(x=>typeOf(x)===t.id);return r.length?group(t.name,r):''}).join('');
       }else if(activeBrand==='all'){
