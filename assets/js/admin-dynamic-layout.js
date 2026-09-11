@@ -11,6 +11,14 @@
     if(document.querySelector('script[data-admin-password]'))return;
     const s=document.createElement('script');s.src='assets/js/admin-password.js?v=20260912-0008';s.dataset.adminPassword='1';document.body.appendChild(s);
   }
+  function loadMobileExperience(){
+    if(!document.querySelector('link[data-admin-mobile]')){
+      const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/admin-mobile.css?v=20260912-0023';l.dataset.adminMobile='1';document.head.appendChild(l);
+    }
+    if(!document.querySelector('script[data-admin-mobile]')){
+      const s=document.createElement('script');s.src='assets/js/admin-mobile.js?v=20260912-0024';s.dataset.adminMobile='1';document.body.appendChild(s);
+    }
+  }
   function injectPolishStyle(){
     if(document.getElementById('adminDynamicPolish'))return;
     const s=document.createElement('style');s.id='adminDynamicPolish';s.textContent=`
@@ -68,10 +76,10 @@
     addLink(document.querySelector('.admin-nav'),'#adminPassword','後台密碼','#adminInquiries');
     addLink(document.querySelector('.admin-section-jump'),'#adminInquiries','網站詢問','#adminAnalytics');
     addLink(document.querySelector('.admin-section-jump'),'#adminPassword','後台密碼','#adminInquiries');
-    const version=document.querySelector('.admin-version-note');if(version)version.textContent='後台介面更新：2026/09/12 00:20';
+    const version=document.querySelector('.admin-version-note');if(version)version.textContent='後台介面更新：2026/09/12 00:25';
     polishPasswordPanel();fixAnalyticsNote();setupDynamicActive();
   }
-  const run=()=>{injectPolishStyle();loadPasswordModule();arrange();setTimeout(arrange,150);setTimeout(arrange,600);setTimeout(arrange,1500)};
+  const run=()=>{injectPolishStyle();loadMobileExperience();loadPasswordModule();arrange();setTimeout(arrange,150);setTimeout(arrange,600);setTimeout(arrange,1500)};
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run,{once:true}):run();
   window.addEventListener('farbeyound:datachange',()=>setTimeout(arrange,100));
 })();
