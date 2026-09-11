@@ -13,6 +13,9 @@
 a,button{outline-offset:3px}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--v4-cyan);outline-offset:3px}
 
+/* Top contact bar is intentionally hidden: phone/LINE remain available in the utility rail and footer. */
+.topbar{display:none!important}
+
 /* Header: keep the current information architecture, but make scrolling feel intentional. */
 .site-header{transition:box-shadow .22s ease,background .22s ease}
 .header-inner,.header-inner .brand-mark,.header-inner .brand-copy strong,.header-inner .brand-copy small,.desktop-nav>.nav-item>a{transition:height .22s ease,width .22s ease,font-size .22s ease,padding .22s ease,transform .22s ease}
