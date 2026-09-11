@@ -13,8 +13,7 @@ body[data-page="admin"] .admin-nav a.active{background:#fff;color:#143047;box-sh
 body[data-page="admin"] .admin-nav a.active:before{content:"";position:absolute;left:0;top:11px;bottom:11px;width:3px;border-radius:0 4px 4px 0;background:#18a8bf}
 body[data-page="admin"] .admin-preview-group{margin-top:12px;border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.035)}
 body[data-page="admin"] .admin-preview-toggle{width:100%;min-height:42px;padding:0 12px;border:0;background:transparent;color:#dce9f0;display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:12px}
-body[data-page="admin"] .admin-preview-toggle:after{content:'⌄';font-size:16px;transition:.18s ease}
-body[data-page="admin"] .admin-preview-group.open .admin-preview-toggle:after{transform:rotate(180deg)}
+body[data-page="admin"] .admin-preview-toggle span{font-size:18px;font-weight:500;color:#8fb1c7}
 body[data-page="admin"] .admin-preview-links{display:none;padding:0 6px 7px}
 body[data-page="admin"] .admin-preview-group.open .admin-preview-links{display:grid}
 body[data-page="admin"] .admin-preview-links a{min-height:36px!important;font-size:11px!important;color:#b8cedb!important}
@@ -62,5 +61,13 @@ body[data-page="admin"] .admin-toggle-card i:after{content:'';position:absolute;
 body[data-page="admin"] .admin-toggle-card input:checked+i{background:#168da5}
 body[data-page="admin"] .admin-toggle-card input:checked+i:after{transform:translateX(16px)}
 body[data-page="admin"] .admin-control-save{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 20px 20px;color:#788a97;font-size:11px}
+body[data-page="admin"] .admin-editor-section{padding:20px 22px;border-bottom:1px solid #e8eef2}
+body[data-page="admin"] .admin-editor-section:last-of-type{border-bottom:0}
+body[data-page="admin"] .admin-editor-section h3{margin:0 0 14px;font-size:14px;color:#213d53}
+body[data-page="admin"] .admin-editor-section .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 16px}
+body[data-page="admin"] .admin-editor-section .field.full{grid-column:1/-1}
+body[data-page="admin"] .admin-editor-section label{display:block;margin-bottom:6px;color:#5d7382;font-size:11px;font-weight:800}
+body[data-page="admin"] .admin-editor-section input,body[data-page="admin"] .admin-editor-section textarea{width:100%;padding:10px 11px}
+#contentControlAdmin,#siteControlAdmin,#homeHeroAdmin{scroll-margin-top:20px}
 @media(max-width:1100px){body[data-page="admin"] .admin-shell{grid-template-columns:228px minmax(0,1fr)}body[data-page="admin"] .admin-main{padding:24px 22px}body[data-page="admin"] .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}body[data-page="admin"] .admin-control-grid{grid-template-columns:1fr}}
-@media(max-width:780px){body[data-page="admin"] .admin-shell{display:block}body[data-page="admin"] .admin-side{position:relative;height:auto;padding:14px}body[data-page="admin"] .admin-nav{grid-template-columns:repeat(2,minmax(0,1fr))}body[data-page="admin"] .admin-nav .admin-nav-label{grid-column:1/-1}body[data-page="admin"] .admin-mode{display:none}body[data-page="admin"] .admin-main{padding:18px 14px 34px}body[data-page="admin"] .admin-top{display:block}body[data-page="admin"] .admin-actions{justify-content:flex-start;margin-top:14px}body[data-page="admin"] .admin-stats{grid-template-columns:1fr 1fr}body[data-page="admin"] .admin-top h1{font-size:24px}body[data-page="admin"] .admin-toggle-grid{grid-template-columns:1fr}body[data-page="admin"] .admin-control-save{align-items:stretch;flex-direction:column}}
+@media(max-width:780px){body[data-page="admin"] .admin-shell{display:block}body[data-page="admin"] .admin-side{position:relative;height:auto;padding:14px}body[data-page="admin"] .admin-nav{grid-template-columns:repeat(2,minmax(0,1fr))}body[data-page="admin"] .admin-nav .admin-nav-label{grid-column:1/-1}body[data-page="admin"] .admin-preview-group{grid-column:1/-1}body[data-page="admin"] .admin-mode{display:none}body[data-page="admin"] .admin-main{padding:18px 14px 34px}body[data-page="admin"] .admin-top{display:block}body[data-page="admin"] .admin-actions{justify-content:flex-start;margin-top:14px}body[data-page="admin"] .admin-stats{grid-template-columns:1fr 1fr}body[data-page="admin"] .admin-top h1{font-size:24px}body[data-page="admin"] .admin-toggle-grid{grid-template-columns:1fr}body[data-page="admin"] .admin-control-save{align-items:stretch;flex-direction:column}body[data-page="admin"] .admin-editor-section .form-grid{grid-template-columns:1fr}body[data-page="admin"] .admin-editor-section .field.full{grid-column:auto}}
