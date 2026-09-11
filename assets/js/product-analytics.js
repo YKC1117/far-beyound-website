@@ -23,6 +23,18 @@
     return String(p.id||'').replace(/^legacy-/,'').replace(/^[^-]+-/,'').replace(/-/g,' ').toUpperCase().slice(0,160);
   }
 
+  function sourceInfo(){
+    let host='';
+    try{ host=document.referrer?new URL(document.referrer).hostname.toLowerCase():''; }catch(_){ host=''; }
+    if(!host || host===location.hostname.toLowerCase()) return {referrer_domain:'',traffic_source:'direct'};
+    const aiHosts=['chatgpt.com','openai.com','perplexity.ai','claude.ai','gemini.google.com','copilot.microsoft.com','you.com'];
+    if(aiHosts.some(d=>host===d||host.endsWith('.'+d))) return {referrer_domain:host.slice(0,180),traffic_source:'ai'};
+    if(/(^|\.)google\./.test(host)) return {referrer_domain:host.slice(0,180),traffic_source:'google'};
+    if(host==='bing.com'||host.endsWith('.bing.com')) return {referrer_domain:host.slice(0,180),traffic_source:'bing'};
+    if(['facebook.com','instagram.com','line.me','liff.line.me','linkedin.com','x.com','twitter.com'].some(d=>host===d||host.endsWith('.'+d))) return {referrer_domain:host.slice(0,180),traffic_source:'social'};
+    return {referrer_domain:host.slice(0,180),traffic_source:'referral'};
+  }
+
   function shouldCount(id){
     try{
       const k='fbProductView:'+id,now=Date.now(),last=Number(localStorage.getItem(k)||0);
@@ -35,13 +47,16 @@
   async function track(){
     const p=currentProduct();if(!p||p.published===false||!shouldCount(p.id))return;
     try{
+      const source=sourceInfo();
       await fetch(PROJECT+'/rest/v1/product_pageviews',{
         method:'POST',keepalive:true,
         headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
         body:JSON.stringify({
           product_id:String(p.id).slice(0,160),
           brand:String(p.brand||'').slice(0,120),
-          model:inferModel(p)
+          model:inferModel(p),
+          referrer_domain:source.referrer_domain,
+          traffic_source:source.traffic_source
         })
       });
     }catch(_){/* analytics must never block the page */}
