@@ -52,6 +52,25 @@ jobs:
               assert href.startswith('https://www.google.com/maps/dir/'), href
               assert 'destination=' in href, href
 
+          def nav_state(doc):
+              rows=[]
+              nav=doc.select_one('.desktop-nav')
+              if not nav:return rows
+              for node in nav.find_all(recursive=False):
+                  a=node if node.name=='a' else node.find('a',recursive=False)
+                  rows.append({
+                    'tag':node.name,
+                    'class':' '.join(node.get('class',[])),
+                    'text':a.get_text(' ',strip=True).replace('⌄','').strip() if a else '',
+                    'href':a.get('href','') if a else '',
+                    'aria':a.get('aria-current','') if a else ''
+                  })
+              return rows
+
+          print('NAV_CONTACT=',nav_state(contact))
+          print('NAV_SOLUTIONS=',nav_state(solutions))
+          print('NAV_DOWNLOADS=',nav_state(downloads))
+
           def active_label(doc):
               active=doc.select_one('.desktop-nav > .nav-item.current > a')
               return active.get_text(' ',strip=True).replace('⌄','').strip() if active else ''
