@@ -39,7 +39,7 @@
     if(buttons[1]){buttons[1].textContent=c.secondaryText||DEFAULT.secondaryText;buttons[1].href=c.secondaryUrl||DEFAULT.secondaryUrl}
   }
   function patchCredibility(c){const strip=document.querySelector('.v5-credibility');if(strip)strip.style.display=c.showCredibility?'block':'none'}
-  function selected(c){const map=productMap();const ids=(c.productIds||DEFAULT.productIds).filter(id=>map.has(id));return ids.map(id=>map.get(id)).filter(Boolean)}
+  function selected(c){const map=productMap();const ids=(c.productIds||DEFAULT.productIds).filter(id=>map.has(id)&&map.get(id)?.published!==false);return ids.map(id=>map.get(id)).filter(Boolean)}
   function tile(p,kind){
     const src=photo(p),img=src?`<img src="${esc(src)}" alt="${esc(p.name||'產品')}" loading="eager">`:'<div class="home-hero-fallback">PRODUCT</div>';
     if(kind==='main')return `<a class="v2-stage-main hero-rotate-card is-entering" href="product.html?id=${encodeURIComponent(p.id)}"><span class="v2-stage-label">${esc((p.type||'PRODUCT').toUpperCase())}</span>${img}<span class="v2-stage-caption"><small>${esc(p.subtitle||p.type||'產品')}</small><b>${esc(p.name||'產品')}</b></span></a>`;
@@ -49,7 +49,7 @@
     const c=cfg(),box=document.querySelector('.v2-hero-products');if(!box)return;
     if(!c.enabled){box.style.display='';return}
     box.style.display='';
-    const list=selected(c);if(!list.length)return;
+    const list=selected(c);if(!list.length){box.style.display='none';return}
     index=((index%list.length)+list.length)%list.length;
     const p0=list[index],p1=list[(index+1)%list.length],p2=list[(index+2)%list.length];
     const controls=c.showControls&&list.length>1?`<div class="hero-rotate-controls"><button type="button" data-hero-prev aria-label="上一個產品">‹</button><div class="hero-rotate-dots">${list.map((_,i)=>`<button type="button" data-hero-dot="${i}" class="${i===index?'active':''}" aria-label="切換到第 ${i+1} 個產品"></button>`).join('')}</div><button type="button" data-hero-next aria-label="下一個產品">›</button></div>`:'';
