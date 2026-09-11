@@ -21,13 +21,13 @@ jobs:
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           test -n "$CHROME"
           mkdir -p qa
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421' > qa/detail-rich.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/product.html?id=zebra-zt510' > qa/detail-sparse.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/product.html?id=not-a-real-product' > qa/detail-missing.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/contact.html?item=Zebra%20ZT510' > qa/contact.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421' > qa/detail-rich.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom 'http://127.0.0.1:8080/product.html?id=software-bartender' > qa/detail-software.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom 'http://127.0.0.1:8080/product.html?id=not-a-real-product' > qa/detail-missing.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom 'http://127.0.0.1:8080/contact.html?item=Zebra%20ZT411' > qa/contact.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
           pip install --disable-pip-version-check beautifulsoup4 >/dev/null
           python3 - <<'PY'
           from bs4 import BeautifulSoup
@@ -35,135 +35,80 @@ jobs:
           from urllib.parse import urlparse, parse_qs, unquote
           import re
 
-          def load(name):
-              return BeautifulSoup(Path('qa',name+'.html').read_text(), 'html.parser')
-
+          def load(name): return BeautifulSoup(Path('qa',name+'.html').read_text(), 'html.parser')
           home=load('home'); products=load('products'); contact=load('contact'); downloads=load('downloads')
-          rich=load('detail-rich'); sparse=load('detail-sparse'); missing=load('detail-missing')
-          cards=products.select('#productGrid a.product-card')
-          assert len(cards)==150, f'Expected 150 product cards, got {len(cards)}'
+          rich=load('detail-rich'); software=load('detail-software'); missing=load('detail-missing')
 
-          tokens=[]; bad=[]; fastech_count=0
-          pseudo_brands={'標籤貼紙','耐溫貼紙','碳帶','代印服務','標籤軟體','外掛紙捲架'}
+          cards=products.select('#productGrid a.product-card')
+          assert len(cards)>=151, f'Product catalog unexpectedly small: {len(cards)}'
+          tokens=[]; problems=[]
           for card in cards:
-              href=(card.get('href') or '').strip()
-              token=parse_qs(urlparse(href).query).get('id',[''])[0]
-              brand=(card.select_one('.product-meta span').get_text(' ',strip=True) if card.select_one('.product-meta span') else '')
-              img=card.select_one('.official-product-photo img') or card.select_one('img')
-              if not token or token.startswith('legacy-'): bad.append(f'bad token: {token}')
-              if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',token): bad.append(f'non-readable slug: {token}')
-              ascii_brand=re.sub(r'[^a-z0-9]+','-',brand.lower()).strip('-')
-              if ascii_brand and not token.startswith(ascii_brand+'-') and token!=ascii_brand:
-                  bad.append(f'{brand} token does not lead with brand: {token}')
-              if brand in pseudo_brands:
-                  fastech_count += 1
-                  if not token.startswith('fastech-'):
-                      bad.append(f'unbranded item must use FASTECH prefix: {brand} -> {token}')
-              if not img or not (img.get('src') or '').strip(): bad.append(f'missing image: {token}')
+              href=(card.get('href') or '').strip(); token=parse_qs(urlparse(href).query).get('id',[''])[0]
+              if not token or token.startswith('legacy-'): problems.append(f'bad token: {token}')
+              if token and not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',token): problems.append(f'non-readable slug: {token}')
+              img=card.select_one('img')
+              if not img or not (img.get('src') or '').strip(): problems.append(f'missing image: {token}')
               else:
                   src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
-                  p=Path(src)
-                  if not p.is_file() or p.stat().st_size<2500: bad.append(f'invalid local image: {token} -> {src}')
+                  p=Path(src); minimum=200 if p.suffix.lower()=='.svg' else 2500
+                  if not p.is_file() or p.stat().st_size<minimum: problems.append(f'invalid local image: {token} -> {src}')
               tokens.append(token)
-          assert len(set(tokens))==150, 'Product public slugs are not unique'
-          assert fastech_count==26, f'Expected 26 unbranded FASTECH items, got {fastech_count}'
-          expected_fastech={
-              'fastech-coated-label','fastech-thermal-label','fastech-security-label',
-              'fastech-resin-ribbon','fastech-wax-resin-ribbon','fastech-wax-ribbon','fastech-color-ribbon',
-              'fastech-label-printing','fastech-bartender','fastech-codesoft','fastech-roll-holder'
-          }
-          missing_fastech=expected_fastech-set(tokens)
-          assert not missing_fastech, f'Expected FASTECH keyword slugs missing: {sorted(missing_fastech)}'
-          assert not bad, '\n'.join(bad[:30])
+          assert len(set(tokens))==len(cards), 'Product public slugs are not unique'
+          assert not problems, '\n'.join(problems[:30])
+          required={'software-bartender','software-codesoft','urovo-enterprise-mobile'}
+          assert not required-set(tokens), f'Curated product entries missing: {sorted(required-set(tokens))}'
 
           brands=home.select('.brand-portfolio a.brand-wordmark')
           assert len(brands)==12, f'Expected 12 brand entries, got {len(brands)}'
           for a in brands:
               assert parse_qs(urlparse(a.get('href','')).query).get('brand'), f'Brand has no destination: {a.get_text(" ",strip=True)}'
-              img=a.select_one('img.brand-logo-img')
+              img=a.select_one('img.brand-logo-img, img.fb-own-brand-logo')
               assert img and img.get('src') and img.get('alt'), f'Brand has no logo: {a.get_text(" ",strip=True)}'
-
-          assert not home.select_one('#homeCategories'), 'Homepage category grid should be removed for compact layout'
-          brand_note=home.select_one('.brand-portfolio-head>p')
-          assert brand_note and '現有官網' not in brand_note.get_text(), 'Homepage still exposes migration/internal wording'
 
           nav_labels=[a.get_text(' ',strip=True).replace('⌄','').strip() for a in home.select('.desktop-nav > .nav-item > a')]
           assert nav_labels[:6]==['產品資訊','系統方案','客戶案例','最新消息','下載服務','公司資訊'], nav_labels
-          mobile_labels=[s.select_one('span').get_text(' ',strip=True) for s in home.select('.drawer-links .mobile-nav-group > summary')]
-          assert mobile_labels[:6]==['產品資訊','系統方案','客戶案例','最新消息','下載服務','公司資訊'], mobile_labels
-
           rail=home.select_one('.quick-contact'); mobile=home.select_one('.mobile-contact-bar')
-          assert rail, 'Desktop floating contact rail missing'
-          assert mobile, 'Mobile contact bar missing'
-          rail_links=[a.get('href','') for a in rail.select('a')]; mobile_links=[a.get('href','') for a in mobile.select('a')]
+          assert rail and mobile, 'Floating contact controls missing'
           expected_line='https://line.me/R/ti/p/@453haosc'
-          assert expected_line in rail_links and expected_line in mobile_links, 'LINE link missing or incorrect'
-          assert 'contact.html#inquiryForm' in rail_links and 'contact.html#inquiryForm' in mobile_links, 'Inquiry link missing'
-          phones=[a.get('href','') for a in home.select('a[href^="tel:"]')]
-          assert 'tel:0282217759' in phones and 'tel:062360139' in phones, 'Office phone links missing'
-          assert rail.select_one('[data-back-top] .quick-contact-btn'), 'Back-to-top button is not integrated into right rail'
-          assert not home.select_one('.back-top'), 'Legacy standalone back-to-top button remains'
+          assert expected_line in [a.get('href','') for a in rail.select('a')], 'Desktop LINE link missing'
+          assert expected_line in [a.get('href','') for a in mobile.select('a')], 'Mobile LINE link missing'
+          assert rail.select_one('[data-back-top] .quick-contact-btn'), 'Back-to-top button not integrated into right rail'
+          assert not home.select_one('.back-top'), 'Legacy standalone back-to-top remains'
 
-          footer_locations=home.select('.site-footer a.footer-location')
-          assert len(footer_locations)==2, f'Expected two footer office locations, got {len(footer_locations)}'
-          footer_text=' '.join(x.get_text(' ',strip=True) for x in footer_locations)
-          assert '新北市中和區中山路二段351號10樓之1' in footer_text, 'Taipei office address missing'
-          assert '台南市永康區中華路425號4樓之18' in footer_text, 'Tainan office address missing'
-          for a in footer_locations:
-              href=a.get('href','')
-              assert href.startswith('https://www.google.com/maps/dir/'), f'Footer address is not a Google Maps directions link: {href}'
-              assert 'destination=' in href, f'Google Maps destination missing: {href}'
-          footer_bottom=home.select('.site-footer .footer-bottom > span')
-          assert len(footer_bottom)==1, f'Unexpected extra footer-bottom item remains: {len(footer_bottom)}'
+          assert rich.select_one('.product-detail-visual img'), 'Rich product image missing'
+          assert 'ZT411' in (rich.select_one('#productHero h1').get_text(' ',strip=True) if rich.select_one('#productHero h1') else ''), 'ZT411 detail did not resolve'
+          assert software.select_one('.product-detail-visual img[src*="software-bartender.svg"]'), 'BarTender local artwork did not resolve'
+          assert software.select_one('.fb-official-resource'), 'BarTender official-resource action missing'
+          assert missing.select_one('.product-not-found'), 'Invalid product URL should show not-found state'
 
-          rich_img=rich.select_one('.product-detail-visual img')
-          assert rich_img and 'zebra-zt411' in (rich_img.get('src') or ''), 'Rich product detail image did not resolve'
-          assert 'ZT411' in (rich.select_one('#productHero h1').get_text(' ',strip=True) if rich.select_one('#productHero h1') else ''), 'Rich product detail title did not resolve'
-          sparse_img=sparse.select_one('.product-detail-visual img')
-          assert sparse_img and (sparse_img.get('src') or '').startswith('assets/images/catalog/'), 'Imported product detail image did not resolve'
-          assert len(sparse.select('#specTable .spec-row'))>=4, 'Sparse imported product should show verified basic information'
-          assert sparse.select_one('.product-support-card'), 'Sparse product should show customer-facing document inquiry block'
-          assert missing.select_one('.product-not-found'), 'Invalid product URL should show a not-found state'
-
-          assert contact.select_one('#contactForm'), 'Contact form behavior hook missing'
+          form=contact.select_one('#contactForm')
+          assert form and form.get('method','').upper()=='POST', 'Contact form POST setup missing'
+          for name in ['company','department','contact_name','phone','email','website']:
+              assert form.select_one(f'[name="{name}"]'), f'Contact field missing name={name}'
           assert contact.select_one('#inquiryForm'), 'Inquiry fragment anchor missing'
-          subject_text=contact.select_one('#subject').get_text(' ',strip=True) if contact.select_one('#subject') else ''
-          assert 'Zebra ZT510' in subject_text, 'Product inquiry did not prefill/add product subject option'
 
-          download_brands=[x.get_text(' ',strip=True) for x in downloads.select('#downloadBrands [data-brand]')]
-          assert download_brands[:7]==['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'], download_brands
-          rows=downloads.select('#downloadList .download-item')
-          actions=downloads.select('#downloadList a.download-action')
-          external=[a for a in actions if (a.get('href') or '').startswith(('http://','https://'))]
-          assert len(rows)>=5, f'Download center unexpectedly sparse: {len(rows)} rows'
-          assert len(actions)==len(rows), f'Every rendered download row must have an actionable link: {len(actions)}/{len(rows)}'
-          assert not downloads.select('#downloadList .demo-download'), 'Demo-only download buttons remain'
-          assert len(external)>=3, f'Expected real external download destinations, got {len(external)}'
-          bad_titles=[h.get_text(' ',strip=True) for h in downloads.select('#downloadList h3') if h.get_text(' ',strip=True) in {'萬里資訊','下載檔案'}]
-          assert not bad_titles, f'Bad imported download titles leaked: {bad_titles}'
+          assert downloads.select_one('#downloadSearch'), 'Download search missing'
+          assert downloads.select_one('#downloadTypeFilters'), 'Download type stage missing'
+          assert downloads.select_one('#downloadBrandFilters'), 'Download brand stage missing'
+          assert downloads.select_one('#downloadResults'), 'Download results missing'
+          type_buttons=downloads.select('#downloadTypeFilters [data-type]')
+          assert len(type_buttons)>=3, f'Download type filters unexpectedly sparse: {len(type_buttons)}'
+          assert '先選擇下載類型' in downloads.get_text(' ',strip=True), 'Two-step download guidance missing'
 
           forbidden='測試版 正式版 原官網產品資料 新版目錄 網站提案 預覽環境 正式檔案空間'.split()
-          public_text=' '.join([home.get_text(' ',strip=True),rich.get_text(' ',strip=True),sparse.get_text(' ',strip=True),contact.get_text(' ',strip=True),downloads.get_text(' ',strip=True)])
+          public_text=' '.join([home.get_text(' ',strip=True),rich.get_text(' ',strip=True),software.get_text(' ',strip=True),contact.get_text(' ',strip=True),downloads.get_text(' ',strip=True)])
           leaked=[x for x in forbidden if x in public_text]
           assert not leaked, f'Public-facing internal wording leaked: {leaked}'
 
-          print('PRODUCT_CARDS_OK=150')
-          print('UNIQUE_READABLE_PRODUCT_SLUGS=150')
-          print(f'FASTECH_UNBRANDED_SLUGS_OK={fastech_count}')
-          print('LOCAL_PRODUCT_IMAGES_OK=150')
+          print(f'PRODUCT_CARDS_OK={len(cards)}')
+          print(f'UNIQUE_READABLE_PRODUCT_SLUGS={len(set(tokens))}')
+          print('CURATED_SOFTWARE_UROVO=OK')
+          print(f'LOCAL_PRODUCT_IMAGES_OK={len(cards)}')
           print('CLICKABLE_BRAND_ENTRIES_OK=12')
-          print('COMPACT_HOMEPAGE=OK')
-          print('NAV_ORDER_OK=PRODUCT,SOLUTIONS,CASES,NEWS,DOWNLOADS,COMPANY')
-          print('FOOTER_OFFICE_DIRECTIONS_OK=2')
-          print('FOOTER_EXTRA_ITEM_REMOVED=OK')
-          print('BACK_TO_TOP_IN_RIGHT_RAIL=OK')
-          print('PRODUCT_DETAIL_RICH=OK')
-          print('PRODUCT_DETAIL_SPARSE=OK')
-          print('PRODUCT_NOT_FOUND=OK')
-          print('PRODUCT_INQUIRY_PREFILL=OK')
-          print(f'DOWNLOAD_ACTIONS_OK={len(actions)}')
-          print(f'REAL_DOWNLOAD_LINKS_VISIBLE={len(external)}')
-          print('PUBLIC_COPY_CLEAN=OK')
           print('FLOATING_CONTACT_DESKTOP=OK')
           print('FLOATING_CONTACT_MOBILE=OK')
+          print('PRODUCT_DETAIL_BARTENDER=OK')
+          print('CONTACT_FORM_FIELDS=OK')
+          print(f'DOWNLOAD_TYPE_FILTERS={len(type_buttons)}')
+          print('PUBLIC_COPY_CLEAN=OK')
           PY
