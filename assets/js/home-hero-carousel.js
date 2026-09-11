@@ -3,13 +3,13 @@
   if(window.__fbHomeHeroCarousel)return;window.__fbHomeHeroCarousel=true;
 
   const DEFAULT={
-    enabled:true,autoplay:true,interval:5000,showControls:true,
+    enabled:true,autoplay:true,interval:3500,showControls:true,
     eyebrow:'萬里資訊股份有限公司',
     title:'企業條碼設備與\n自動識別整合服務',
     accentLine:1,
     intro:'從標籤列印、條碼掃描、RFID、企業行動電腦，到標籤耗材、設備維修與現場系統整合，依實際作業需求提供完整服務。',
     primaryText:'查看產品資訊',primaryUrl:'products.html',secondaryText:'了解系統方案',secondaryUrl:'solutions.html',
-    productIds:['zebra-zt610-zt620','zebra-zt411-zt421','zebra-ds4678-xd','fastech-ft-yx510','honeywell-xenon-1900-1902','tsc-mh241-mh341-mh641']
+    productIds:['zebra-zt610-zt620','fastech-ft-yx510','zebra-zt411-zt421','zebra-ds4678-xd','honeywell-xenon-1900-1902','tsc-mh241-mh341-mh641']
   };
   const IMAGES={
     'zebra-zt610-zt620':'assets/images/products/zebra-zt610-zt620.jpg',
@@ -47,21 +47,23 @@
   function renderStage(){
     const c=cfg(),box=document.querySelector('.v2-hero-products');if(!box)return;
     if(!c.enabled){box.style.display='';return}
+    box.style.display='';
     const list=selected(c);if(!list.length)return;
     index=((index%list.length)+list.length)%list.length;
     const p0=list[index],p1=list[(index+1)%list.length],p2=list[(index+2)%list.length];
     const controls=c.showControls&&list.length>1?`<div class="hero-rotate-controls"><button type="button" data-hero-prev aria-label="上一個產品">‹</button><div class="hero-rotate-dots">${list.map((_,i)=>`<button type="button" data-hero-dot="${i}" class="${i===index?'active':''}" aria-label="切換到第 ${i+1} 個產品"></button>`).join('')}</div><button type="button" data-hero-next aria-label="下一個產品">›</button></div>`:'';
     box.innerHTML=`${tile(p0,'main')}<div class="v2-stage-side">${tile(p1,'side')}${tile(p2,'side')}</div>${controls}`;
-    box.querySelector('[data-hero-prev]')?.addEventListener('click',()=>{index--;renderStage();restart()});
-    box.querySelector('[data-hero-next]')?.addEventListener('click',()=>{index++;renderStage();restart()});
-    box.querySelectorAll('[data-hero-dot]').forEach(b=>b.addEventListener('click',()=>{index=+b.dataset.heroDot;renderStage();restart()}));
+    box.querySelector('[data-hero-prev]')?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();index--;renderStage();restart()});
+    box.querySelector('[data-hero-next]')?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();index++;renderStage();restart()});
+    box.querySelectorAll('[data-hero-dot]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();index=+b.dataset.heroDot;renderStage();restart()}));
     box.onmouseenter=()=>stop();box.onmouseleave=()=>start();
   }
   function stop(){if(timer){clearInterval(timer);timer=null}}
-  function start(){stop();const c=cfg(),list=selected(c);if(!c.enabled||!c.autoplay||list.length<2)return;timer=setInterval(()=>{index++;renderStage()},Math.max(2500,Number(c.interval)||5000))}
+  function start(){stop();const c=cfg(),list=selected(c);if(!c.enabled||!c.autoplay||list.length<2)return;timer=setInterval(()=>{index++;renderStage()},Math.max(2500,Number(c.interval)||3500))}
   function restart(){start()}
   function run(){if(document.body.dataset.page!=='home')return;const c=cfg();patchCopy(c);renderStage();start()}
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(run,80),{once:true});
-  if(document.readyState!=='loading')setTimeout(run,80);
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(run,40),{once:true});
+  if(document.readyState!=='loading')setTimeout(run,40);
+  window.addEventListener('load',()=>setTimeout(run,80),{once:true});
   window.addEventListener('farbeyound:datachange',()=>{index=0;setTimeout(run,50)});
 })();
