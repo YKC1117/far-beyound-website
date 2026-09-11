@@ -3,17 +3,24 @@
   const URL='https://papqrnqbfauwuipjwwdh.supabase.co';
   const KEY='sb_publishable_dDCh9hy183BipvxCbuZdiA_qPonsyxe';
   const label=s=>({direct:'直接/站內',google:'Google 來源',bing:'Bing 來源',ai:'AI 助理導流',social:'社群導流',referral:'其他網站'}[s]||s||'未知');
-  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
   const pct=(n,p)=>!p?(n?'新':'—'):`${Math.round((n-p)/p*100)>0?'+':''}${Math.round((n-p)/p*100)}%`;
   async function load(days){
     const r=await fetch(URL+'/rest/v1/rpc/product_analytics_source_public_summary',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json'},body:JSON.stringify({period_days:days})});
     if(!r.ok)throw new Error('HTTP '+r.status);return r.json();
   }
+  function loadInquiryModule(){
+    if(document.querySelector('script[data-admin-inquiries]'))return;
+    const s=document.createElement('script');
+    s.src='assets/js/admin-inquiries.js?v=20260911-2324';
+    s.dataset.adminInquiries='1';
+    document.body.appendChild(s);
+  }
   function ensure(){
     const box=document.getElementById('adminAnalytics');if(!box||document.getElementById('analyticsSourcePanel'))return;
     const panel=document.createElement('div');panel.id='analyticsSourcePanel';panel.innerHTML='<h3 style="margin:24px 0 10px">流量來源</h3><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>來源</th><th>本期點閱</th><th>前期</th><th>變化</th></tr></thead><tbody id="analyticsSourceRows"><tr><td colspan="4">正在讀取來源資料…</td></tr></tbody></table></div><div id="analyticsSourceNote" class="admin-usage-note"><b>AI SEO：</b>AI 助理導流只代表可辨識的 ChatGPT、Perplexity、Claude、Gemini、Copilot 等轉介流量，不代表 AI 提及或引用次數。</div>';
     const status=document.getElementById('analyticsStatus');if(status)status.after(panel);else box.appendChild(panel);
-    document.getElementById('analyticsPeriod')?.addEventListener('change',refresh);refresh();
+    document.getElementById('analyticsPeriod')?.addEventListener('change',refresh);refresh();loadInquiryModule();
   }
   async function refresh(){
     const days=Number(document.getElementById('analyticsPeriod')?.value||30),body=document.getElementById('analyticsSourceRows'),note=document.getElementById('analyticsSourceNote');if(!body)return;
