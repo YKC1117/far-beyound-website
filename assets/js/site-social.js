@@ -6,7 +6,7 @@ window.FBSocialLinks = {
 (function(){
   if(window.__fbAdminRuntimeLoaded)return;
   window.__fbAdminRuntimeLoaded=true;
-  ['assets/js/site-content-control.js?v=20260911b','assets/js/site-display-control.js?v=20260911b','assets/js/site-page-settings.js?v=20260911a'].forEach(function(src){
+  ['assets/js/site-content-control.js?v=20260911c','assets/js/site-display-control.js?v=20260911c','assets/js/site-page-settings.js?v=20260911c'].forEach(function(src){
     if(document.querySelector('script[src^="'+src.split('?')[0]+'"]'))return;
     var s=document.createElement('script');s.src=src;document.head.appendChild(s);
   });
