@@ -120,3 +120,16 @@ GitHub Pages 測試站目前使用 `robots.txt: Disallow: /`，避免尚未核�
 - 上傳檔限制副檔名、MIME、大小並重新命名
 - 後台操作寫入 audit_logs
 - production `.env` 不提交到 Git
+
+## 9. 舊網站完全斷開原則（硬性要求）
+
+舊網站 `www.far-beyound.com.tw` 在移轉期間只允許作為「資料來源」，不得成為新版網站的執行期依賴。
+
+- 可以從舊網站擷取文字、產品資料、圖片、型錄、手冊與下載資訊。
+- 圖片、PDF、公司自行提供的文件與其他必須長期保留的資產，擷取後必須存到新版主機、公司控制的物件儲存或其他可長期管理的空間。
+- 新版前台不得以 `img/src`、`script/src`、`link/href`、CSS `url()`、JavaScript `fetch()` 或下載按鈕直接依賴舊網站主機。
+- 第三方原廠官方來源（例如 Zebra、TSC、Argox、GoDEX 等）可作為外部來源，但它們與舊網站主機必須完全分離；重要文件若需保證長期可用，正式上線前仍應鏡像到公司控制的儲存空間。
+- 舊網址可以暫時保留為匯入比對用的 metadata／識別欄位，但不能拿來載入資源或導覽。
+- 切站驗收必須以「舊網站主機完全離線」為假設，首頁、產品圖片、產品文件、下載中心、聯絡方式、系統方案、案例與新聞都要正常。
+
+Repository 內的 `tools/audit_legacy_independence.py` 與 GitHub Actions `Legacy site independence` 會自動檢查公開網站是否又出現舊主機的執行期依賴；檢查失敗時不得視為可上線版本。
