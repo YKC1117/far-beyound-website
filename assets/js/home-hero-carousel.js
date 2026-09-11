@@ -3,7 +3,7 @@
   if(window.__fbHomeHeroCarousel)return;window.__fbHomeHeroCarousel=true;
 
   const DEFAULT={
-    enabled:true,autoplay:true,interval:3500,showControls:true,
+    enabled:true,autoplay:true,interval:3500,showControls:true,showCredibility:false,
     eyebrow:'萬里資訊股份有限公司',
     title:'企業條碼設備與\n自動識別整合服務',
     accentLine:1,
@@ -38,6 +38,7 @@
     if(buttons[0]){buttons[0].textContent=c.primaryText||DEFAULT.primaryText;buttons[0].href=c.primaryUrl||DEFAULT.primaryUrl}
     if(buttons[1]){buttons[1].textContent=c.secondaryText||DEFAULT.secondaryText;buttons[1].href=c.secondaryUrl||DEFAULT.secondaryUrl}
   }
+  function patchCredibility(c){const strip=document.querySelector('.v5-credibility');if(strip)strip.style.display=c.showCredibility?'':'none'}
   function selected(c){const map=productMap();const ids=(c.productIds||DEFAULT.productIds).filter(id=>map.has(id));return ids.map(id=>map.get(id)).filter(Boolean)}
   function tile(p,kind){
     const src=photo(p),img=src?`<img src="${esc(src)}" alt="${esc(p.name||'產品')}" loading="eager">`:'<div class="home-hero-fallback">PRODUCT</div>';
@@ -61,7 +62,7 @@
   function stop(){if(timer){clearInterval(timer);timer=null}}
   function start(){stop();const c=cfg(),list=selected(c);if(!c.enabled||!c.autoplay||list.length<2)return;timer=setInterval(()=>{index++;renderStage()},Math.max(2500,Number(c.interval)||3500))}
   function restart(){start()}
-  function run(){if(document.body.dataset.page!=='home')return;const c=cfg();patchCopy(c);renderStage();start()}
+  function run(){if(document.body.dataset.page!=='home')return;const c=cfg();patchCopy(c);patchCredibility(c);renderStage();start()}
   document.addEventListener('DOMContentLoaded',()=>setTimeout(run,40),{once:true});
   if(document.readyState!=='loading')setTimeout(run,40);
   window.addEventListener('load',()=>setTimeout(run,80),{once:true});
