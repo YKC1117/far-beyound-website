@@ -66,7 +66,7 @@ jobs:
               assert img and img.get('src') and img.get('alt'), f'Brand has no logo: {a.get_text(" ",strip=True)}'
 
           nav_labels=[a.get_text(' ',strip=True).replace('⌄','').strip() for a in home.select('.desktop-nav > .nav-item > a')]
-          assert nav_labels[:6]==['產品資訊','系統方案','客戶案例','最新消息','下載服務','公司資訊'], nav_labels
+          assert nav_labels[:6]==['產品資訊','下載服務','系統方案','客戶案例','最新消息','聯絡我們'], nav_labels
           rail=home.select_one('.quick-contact'); mobile=home.select_one('.mobile-contact-bar')
           assert rail and mobile, 'Floating contact controls missing'
           expected_line='https://line.me/R/ti/p/@453haosc'
