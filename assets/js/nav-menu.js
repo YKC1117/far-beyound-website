@@ -10,107 +10,28 @@
   function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
   function uniq(arr){return [...new Set(arr.filter(Boolean))]}
   function caret(){return '<span class="nav-drop-caret" aria-hidden="true">⌄</span>'}
-  function item(href,title,sub=''){
-    return `<a class="subnav-link" href="${href}"><span><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span><span class="subnav-arrow">→</span></a>`;
-  }
-  function panel(title,en,body,allHref,allLabel='查看全部'){
-    return `<div class="subnav-panel"><div class="subnav-panel-head"><div><small>${esc(en)}</small><b>${esc(title)}</b></div><a href="${allHref}">${esc(allLabel)} →</a></div><div class="subnav-grid">${body}</div></div>`;
-  }
-
+  function item(href,title,sub=''){return `<a class="subnav-link" href="${href}"><span><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span><span class="subnav-arrow">→</span></a>`}
+  function panel(title,en,body,allHref,allLabel='查看全部'){return `<div class="subnav-panel"><div class="subnav-panel-head"><div><small>${esc(en)}</small><b>${esc(title)}</b></div><a href="${allHref}">${esc(allLabel)} →</a></div><div class="subnav-grid">${body}</div></div>`}
   function desktopNav(d){
-    const cats=(d.categories||[]).slice(0,8);
-    const brands=uniq((d.downloads||[]).map(x=>x.brand));
-    const solutions=d.solutions||[];
-    const cases=(d.cases||[]).slice(0,6);
-    const news=(d.news||[]).slice(0,5);
-
-    const productMega=`<div class="nav-item has-mega">
-      <a href="products.html">產品資訊 ${caret()}</a>
-      <div class="mega-menu">
-        <div class="mega-head"><div><span class="eyebrow">PRODUCT INFORMATION</span><h3>產品與服務</h3></div><a href="products.html" class="text-link">查看所有產品 →</a></div>
-        <div class="mega-grid">${cats.map(c=>`<a href="products.html?category=${encodeURIComponent(c.id)}" class="mega-card"><span class="nav-mega-symbol">${esc((c.name||'').slice(0,1))}</span><span><b>${esc(c.name)}</b><small>${esc(c.en||'')}</small></span></a>`).join('')}</div>
-      </div>
-    </div>`;
-
+    const cats=(d.categories||[]).slice(0,8),brands=uniq((d.downloads||[]).map(x=>x.brand)),solutions=d.solutions||[],cases=(d.cases||[]).slice(0,6),news=(d.news||[]).slice(0,5);
+    const productMega=`<div class="nav-item has-mega"><a href="products.html">產品資訊 ${caret()}</a><div class="mega-menu"><div class="mega-head"><div><span class="eyebrow">PRODUCT INFORMATION</span><h3>產品與服務</h3></div><a href="products.html" class="text-link">查看所有產品 →</a></div><div class="mega-grid">${cats.map(c=>`<a href="products.html?category=${encodeURIComponent(c.id)}" class="mega-card"><span class="nav-mega-symbol">${esc((c.name||'').slice(0,1))}</span><span><b>${esc(c.name)}</b><small>${esc(c.en||'')}</small></span></a>`).join('')}</div></div></div>`;
     const downloads=`<div class="nav-item has-subnav"><a href="downloads.html">下載服務 ${caret()}</a>${panel('下載服務','DOWNLOAD CENTER',brands.map(b=>item(`downloads.html?brand=${encodeURIComponent(b)}`,b,'驅動、軟體、工具與文件')).join(''),'downloads.html')}</div>`;
     const sols=`<div class="nav-item has-subnav"><a href="solutions.html">系統方案 ${caret()}</a>${panel('系統方案','SYSTEM SOLUTIONS',solutions.map(s=>item(`solutions.html#${encodeURIComponent(s.id)}`,s.name,s.en||'')).join(''),'solutions.html')}</div>`;
     const caseNav=`<div class="nav-item has-subnav"><a href="cases.html">客戶案例 ${caret()}</a>${panel('客戶案例','OUR CASES',cases.map(c=>item('cases.html',c.name,c.system||'')).join(''),'cases.html')}</div>`;
     const newsNav=`<div class="nav-item has-subnav"><a href="news.html">最新消息 ${caret()}</a>${panel('最新消息','LATEST NEWS',news.map(n=>{const slug=slugMap[n.title];return item(slug?`news-detail.html?id=${slug}`:'news.html',n.title,`${n.date||''} · ${n.type||''}`)}).join(''),'news.html')}</div>`;
-    const company=`<div class="nav-item has-subnav"><a href="about.html">公司資訊 ${caret()}</a>${panel('公司資訊','ABOUT FAR-BEYOUND',[
-      item('about.html','關於我們','公司與服務介紹'),
-      item('locations.html','服務據點','台北、台南與中國服務資訊'),
-      item('contact.html','聯絡我們','產品、耗材與系統洽詢')
-    ].join(''),'about.html','了解萬里資訊')}</div>`;
-
+    const company=`<div class="nav-item has-subnav"><a href="about.html">公司資訊 ${caret()}</a>${panel('公司資訊','ABOUT FAR-BEYOUND',[item('about.html','關於我們','公司與服務介紹'),item('locations.html','服務據點','台北、台南與中國服務資訊'),item('contact.html','聯絡我們','產品、耗材與系統洽詢')].join(''),'about.html','了解萬里資訊')}</div>`;
     return productMega+sols+caseNav+newsNav+downloads+company;
   }
-
   function mobileNav(d){
-    const cats=(d.categories||[]).slice(0,8);
-    const brands=uniq((d.downloads||[]).map(x=>x.brand));
-    const solutions=d.solutions||[];
-    const cases=(d.cases||[]).slice(0,6);
-    const news=(d.news||[]).slice(0,5);
+    const cats=(d.categories||[]).slice(0,8),brands=uniq((d.downloads||[]).map(x=>x.brand)),solutions=d.solutions||[],cases=(d.cases||[]).slice(0,6),news=(d.news||[]).slice(0,5);
     function group(title,href,links){return `<details class="mobile-nav-group"><summary><span>${title}</span><span>＋</span></summary><div class="mobile-nav-sub"><a class="mobile-nav-all" href="${href}">查看全部 ${title}</a>${links}</div></details>`}
-    return `<a href="index.html">首頁</a>`+
-      group('產品資訊','products.html',cats.map(c=>`<a href="products.html?category=${encodeURIComponent(c.id)}">${esc(c.name)}</a>`).join(''))+
-      group('系統方案','solutions.html',solutions.map(s=>`<a href="solutions.html#${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join(''))+
-      group('客戶案例','cases.html',cases.map(c=>`<a href="cases.html">${esc(c.name)}<small>${esc(c.system||'')}</small></a>`).join(''))+
-      group('最新消息','news.html',news.map(n=>{const slug=slugMap[n.title];return `<a href="${slug?`news-detail.html?id=${slug}`:'news.html'}">${esc(n.title)}</a>`}).join(''))+
-      group('下載服務','downloads.html',brands.map(b=>`<a href="downloads.html?brand=${encodeURIComponent(b)}">${esc(b)}</a>`).join(''))+
-      group('公司資訊','about.html',`<a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">聯絡我們</a>`);
+    return `<a href="index.html">首頁</a>`+group('產品資訊','products.html',cats.map(c=>`<a href="products.html?category=${encodeURIComponent(c.id)}">${esc(c.name)}</a>`).join(''))+group('系統方案','solutions.html',solutions.map(s=>`<a href="solutions.html#${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join(''))+group('客戶案例','cases.html',cases.map(c=>`<a href="cases.html">${esc(c.name)}<small>${esc(c.system||'')}</small></a>`).join(''))+group('最新消息','news.html',news.map(n=>{const slug=slugMap[n.title];return `<a href="${slug?`news-detail.html?id=${slug}`:'news.html'}">${esc(n.title)}</a>`}).join(''))+group('下載服務','downloads.html',brands.map(b=>`<a href="downloads.html?brand=${encodeURIComponent(b)}">${esc(b)}</a>`).join(''))+group('公司資訊','about.html',`<a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">聯絡我們</a>`);
   }
-
-  function markCurrent(desktop){
-    const page=document.body.dataset.page||'';
-    const target={
-      products:'products.html',product:'products.html',downloads:'downloads.html',solutions:'solutions.html',cases:'cases.html',
-      news:'news.html','news-detail':'news.html',about:'about.html',locations:'about.html',contact:'about.html','preview-guide':'about.html'
-    }[page]||'';
-    [...desktop.children].forEach(node=>{
-      const a=node.querySelector(':scope > a');
-      const href=(a?.getAttribute('href')||'').split('?')[0].split('#')[0];
-      const active=!!target&&href===target;
-      node.classList.toggle('current',active);
-      a?.classList.toggle('current',active);
-      if(active)a?.setAttribute('aria-current','page');else a?.removeAttribute('aria-current');
-    });
-  }
-
-  function styles(){
-    if(document.getElementById('navEnhancedStyles'))return;
-    const s=document.createElement('style');s.id='navEnhancedStyles';s.textContent=`
-      .desktop-nav>.nav-item{position:relative}
-      .desktop-nav>.nav-item.has-mega{position:static}
-      .nav-drop-caret{margin-left:6px;color:var(--muted);font-size:13px;transition:transform .18s}
-      .has-subnav:hover>a .nav-drop-caret,.has-subnav:focus-within>a .nav-drop-caret,.has-mega:hover>a .nav-drop-caret{transform:rotate(180deg)}
-      .subnav-panel{position:absolute;top:calc(100% - 1px);left:50%;width:430px;transform:translate(-50%,10px);background:#fff;border:1px solid var(--line);border-radius:0 0 18px 18px;box-shadow:0 24px 60px rgba(9,32,59,.18);padding:18px;opacity:0;visibility:hidden;pointer-events:none;transition:.18s;z-index:80}
-      .has-subnav:hover>.subnav-panel,.has-subnav:focus-within>.subnav-panel{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0)}
-      .subnav-panel-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #e8edf2;padding:0 3px 12px;margin-bottom:10px}
-      .subnav-panel-head>div{display:grid}.subnav-panel-head small{font-size:9px;letter-spacing:.15em;color:var(--teal);font-weight:900}.subnav-panel-head b{font-size:18px}.subnav-panel-head>a{font-size:11px;font-weight:900;color:var(--teal)}
-      .subnav-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-      .subnav-link{min-width:0;padding:10px 11px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid transparent;background:#fbfcfd}
-      .subnav-link:hover{background:#f0faf8;border-color:#cde9e5}.subnav-link>span:first-child{display:grid;min-width:0}.subnav-link b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subnav-link small{font-size:9px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subnav-arrow{color:var(--teal);font-size:13px}
-      .nav-mega-symbol{width:38px;height:38px;border-radius:10px;background:var(--soft);color:var(--teal);display:grid!important;place-items:center;font-weight:900;font-size:15px;flex:none}
-      .mobile-nav-group{border-bottom:1px solid #e6edf2}.mobile-nav-group summary{list-style:none;padding:15px 0;display:flex;justify-content:space-between;align-items:center;font-weight:900;cursor:pointer}.mobile-nav-group summary::-webkit-details-marker{display:none}.mobile-nav-group[open] summary span:last-child{transform:rotate(45deg)}.mobile-nav-group summary span:last-child{transition:.16s;color:var(--teal)}
-      .mobile-nav-sub{display:grid;padding:0 0 12px 12px}.drawer-links .mobile-nav-sub a{padding:9px 10px!important;font-size:12px!important;color:#607286!important;border:0!important}.drawer-links .mobile-nav-sub a:hover{background:#f2f7f8!important;color:var(--teal)!important}.drawer-links .mobile-nav-sub a small{display:block;font-size:9px;color:#8a98a7;margin-top:2px}.drawer-links .mobile-nav-all{font-weight:900!important;color:var(--teal)!important}
-      @media(max-width:1180px) and (min-width:981px){.desktop-nav>a,.nav-item>a{padding-left:9px!important;padding-right:9px!important;font-size:12px!important}.header-inner{gap:15px!important}.header-actions .btn{display:none}.subnav-panel{width:390px}}
-    `;document.head.appendChild(s);
-  }
-
-  function apply(){
-    const d=window.FBStore?.getData?.();
-    const desktop=document.querySelector('.desktop-nav');
-    const mobile=document.querySelector('.drawer-links');
-    if(!d||!desktop||!mobile)return false;
-    styles();
-    desktop.innerHTML=desktopNav(d);
-    mobile.innerHTML=mobileNav(d);
-    markCurrent(desktop);
-    return true;
-  }
-
-  function start(){let tries=0;const timer=setInterval(()=>{tries++;if(apply()||tries>20)clearInterval(timer)},40)}
+  function markCurrent(desktop){const page=document.body.dataset.page||'',target={products:'products.html',product:'products.html',downloads:'downloads.html',solutions:'solutions.html',cases:'cases.html',news:'news.html','news-detail':'news.html',about:'about.html',locations:'about.html',contact:'about.html','preview-guide':'about.html'}[page]||'';[...desktop.children].forEach(node=>{const a=node.querySelector(':scope > a'),href=(a?.getAttribute('href')||'').split('?')[0].split('#')[0],active=!!target&&href===target;node.classList.toggle('current',active);a?.classList.toggle('current',active);if(active)a?.setAttribute('aria-current','page');else a?.removeAttribute('aria-current')})}
+  function styles(){if(document.getElementById('navEnhancedStyles'))return;const s=document.createElement('style');s.id='navEnhancedStyles';s.textContent=`.desktop-nav>.nav-item{position:relative}.desktop-nav>.nav-item.has-mega{position:static}.nav-drop-caret{margin-left:6px;color:var(--muted);font-size:13px;transition:transform .18s}.has-subnav:hover>a .nav-drop-caret,.has-subnav:focus-within>a .nav-drop-caret,.has-mega:hover>a .nav-drop-caret{transform:rotate(180deg)}.subnav-panel{position:absolute;top:calc(100% - 1px);left:50%;width:430px;transform:translate(-50%,10px);background:#fff;border:1px solid var(--line);border-radius:0 0 18px 18px;box-shadow:0 24px 60px rgba(9,32,59,.18);padding:18px;opacity:0;visibility:hidden;pointer-events:none;transition:.18s;z-index:80}.has-subnav:hover>.subnav-panel,.has-subnav:focus-within>.subnav-panel{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0)}.subnav-panel-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #e8edf2;padding:0 3px 12px;margin-bottom:10px}.subnav-panel-head>div{display:grid}.subnav-panel-head small{font-size:9px;letter-spacing:.15em;color:var(--teal);font-weight:900}.subnav-panel-head b{font-size:18px}.subnav-panel-head>a{font-size:11px;font-weight:900;color:var(--teal)}.subnav-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.subnav-link{min-width:0;padding:10px 11px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid transparent;background:#fbfcfd}.subnav-link:hover{background:#f0faf8;border-color:#cde9e5}.subnav-link>span:first-child{display:grid;min-width:0}.subnav-link b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subnav-link small{font-size:9px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subnav-arrow{color:var(--teal);font-size:13px}.nav-mega-symbol{width:38px;height:38px;border-radius:10px;background:var(--soft);color:var(--teal);display:grid!important;place-items:center;font-weight:900;font-size:15px;flex:none}.mobile-nav-group{border-bottom:1px solid #e6edf2}.mobile-nav-group summary{list-style:none;padding:15px 0;display:flex;justify-content:space-between;align-items:center;font-weight:900;cursor:pointer}.mobile-nav-group summary::-webkit-details-marker{display:none}.mobile-nav-group[open] summary span:last-child{transform:rotate(45deg)}.mobile-nav-group summary span:last-child{transition:.16s;color:var(--teal)}.mobile-nav-sub{display:grid;padding:0 0 12px 12px}.drawer-links .mobile-nav-sub a{padding:9px 10px!important;font-size:12px!important;color:#607286!important;border:0!important}.drawer-links .mobile-nav-sub a:hover{background:#f2f7f8!important;color:var(--teal)!important}.drawer-links .mobile-nav-sub a small{display:block;font-size:9px;color:#8a98a7;margin-top:2px}.drawer-links .mobile-nav-all{font-weight:900!important;color:var(--teal)!important}@media(max-width:1180px) and (min-width:981px){.desktop-nav>a,.nav-item>a{padding-left:9px!important;padding-right:9px!important;font-size:12px!important}.header-inner{gap:15px!important}.header-actions .btn{display:none}.subnav-panel{width:390px}}`;document.head.appendChild(s)}
+  function apply(){const d=window.FBStore?.getData?.(),desktop=document.querySelector('.desktop-nav'),mobile=document.querySelector('.drawer-links');if(!d||!desktop||!mobile)return false;styles();desktop.innerHTML=desktopNav(d);mobile.innerHTML=mobileNav(d);markCurrent(desktop);setTimeout(()=>window.FBFrontFeatures?.apply?.(),20);return true}
+  function loadFeatureControl(){if(document.querySelector('script[data-front-feature-control]'))return;const s=document.createElement('script');s.src='assets/js/front-feature-control.js?v=20260912-0647';s.dataset.frontFeatureControl='1';document.body.appendChild(s)}
+  function start(){loadFeatureControl();let tries=0;const timer=setInterval(()=>{tries++;if(apply()||tries>20)clearInterval(timer)},40)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
   window.addEventListener('farbeyound:datachange',()=>setTimeout(apply,20));
 })();
