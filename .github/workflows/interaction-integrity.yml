@@ -43,7 +43,8 @@ jobs:
           cards=products.select('#productGrid a.product-card')
           assert len(cards)==150, f'Expected 150 product cards, got {len(cards)}'
 
-          tokens=[]; bad=[]
+          tokens=[]; bad=[]; fastech_count=0
+          pseudo_brands={'標籤貼紙','耐溫貼紙','碳帶','代印服務','標籤軟體','外掛紙捲架'}
           for card in cards:
               href=(card.get('href') or '').strip()
               token=parse_qs(urlparse(href).query).get('id',[''])[0]
@@ -54,6 +55,10 @@ jobs:
               ascii_brand=re.sub(r'[^a-z0-9]+','-',brand.lower()).strip('-')
               if ascii_brand and not token.startswith(ascii_brand+'-') and token!=ascii_brand:
                   bad.append(f'{brand} token does not lead with brand: {token}')
+              if brand in pseudo_brands:
+                  fastech_count += 1
+                  if not token.startswith('fastech-'):
+                      bad.append(f'unbranded item must use FASTECH prefix: {brand} -> {token}')
               if not img or not (img.get('src') or '').strip(): bad.append(f'missing image: {token}')
               else:
                   src=unquote((img.get('src') or '').split('?',1)[0].split('#',1)[0]).lstrip('/')
@@ -61,6 +66,14 @@ jobs:
                   if not p.is_file() or p.stat().st_size<2500: bad.append(f'invalid local image: {token} -> {src}')
               tokens.append(token)
           assert len(set(tokens))==150, 'Product public slugs are not unique'
+          assert fastech_count==26, f'Expected 26 unbranded FASTECH items, got {fastech_count}'
+          expected_fastech={
+              'fastech-coated-label','fastech-thermal-label','fastech-security-label',
+              'fastech-resin-ribbon','fastech-wax-resin-ribbon','fastech-wax-ribbon','fastech-color-ribbon',
+              'fastech-label-printing','fastech-bartender','fastech-codesoft','fastech-roll-holder'
+          }
+          missing_fastech=expected_fastech-set(tokens)
+          assert not missing_fastech, f'Expected FASTECH keyword slugs missing: {sorted(missing_fastech)}'
           assert not bad, '\n'.join(bad[:30])
 
           brands=home.select('.brand-portfolio a.brand-wordmark')
@@ -136,6 +149,7 @@ jobs:
 
           print('PRODUCT_CARDS_OK=150')
           print('UNIQUE_READABLE_PRODUCT_SLUGS=150')
+          print(f'FASTECH_UNBRANDED_SLUGS_OK={fastech_count}')
           print('LOCAL_PRODUCT_IMAGES_OK=150')
           print('CLICKABLE_BRAND_ENTRIES_OK=12')
           print('COMPACT_HOMEPAGE=OK')
