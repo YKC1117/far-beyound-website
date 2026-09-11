@@ -1,13 +1,1 @@
-// Generated from the current official Far-beyound website. Do not hand-edit.
-window.FBSocialLinks = {
-  "generatedAt": "2026-09-11T01:53:09Z",
-  "youtube": "https://www.youtube.com/@FastechTaiwan"
-};
-(function(){
-  if(window.__fbAdminRuntimeLoaded)return;
-  window.__fbAdminRuntimeLoaded=true;
-  ['assets/js/cloud-sync.js?v=20260911a','assets/js/site-content-control.js?v=20260911c','assets/js/site-display-control.js?v=20260911c','assets/js/site-page-settings.js?v=20260911c'].forEach(function(src){
-    if(document.querySelector('script[src^="'+src.split('?')[0]+'"]'))return;
-    var s=document.createElement('script');s.src=src;document.head.appendChild(s);
-  });
-})();
+window.FBSocialLinks=window.FBSocialLinks||{youtube:'https://www.youtube.com/@FastechTaiwan'};(function(){function sync(){const d=window.FBStore?.getData?.(),site=d?.site||{};if(site.youtube)window.FBSocialLinks.youtube=site.youtube;if(site.line)window.FBSocialLinks.line=site.line}function load(src,key){if(document.querySelector(`script[data-${key}]`)||document.querySelector(`script[src^="${src.split('?')[0]}"]`))return;const s=document.createElement('script');s.src=src;s.setAttribute(`data-${key}`,'1');document.head.appendChild(s)}function run(){sync();load('assets/js/cloud-sync.js?v=20260912-0824','social-cloud-sync');load('assets/js/site-content-control.js?v=20260912-0716','social-content');load('assets/js/site-display-control.js?v=20260912-0906','social-display');load('assets/js/page-settings-control.js?v=20260912-0818','social-pages')}document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(sync,400)});window.addEventListener('load',()=>setTimeout(sync,120));window.addEventListener('farbeyound:datachange',()=>setTimeout(sync,60));})();
