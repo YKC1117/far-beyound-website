@@ -26,4 +26,22 @@ body[data-page="admin"] .admin-nav a.admin-important:after{content:'常用';marg
 body[data-page="admin"] .admin-usage-note{margin:0 0 16px;padding:12px 14px;border:1px solid #dfe8ec;border-radius:12px;background:#fff;color:#667b88;font-size:11px;line-height:1.65}
 body[data-page="admin"] .admin-usage-note b{color:#24445a}
 body[data-page="admin"] #homeHeroAdmin,#siteControlAdmin,#contentControlAdmin,#siteStructureAdmin,#products,#adminExtended,#resourceAdmin{scroll-margin-top:74px}
-@media(max-width:780px){body[data-page="admin"] .admin-section-jump{top:0;overflow-x:auto;flex-wrap:nowrap}body[data-page="admin"] .admin-section-jump:before{display:none}body[data-page="admin"] .admin-step-badge{grid-template-columns:auto auto}body[data-page="admin"] .admin-step-badge>small{grid-column:1/-1}body[data-page="admin"] .admin-head-actions{width:100%;justify-content:flex-start}}
+body[data-page="admin"] .admin-product-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+body[data-page="admin"] .admin-product-tools{display:grid;grid-template-columns:minmax(220px,1.4fr) minmax(150px,.8fr) auto auto;gap:8px;align-items:center;padding:12px 14px;border-bottom:1px solid #e8eef2;background:#fbfcfd}
+body[data-page="admin"] .admin-product-tools input[type="search"],body[data-page="admin"] .admin-product-tools select{width:100%;min-height:38px;padding:0 10px}
+body[data-page="admin"] .admin-product-tools .featured-only{display:flex;align-items:center;gap:7px;min-height:38px;padding:0 10px;border:1px solid #dce5ea;border-radius:9px;background:#fff;color:#526a79;font-size:11px;font-weight:800;white-space:nowrap}
+body[data-page="admin"] .admin-product-tools .featured-only input{width:16px;height:16px}
+body[data-page="admin"] .admin-product-count{color:#718692;font-size:10px;font-weight:900;white-space:nowrap}
+body[data-page="admin"] .admin-product-empty{padding:18px;text-align:center;color:#788c98;font-size:11px}
+body[data-page="admin"] .admin-maintenance{border-color:#eadfce;background:#fffdf9}
+body[data-page="admin"] .admin-maintenance summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;cursor:pointer;list-style:none;font-weight:900;color:#5b4b38}
+body[data-page="admin"] .admin-maintenance summary::-webkit-details-marker{display:none}
+body[data-page="admin"] .admin-maintenance summary:after{content:'＋';font-size:18px;color:#9b7a4c}
+body[data-page="admin"] .admin-maintenance[open] summary:after{content:'−'}
+body[data-page="admin"] .admin-maintenance-body{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 20px 18px;border-top:1px solid #f0e6d7}
+body[data-page="admin"] .admin-maintenance-copy{padding-top:16px;color:#756753;font-size:11px;line-height:1.65}
+body[data-page="admin"] .admin-maintenance-copy b{display:block;color:#5b4933;font-size:12px}
+body[data-page="admin"] .btn-danger-soft{border:1px solid #e4c9c5;background:#fff;color:#a63f34}
+body[data-page="admin"] .btn-danger-soft:hover{background:#fff3f1;border-color:#dbaaa3}
+@media(max-width:1000px){body[data-page="admin"] .admin-product-tools{grid-template-columns:1fr 1fr}body[data-page="admin"] .admin-product-count{justify-self:end}}
+@media(max-width:780px){body[data-page="admin"] .admin-section-jump{top:0;overflow-x:auto;flex-wrap:nowrap}body[data-page="admin"] .admin-section-jump:before{display:none}body[data-page="admin"] .admin-step-badge{grid-template-columns:auto auto}body[data-page="admin"] .admin-step-badge>small{grid-column:1/-1}body[data-page="admin"] .admin-head-actions{width:100%;justify-content:flex-start}body[data-page="admin"] .admin-product-tools{grid-template-columns:1fr}body[data-page="admin"] .admin-product-count{justify-self:start}body[data-page="admin"] .admin-maintenance-body{align-items:flex-start;flex-direction:column}}
