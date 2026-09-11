@@ -12,12 +12,20 @@
     adminExtended:{step:'06',tag:'內容',hint:'最新消息、客戶案例與公司基本資料'},
     resourceAdmin:{step:'07',tag:'資源',hint:'下載中心與系統方案'}
   };
+  const LOW_FREQ=['contentControlAdmin','siteStructureAdmin','adminExtended','resourceAdmin'];
+  const FOLD_KEY='farbeyoundAdminFoldV2';
   let dirty=false;
+
+  function readFold(){try{return JSON.parse(localStorage.getItem(FOLD_KEY)||'{}')||{}}catch(e){return {}}}
+  function writeFold(id,folded){const s=readFold();s[id]=!!folded;localStorage.setItem(FOLD_KEY,JSON.stringify(s))}
+  function shouldFold(id){const s=readFold();return Object.prototype.hasOwnProperty.call(s,id)?!!s[id]:LOW_FREQ.includes(id)}
+
   function reorder(){
     const main=$('.admin-main');if(!main)return;
     let anchor=$('.admin-section-jump')||$('.admin-top');
     ORDER.forEach(id=>{const el=document.getElementById(id);if(!el||!anchor)return;anchor.insertAdjacentElement('afterend',el);anchor=el});
   }
+
   function decorate(){
     Object.entries(META).forEach(([id,m])=>{
       const host=document.getElementById(id);if(!host)return;
@@ -30,25 +38,68 @@
     });
     const hero=$('#homeHeroAdmin .admin-panel');if(hero)hero.classList.add('admin-priority-panel');
   }
-  function collapsible(){
-    ['siteControlAdmin','contentControlAdmin','siteStructureAdmin'].forEach(id=>{
-      const panel=$(`#${id} > .admin-panel`);if(!panel||panel.dataset.foldReady)return;
-      panel.dataset.foldReady='1';
-      const head=$('.admin-panel-head',panel);if(!head)return;
-      const action=document.createElement('button');action.type='button';action.className='admin-fold-btn';action.setAttribute('aria-expanded','true');action.innerHTML='收合 <span>−</span>';
-      const old=head.querySelector(':scope > a.btn, :scope > button.btn');
-      const box=document.createElement('div');box.className='admin-head-actions';if(old)box.appendChild(old);box.appendChild(action);head.appendChild(box);
-      action.onclick=()=>{const folded=panel.classList.toggle('is-folded');action.setAttribute('aria-expanded',folded?'false':'true');action.innerHTML=folded?'展開 <span>＋</span>':'收合 <span>−</span>'};
-    });
+
+  function setPanelFold(panel,id,folded,button){
+    panel.classList.toggle('is-folded',folded);
+    if(button){button.setAttribute('aria-expanded',folded?'false':'true');button.innerHTML=folded?'展開 <span>＋</span>':'收合 <span>−</span>'}
+    writeFold(id,folded);
   }
+
+  function makePanelCollapsible(id,defaultFold=false){
+    const panel=$(`#${id} > .admin-panel`);if(!panel||panel.dataset.foldReady)return;
+    panel.dataset.foldReady='1';
+    const head=$('.admin-panel-head',panel);if(!head)return;
+    const action=document.createElement('button');action.type='button';action.className='admin-fold-btn';
+    const old=head.querySelector(':scope > a.btn, :scope > button.btn');
+    let box=head.querySelector(':scope > .admin-head-actions');
+    if(!box){box=document.createElement('div');box.className='admin-head-actions';if(old)box.appendChild(old);head.appendChild(box)}
+    box.appendChild(action);
+    const folded=defaultFold?shouldFold(id):false;
+    setPanelFold(panel,id,folded,action);
+    action.onclick=()=>setPanelFold(panel,id,!panel.classList.contains('is-folded'),action);
+  }
+
+  function makeGroupCollapsible(id,title,desc){
+    const host=document.getElementById(id);if(!host||host.dataset.groupFoldReady)return;
+    host.dataset.groupFoldReady='1';host.classList.add('admin-lowfreq-host');
+    const bar=document.createElement('div');bar.className='admin-group-fold';
+    bar.innerHTML=`<div><b>${title}</b><small>${desc}</small></div><button type="button" class="admin-fold-btn" aria-expanded="true">收合 <span>−</span></button>`;
+    host.prepend(bar);
+    const btn=$('button',bar);
+    const apply=(folded)=>{host.classList.toggle('is-group-folded',folded);btn.setAttribute('aria-expanded',folded?'false':'true');btn.innerHTML=folded?'展開 <span>＋</span>':'收合 <span>−</span>';writeFold(id,folded)};
+    apply(shouldFold(id));btn.onclick=()=>apply(!host.classList.contains('is-group-folded'));
+  }
+
+  function collapsible(){
+    makePanelCollapsible('siteControlAdmin',false);
+    makePanelCollapsible('contentControlAdmin',true);
+    makePanelCollapsible('siteStructureAdmin',true);
+    makeGroupCollapsible('adminExtended','消息／案例／公司資料','較低頻使用，需要維護公告、案例或公司基本資料時再展開。');
+    makeGroupCollapsible('resourceAdmin','下載／系統方案','較低頻使用，需要更新下載資源或系統方案時再展開。');
+  }
+
+  function expandForTarget(id){
+    const host=document.getElementById(id);if(!host)return;
+    const panel=host.matches('.admin-panel')?host:host.querySelector(':scope > .admin-panel');
+    if(panel?.classList.contains('is-folded')){
+      const btn=panel.querySelector('.admin-fold-btn');setPanelFold(panel,id,false,btn);
+    }
+    if(host.classList.contains('is-group-folded')){
+      const btn=host.querySelector(':scope > .admin-group-fold .admin-fold-btn');
+      host.classList.remove('is-group-folded');if(btn){btn.setAttribute('aria-expanded','true');btn.innerHTML='收合 <span>−</span>'}writeFold(id,false);
+    }
+  }
+
   function activeNav(){
-    const links=$$('.admin-nav a[href^="#"]');
-    links.forEach(a=>a.addEventListener('click',()=>{links.forEach(x=>x.classList.remove('active'));a.classList.add('active')}));
+    const navLinks=$$('.admin-nav a[href^="#"]');
+    const jumpLinks=$$('.admin-section-jump a[href^="#"]');
+    [...navLinks,...jumpLinks].forEach(a=>a.addEventListener('click',()=>{const id=(a.getAttribute('href')||'').slice(1);if(id)expandForTarget(id);navLinks.forEach(x=>x.classList.toggle('active',x.getAttribute('href')===a.getAttribute('href')))}));
     const sections=ORDER.map(id=>document.getElementById(id)).filter(Boolean);
     if(!('IntersectionObserver'in window))return;
-    const obs=new IntersectionObserver(entries=>{const hit=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top)[0];if(!hit)return;links.forEach(x=>x.classList.toggle('active',x.getAttribute('href')==='#'+hit.target.id))},{rootMargin:'-18% 0px -72% 0px',threshold:0});
+    const obs=new IntersectionObserver(entries=>{const hit=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top)[0];if(!hit)return;navLinks.forEach(x=>x.classList.toggle('active',x.getAttribute('href')==='#'+hit.target.id))},{rootMargin:'-18% 0px -72% 0px',threshold:0});
     sections.forEach(s=>obs.observe(s));
   }
+
   function dirtyState(){
     const pill=$('#adminSaveState');
     const mark=()=>{dirty=true;if(pill){pill.textContent='有未儲存變更';pill.classList.add('dirty')}};
@@ -57,6 +108,7 @@
     document.addEventListener('submit',e=>{if(e.target.closest('.admin-main')){dirty=false;setTimeout(()=>{if(pill){pill.textContent='目前無未儲存變更';pill.classList.remove('dirty')}},50)}},true);
     window.addEventListener('beforeunload',e=>{if(!dirty)return;e.preventDefault();e.returnValue=''});
   }
+
   function safeReset(){
     const btn=$('#resetBtn');if(!btn||btn.dataset.safeReady)return;btn.dataset.safeReady='1';
     btn.onclick=()=>{
@@ -66,6 +118,7 @@
       window.FBStore?.resetData?.();dirty=false;location.reload();
     };
   }
+
   function init(){
     if(document.body.dataset.page!=='admin')return;
     reorder();decorate();collapsible();safeReset();
