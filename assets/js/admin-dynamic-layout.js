@@ -8,7 +8,7 @@
   }
   function loadPasswordModule(){
     if(document.querySelector('script[data-admin-password]'))return;
-    const s=document.createElement('script');s.src='assets/js/admin-password.js?v=20260911-2354';s.dataset.adminPassword='1';document.body.appendChild(s);
+    const s=document.createElement('script');s.src='assets/js/admin-password.js?v=20260912-0008';s.dataset.adminPassword='1';document.body.appendChild(s);
   }
   function fixAnalyticsNote(){
     const box=document.getElementById('adminAnalytics');
@@ -37,7 +37,7 @@
     addLink(document.querySelector('.admin-nav'),'#adminPassword','後台密碼','#adminInquiries');
     addLink(document.querySelector('.admin-section-jump'),'#adminInquiries','網站詢問','#adminAnalytics');
     addLink(document.querySelector('.admin-section-jump'),'#adminPassword','後台密碼','#adminInquiries');
-    const version=document.querySelector('.admin-version-note');if(version)version.textContent='後台介面更新：2026/09/11 23:54';
+    const version=document.querySelector('.admin-version-note');if(version)version.textContent='後台介面更新：2026/09/12 00:08';
     fixAnalyticsNote();
   }
   const run=()=>{loadPasswordModule();arrange();setTimeout(arrange,150);setTimeout(arrange,600);setTimeout(arrange,1500)};
