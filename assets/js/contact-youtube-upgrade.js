@@ -3,8 +3,8 @@
   window.__fbContactYoutubeUpgrade = true;
 
   const PHONE_ROWS = [
-    {label:'台北', display:'02-82217759', tel:'0282217759'},
-    {label:'台南', display:'06-2360139', tel:'062360139'}
+    {label:'新北辦公室', display:'02-82217759', tel:'0282217759'},
+    {label:'台南辦公室', display:'06-2360139', tel:'062360139'}
   ];
 
   function addStyle(){
@@ -13,7 +13,7 @@
     style.id='fbContactYoutubeUpgradeStyle';
     style.textContent=`
       .quick-contact-item[data-contact-phone] .quick-phone-panel{pointer-events:none}
-      .quick-contact-item[data-contact-phone].is-open .quick-phone-panel{pointer-events:auto}
+      .quick-contact-item[data-contact-phone].is-open .quick-phone-panel{opacity:1!important;visibility:visible!important;transform:none!important;pointer-events:auto!important}
       .quick-phone-panel .quick-phone-heading{display:block;font-size:12px;color:#6e7f8d;padding:2px 5px 9px;letter-spacing:.04em}
       .quick-phone-link b{font-variant-numeric:tabular-nums}
       .footer-media-link{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12);text-decoration:none;color:inherit}
@@ -32,8 +32,14 @@
     original.replaceWith(item);
 
     const btn=item.querySelector('.quick-contact-btn');
-    const panel=item.querySelector('.quick-phone-panel');
-    if(!btn || !panel) return;
+    let panel=item.querySelector('.quick-phone-panel');
+    if(!btn) return;
+
+    if(!panel){
+      panel=document.createElement('div');
+      panel.className='quick-phone-panel';
+      item.appendChild(panel);
+    }
 
     panel.id='quickPhonePanel';
     panel.innerHTML=`<span class="quick-phone-heading">請選擇辦公室</span>${PHONE_ROWS.map(p=>`<a class="quick-phone-link" href="tel:${p.tel}"><span>${p.label}</span><b>${p.display}</b></a>`).join('')}`;
@@ -44,7 +50,8 @@
     const open=()=>{item.classList.add('is-open');btn.setAttribute('aria-expanded','true')};
 
     btn.addEventListener('click',e=>{
-      e.preventDefault();e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
       item.classList.contains('is-open') ? close() : open();
     });
     panel.addEventListener('click',e=>e.stopPropagation());
@@ -67,7 +74,8 @@
 
     const close=()=>{panel.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};
     btn.addEventListener('click',e=>{
-      e.preventDefault();e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
       const open=!panel.classList.contains('is-open');
       close();
       if(open){panel.classList.add('is-open');btn.setAttribute('aria-expanded','true')}
@@ -98,6 +106,19 @@
     addYoutubeFooter();
   }
 
-  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,120);setTimeout(run,600)});
+  let queued=false;
+  const scheduleRun=()=>{
+    if(queued) return;
+    queued=true;
+    requestAnimationFrame(()=>{queued=false;run()});
+  };
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    run();
+    setTimeout(run,120);
+    setTimeout(run,600);
+    const observer=new MutationObserver(scheduleRun);
+    observer.observe(document.body,{childList:true,subtree:true});
+  });
   if(document.readyState!=='loading')setTimeout(run,0);
 })();
