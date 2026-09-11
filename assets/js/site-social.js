@@ -1,6 +1,5 @@
-// Social links discovered from the current official Far-beyound website.
-// The importer updates this file when an official public link can be confirmed.
+// Generated from the current official Far-beyound website. Do not hand-edit.
 window.FBSocialLinks = {
-  generatedAt: '2026-09-11',
-  youtube: ''
+  "generatedAt": "2026-09-11T01:53:09Z",
+  "youtube": "https://www.youtube.com/@FastechTaiwan"
 };
