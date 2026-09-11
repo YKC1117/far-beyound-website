@@ -27,12 +27,12 @@
       'Datalogic':'products.html?category=scanners&brand=Datalogic'
     },
     '標籤編輯軟體':{
-      'BarTender':'products.html?category=software&brand=BarTender',
-      'CodeSoft':'products.html?category=software&brand=CodeSoft'
+      'BarTender':'product.html?id=legacy-bartender-5382ba34',
+      'CodeSoft':'product.html?id=legacy-codesoft-71391e24'
     },
     '行動裝置 PDA':{
       'Zebra':'products.html?category=mobile&brand=Zebra',
-      'UROVO':'products.html?category=mobile&brand=UROVO'
+      'UROVO':'contact.html?item=UROVO%20PDA'
     }
   };
 
