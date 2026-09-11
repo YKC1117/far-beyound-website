@@ -9,6 +9,7 @@ on:
       - 'assets/js/v2-corporate.js'
       - 'assets/js/v4-polish.js'
       - 'assets/js/v5-showcase.js'
+      - 'assets/js/interaction-upgrade.js'
       - 'assets/css/v2-corporate.css'
       - 'assets/css/v4-polish.css'
       - 'assets/css/v4-inner-polish.css'
@@ -55,7 +56,7 @@ jobs:
                       text=text.replace(marker, marker+'<link rel="stylesheet" href="assets/css/v5-showcase.css">')
                   else:
                       text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v5-showcase.css"></head>')
-              for script in ['assets/js/nav-menu.js','assets/js/presentation-polish.js','assets/js/final-fixes.js','assets/js/v2-corporate.js','assets/js/v4-polish.js','assets/js/v5-showcase.js']:
+              for script in ['assets/js/nav-menu.js','assets/js/presentation-polish.js','assets/js/final-fixes.js','assets/js/v2-corporate.js','assets/js/v4-polish.js','assets/js/v5-showcase.js','assets/js/interaction-upgrade.js']:
                   if script not in text:
                       text=text.replace('</body>', f'<script src="{script}"></script></body>')
               if 'rel="icon"' not in text:
@@ -74,5 +75,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add '*.html'
-          git commit -m 'Apply V5 showcase layer across public pages'
+          git commit -m 'Apply interaction upgrade across public pages'
           git push
