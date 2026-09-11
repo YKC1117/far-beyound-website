@@ -47,9 +47,7 @@ jobs:
           from pathlib import Path
           from urllib.parse import urlparse, parse_qs
 
-          def load(name):
-              return BeautifulSoup(Path('qa-click',name+'.html').read_text(), 'html.parser')
-
+          def load(name): return BeautifulSoup(Path('qa-click',name+'.html').read_text(), 'html.parser')
           home=load('home'); about=load('about'); cases=load('cases'); news=load('news')
           locations=load('locations'); product=load('product'); products=load('products'); downloads=load('downloads')
 
@@ -57,7 +55,6 @@ jobs:
           def check(cond,msg):
               if not cond: errors.append(msg)
 
-          # User-facing items that visually read as navigation/actions must really be links.
           trust=home.select('.hero-trust > a')
           check(len(trust)==4,f'home hero trust links: expected 4, got {len(trust)}')
           expected=['products.html','products.html?category=labels','products.html?category=parts','solutions.html']
@@ -72,12 +69,11 @@ jobs:
           check(all((a.get('href') or '').strip() for a in creds),'credibility card missing href')
 
           brand_links=home.select('.brand-portfolio a.brand-wordmark')
-          check(len(brand_links)==12,'homepage brand logos are not all clickable')
-          check(all(a.select_one('img.brand-logo-img') for a in brand_links),'homepage brand entry is missing clickable logo image')
+          check(len(brand_links)==12,f'homepage brand entries expected 12, got {len(brand_links)}')
+          check(all(a.select_one('img.brand-logo-img, img.fb-own-brand-logo') for a in brand_links),'homepage brand entry is missing clickable logo image')
+          check(all(parse_qs(urlparse(a.get('href') or '').query).get('brand') for a in brand_links),'homepage brand entry missing brand destination')
           check(len(home.select('.v2-service-grid a.v2-service-item'))==4,'homepage service strip is not fully clickable')
 
-          # The compact homepage intentionally removes the 8-category section. If it is restored later,
-          # every visible category card must be a real anchor rather than a decorative card.
           category_zone=home.select_one('#homeCategories')
           if category_zone:
               cards=category_zone.select('.category-card')
@@ -89,7 +85,6 @@ jobs:
 
           scope=about.select('.service-scope a.scope-card')
           check(len(scope)==4,f'about service scope links: expected 4, got {len(scope)}')
-
           case_links=cases.select('#casePageGrid a.case-page-card')
           check(len(case_links)>=4,f'case page cards clickable: expected >=4, got {len(case_links)}')
           check(all('solutions.html#' in (a.get('href') or '') for a in case_links),'case card target is not a related solution')
@@ -112,11 +107,14 @@ jobs:
           check(product.select_one('.product-actions a[href^="contact.html?item="]') is not None,'product inquiry button missing')
 
           product_cards=products.select('#productGrid a.product-card')
-          check(len(product_cards)==150,f'product catalog expected 150 clickable cards, got {len(product_cards)}')
+          check(len(product_cards)>=151,f'product catalog expected >=151 clickable cards, got {len(product_cards)}')
           check(all(parse_qs(urlparse(a.get('href') or '').query).get('id') for a in product_cards),'catalog card missing product id')
           check(all(a.select_one('img') for a in product_cards),'catalog product card has no image inside clickable area')
 
-          # General dead-link smells on rendered public pages.
+          check(downloads.select_one('#downloadSearch') is not None,'download search missing')
+          check(downloads.select_one('#downloadTypeFilters') is not None,'download type selector missing')
+          check(downloads.select_one('#downloadResults') is not None,'download results region missing')
+
           for name,soup in [('home',home),('about',about),('cases',cases),('news',news),('locations',locations),('product',product),('products',products),('downloads',downloads)]:
               for a in soup.select('a'):
                   href=(a.get('href') or '').strip()
