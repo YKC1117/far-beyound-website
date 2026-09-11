@@ -6,6 +6,7 @@
   const COMMON = ['工業型條碼列印機','商業型條碼列印機','桌上型條碼列印機','攜帶型標籤條碼列印機','標籤條碼列印機','條碼列印機','條碼掃描器','工業型','商業型','桌上型','攜帶型','通用型','超耐用型','固定式'];
   const CATEGORY_SLUG={printers:'printer',scanners:'scanner',rfid:'rfid',mobile:'mobile',labels:'labels',printing:'printing',software:'software',parts:'parts'};
   const FASTECH_FALLBACK={labels:'label',printing:'label-printing',software:'label-software',parts:'printer-parts',rfid:'rfid',mobile:'mobile',printers:'printer',scanners:'scanner'};
+  const CURATED_IDS=new Set(['software-bartender','software-codesoft','urovo-enterprise-mobile','legacy-bartender-5382ba34','legacy-codesoft-71391e24']);
   function key(v=''){
     let s=String(v).toLowerCase().replace(/[／/|｜・·()（）\-\s]/g,'');
     COMMON.forEach(x=>{s=s.replace(x.toLowerCase().replace(/[／/|｜・·()（）\-\s]/g,''),'')});
@@ -83,6 +84,7 @@
   function assignPublicSlugs(items){
     const used=new Set();
     items.forEach(p=>{
+      if(CURATED_IDS.has(String(p.id||''))){used.add(p.id);return;}
       const base=publicSlugBase(p);
       let slug=base;
       if(used.has(slug)) slug=`${base}-${CATEGORY_SLUG[p.category]||asciiSlug(p.category)||'product'}`;
@@ -141,9 +143,9 @@
     if(!catalog || !Array.isArray(catalog.products)) return d;
 
     const existing=(d.products||[]).slice();
-    const official=enrichOfficial(catalog.products,existing);
-    // Keep only products explicitly created from the demo admin in addition to the official inventory.
-    const custom=existing.filter(x=>/^product-\d+$/.test(String(x.id||'')));
+    const official=enrichOfficial(catalog.products,existing).filter(p=>!((p.category==='software'&&/bartender|codesoft/i.test(String(p.name||'')))||String(p.brand||'').toUpperCase()==='UROVO'));
+    // Keep products explicitly created from the demo admin and curated product pages that fill gaps in the old website catalog.
+    const custom=existing.filter(x=>/^product-\d+$/.test(String(x.id||''))||CURATED_IDS.has(String(x.id||'')));
     d.products=[...official,...custom];
 
     d.products.sort((a,b)=>{
