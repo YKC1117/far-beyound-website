@@ -1,0 +1,67 @@
+(function(){
+  'use strict';
+  if(window.__fbHomeHeroCarousel)return;window.__fbHomeHeroCarousel=true;
+
+  const DEFAULT={
+    enabled:true,autoplay:true,interval:5000,showControls:true,
+    eyebrow:'萬里資訊股份有限公司',
+    title:'企業條碼設備與\n自動識別整合服務',
+    accentLine:1,
+    intro:'從標籤列印、條碼掃描、RFID、企業行動電腦，到標籤耗材、設備維修與現場系統整合，依實際作業需求提供完整服務。',
+    primaryText:'查看產品資訊',primaryUrl:'products.html',secondaryText:'了解系統方案',secondaryUrl:'solutions.html',
+    productIds:['zebra-zt610-zt620','zebra-zt411-zt421','zebra-ds4678-xd','fastech-ft-yx510','honeywell-xenon-1900-1902','tsc-mh241-mh341-mh641']
+  };
+  const IMAGES={
+    'zebra-zt610-zt620':'assets/images/products/zebra-zt610-zt620.jpg',
+    'zebra-zt411-zt421':'assets/images/products/zebra-zt411-zt421.png',
+    'zebra-ds4678-xd':'assets/images/products/zebra-ds4678-xd.jpg',
+    'fastech-ft-yx510':'assets/images/products/fastech-ft-yx510.jpg',
+    'honeywell-xenon-1900-1902':'assets/images/products/honeywell-xenon-1900-1902.png',
+    'tsc-mh241-mh341-mh641':'assets/images/products/tsc-mh241-mh341-mh641.png',
+    'tsc-tx610':'assets/images/products/tsc-tx610.png',
+    'argox-cx3140-pro':'assets/images/products/argox-cx3140-pro.jpg',
+    'godex-g500-g530':'assets/images/products/godex-g500-g530.png',
+    'godex-gx4200i-gx4300i-gx4600i':'assets/images/products/godex-gx4200i-gx4300i-gx4600i.jpg'
+  };
+  const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const cfg=()=>Object.assign({},DEFAULT,(window.FBStore?.getData?.().homeHero||{}));
+  const productMap=()=>new Map((window.FBStore?.getData?.().products||[]).map(p=>[p.id,p]));
+  const photo=p=>IMAGES[p.id]||p.image||'';
+  let index=0,timer=null;
+
+  function patchCopy(c){
+    const hero=document.querySelector('.hero.v2-home-hero');if(!hero)return;
+    const eyebrow=hero.querySelector('.hero-copy .eyebrow');if(eyebrow)eyebrow.textContent=c.eyebrow||DEFAULT.eyebrow;
+    const h1=hero.querySelector('.hero-copy h1');if(h1){const lines=String(c.title||DEFAULT.title).split(/\n/);h1.innerHTML=lines.map((x,i)=>i===Number(c.accentLine||1)?`<em>${esc(x)}</em>`:esc(x)).join('<br>')}
+    const intro=hero.querySelector('.hero-copy>p');if(intro)intro.textContent=c.intro||DEFAULT.intro;
+    const buttons=hero.querySelectorAll('.hero-actions a');
+    if(buttons[0]){buttons[0].textContent=c.primaryText||DEFAULT.primaryText;buttons[0].href=c.primaryUrl||DEFAULT.primaryUrl}
+    if(buttons[1]){buttons[1].textContent=c.secondaryText||DEFAULT.secondaryText;buttons[1].href=c.secondaryUrl||DEFAULT.secondaryUrl}
+  }
+  function selected(c){const map=productMap();const ids=(c.productIds||DEFAULT.productIds).filter(id=>map.has(id));return ids.map(id=>map.get(id)).filter(Boolean)}
+  function tile(p,kind){
+    const src=photo(p),img=src?`<img src="${esc(src)}" alt="${esc(p.name||'產品')}" loading="eager">`:'<div class="home-hero-fallback">PRODUCT</div>';
+    if(kind==='main')return `<a class="v2-stage-main hero-rotate-card is-entering" href="product.html?id=${encodeURIComponent(p.id)}"><span class="v2-stage-label">${esc((p.type||'PRODUCT').toUpperCase())}</span>${img}<span class="v2-stage-caption"><small>${esc(p.subtitle||p.type||'產品')}</small><b>${esc(p.name||'產品')}</b></span></a>`;
+    return `<a class="hero-rotate-side is-entering" href="product.html?id=${encodeURIComponent(p.id)}">${img}<span><small>${esc(p.brand||'')}</small>${esc(p.name||'產品')}</span></a>`;
+  }
+  function renderStage(){
+    const c=cfg(),box=document.querySelector('.v2-hero-products');if(!box)return;
+    if(!c.enabled){box.style.display='';return}
+    const list=selected(c);if(!list.length)return;
+    index=((index%list.length)+list.length)%list.length;
+    const p0=list[index],p1=list[(index+1)%list.length],p2=list[(index+2)%list.length];
+    const controls=c.showControls&&list.length>1?`<div class="hero-rotate-controls"><button type="button" data-hero-prev aria-label="上一個產品">‹</button><div class="hero-rotate-dots">${list.map((_,i)=>`<button type="button" data-hero-dot="${i}" class="${i===index?'active':''}" aria-label="切換到第 ${i+1} 個產品"></button>`).join('')}</div><button type="button" data-hero-next aria-label="下一個產品">›</button></div>`:'';
+    box.innerHTML=`${tile(p0,'main')}<div class="v2-stage-side">${tile(p1,'side')}${tile(p2,'side')}</div>${controls}`;
+    box.querySelector('[data-hero-prev]')?.addEventListener('click',()=>{index--;renderStage();restart()});
+    box.querySelector('[data-hero-next]')?.addEventListener('click',()=>{index++;renderStage();restart()});
+    box.querySelectorAll('[data-hero-dot]').forEach(b=>b.addEventListener('click',()=>{index=+b.dataset.heroDot;renderStage();restart()}));
+    box.onmouseenter=()=>stop();box.onmouseleave=()=>start();
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null}}
+  function start(){stop();const c=cfg(),list=selected(c);if(!c.enabled||!c.autoplay||list.length<2)return;timer=setInterval(()=>{index++;renderStage()},Math.max(2500,Number(c.interval)||5000))}
+  function restart(){start()}
+  function run(){if(document.body.dataset.page!=='home')return;const c=cfg();patchCopy(c);renderStage();start()}
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(run,80),{once:true});
+  if(document.readyState!=='loading')setTimeout(run,80);
+  window.addEventListener('farbeyound:datachange',()=>{index=0;setTimeout(run,50)});
+})();
