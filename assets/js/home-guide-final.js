@@ -106,25 +106,6 @@
         gap:8px!important;
       }
       body[data-page="home"] .fb-service-title-row h3{margin:0!important}
-      body[data-page="home"] .fb-service-own-badge{
-        display:inline-flex!important;
-        align-items:center!important;
-        min-height:20px!important;
-        padding:3px 7px!important;
-        border:1px solid #d5e3e9!important;
-        border-radius:999px!important;
-        background:#f5f8fa!important;
-        color:#60798a!important;
-        font-size:8px!important;
-        font-weight:800!important;
-        letter-spacing:.08em!important;
-        line-height:1!important;
-        white-space:nowrap!important;
-      }
-      body[data-page="home"] .fb-service-own-badge:before{
-        content:"";
-        width:4px;height:4px;margin-right:5px;border-radius:50%;background:#7893a3;
-      }
 
       body[data-page="home"] .fb-service-primary,
       body[data-page="home"] .fb-service-secondary{
@@ -165,26 +146,8 @@
     tags.querySelectorAll('.fb-service-tag-link,.fb-service-tag').forEach(el=>el.classList.remove('is-own'));
   }
 
-  function addOwnBrandBadge(card,title){
-    const old=card.querySelector('.fb-service-own-badge');
-    if(title!=='條碼掃描器'){
-      if(old)old.remove();
-      return;
-    }
-    if(old)return;
-    const h3=card.querySelector('h3');
-    if(!h3)return;
-    let row=h3.closest('.fb-service-title-row');
-    if(!row){
-      row=document.createElement('div');
-      row.className='fb-service-title-row';
-      h3.parentNode.insertBefore(row,h3);
-      row.appendChild(h3);
-    }
-    const badge=document.createElement('span');
-    badge.className='fb-service-own-badge';
-    badge.textContent='自有品牌';
-    row.appendChild(badge);
+  function removeOwnBrandBadge(card){
+    card.querySelectorAll('.fb-service-own-badge').forEach(el=>el.remove());
   }
 
   function apply(){
@@ -203,7 +166,7 @@
       const no=card.querySelector('.fb-service-no');
       if(no)no.textContent=String(index+1).padStart(2,'0');
       makeTagsClickable(card,title);
-      addOwnBrandBadge(card,title);
+      removeOwnBrandBadge(card);
       cards.appendChild(card);
     });
 
