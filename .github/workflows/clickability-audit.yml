@@ -63,13 +63,26 @@ jobs:
           expected=['products.html','products.html?category=labels','products.html?category=parts','solutions.html']
           check([a.get('href') for a in trust]==expected,f'home hero trust destinations wrong: {[a.get("href") for a in trust]}')
 
+          hero_products=home.select('.v2-hero-products a')
+          check(len(hero_products)==3,f'homepage hero product visuals: expected 3 clickable items, got {len(hero_products)}')
+          check(all(a.select_one('img') and 'product.html?id=' in (a.get('href') or '') for a in hero_products),'homepage hero image is not linked to a product')
+
           creds=home.select('.v5-credibility a.v5-cred-item')
           check(len(creds)==4,f'credibility cards clickable: expected 4, got {len(creds)}')
           check(all((a.get('href') or '').strip() for a in creds),'credibility card missing href')
 
-          check(len(home.select('.brand-portfolio a.brand-wordmark'))==12,'homepage brand logos are not all clickable')
+          brand_links=home.select('.brand-portfolio a.brand-wordmark')
+          check(len(brand_links)==12,'homepage brand logos are not all clickable')
+          check(all(a.select_one('img.brand-logo-img') for a in brand_links),'homepage brand entry is missing clickable logo image')
           check(len(home.select('.v2-service-grid a.v2-service-item'))==4,'homepage service strip is not fully clickable')
-          check(len(home.select('#homeCategories a.category-card'))>=8,'homepage product/service categories not fully clickable')
+
+          # The compact homepage intentionally removes the 8-category section. If it is restored later,
+          # every visible category card must be a real anchor rather than a decorative card.
+          category_zone=home.select_one('#homeCategories')
+          if category_zone:
+              cards=category_zone.select('.category-card')
+              check(cards and all(c.name=='a' and (c.get('href') or '').strip() for c in cards),'homepage product/service category contains a non-clickable card')
+
           check(len(home.select('#homeProducts a.product-card'))>=1,'homepage featured products not clickable')
           check(len(home.select('#homeSolutions a.solution-card'))>=4,'homepage solution cards not fully clickable')
           check(len(home.select('.v5-case-grid a.v5-case-card'))==4,'homepage case cards not fully clickable')
@@ -85,7 +98,7 @@ jobs:
           check(len(news_cards)>=1,'news cards were not upgraded to whole-card links')
           check(all('news-detail.html?id=' in (a.get('href') or '') for a in news_cards),'news card missing detail destination')
           home_news=home.select('#homeNews a.news-row')
-          check(all('news-detail.html?id=' in (a.get('href') or '') for a in home_news),'homepage news row still points only to news index')
+          check(home_news and all('news-detail.html?id=' in (a.get('href') or '') for a in home_news),'homepage news row still points only to news index')
 
           tels=locations.select('.location-card a[href^="tel:"]')
           mails=locations.select('.location-card a[href^="mailto:"]')
@@ -101,6 +114,7 @@ jobs:
           product_cards=products.select('#productGrid a.product-card')
           check(len(product_cards)==150,f'product catalog expected 150 clickable cards, got {len(product_cards)}')
           check(all(parse_qs(urlparse(a.get('href') or '').query).get('id') for a in product_cards),'catalog card missing product id')
+          check(all(a.select_one('img') for a in product_cards),'catalog product card has no image inside clickable area')
 
           # General dead-link smells on rendered public pages.
           for name,soup in [('home',home),('about',about),('cases',cases),('news',news),('locations',locations),('product',product),('products',products),('downloads',downloads)]:
@@ -110,8 +124,9 @@ jobs:
                       errors.append(f'{name}: dead anchor: {a.get_text(" ",strip=True)[:50]!r} -> {href!r}')
 
           print('HOME_TRUST_LINKS=',len(trust))
+          print('HOME_HERO_PRODUCT_IMAGES=',len(hero_products))
           print('HOME_CREDIBILITY_LINKS=',len(creds))
-          print('HOME_BRAND_LINKS=',len(home.select('.brand-portfolio a.brand-wordmark')))
+          print('HOME_BRAND_LINKS=',len(brand_links))
           print('HOME_SERVICE_LINKS=',len(home.select('.v2-service-grid a.v2-service-item')))
           print('ABOUT_SCOPE_LINKS=',len(scope))
           print('CASE_CARD_LINKS=',len(case_links))
