@@ -10,6 +10,10 @@ on:
       - 'assets/js/v4-polish.js'
       - 'assets/js/v5-showcase.js'
       - 'assets/js/interaction-upgrade.js'
+      - 'assets/js/product-docs.js'
+      - 'assets/js/product-resources.js'
+      - 'assets/js/site-social.js'
+      - 'assets/js/contact-youtube-upgrade.js'
       - 'assets/css/v2-corporate.css'
       - 'assets/css/v4-polish.css'
       - 'assets/css/v4-inner-polish.css'
@@ -56,7 +60,19 @@ jobs:
                       text=text.replace(marker, marker+'<link rel="stylesheet" href="assets/css/v5-showcase.css">')
                   else:
                       text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v5-showcase.css"></head>')
-              for script in ['assets/js/nav-menu.js','assets/js/presentation-polish.js','assets/js/final-fixes.js','assets/js/v2-corporate.js','assets/js/v4-polish.js','assets/js/v5-showcase.js','assets/js/interaction-upgrade.js']:
+              for script in [
+                  'assets/js/nav-menu.js',
+                  'assets/js/presentation-polish.js',
+                  'assets/js/final-fixes.js',
+                  'assets/js/v2-corporate.js',
+                  'assets/js/v4-polish.js',
+                  'assets/js/v5-showcase.js',
+                  'assets/js/interaction-upgrade.js',
+                  'assets/js/product-docs.js',
+                  'assets/js/site-social.js',
+                  'assets/js/product-resources.js',
+                  'assets/js/contact-youtube-upgrade.js'
+              ]:
                   if script not in text:
                       text=text.replace('</body>', f'<script src="{script}"></script></body>')
               if 'rel="icon"' not in text:
