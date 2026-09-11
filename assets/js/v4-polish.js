@@ -7,9 +7,7 @@
   let navObserver=null;
   let navApplying=false;
 
-  function currentNav(){
-    if(document.body.dataset.page==='admin'||navApplying)return;
-    navApplying=true;
+  function desiredNavNode(nav){
     const page=document.body.dataset.page||'';
     const targets={
       products:['products.html'],product:['products.html'],
@@ -17,40 +15,50 @@
       news:['news.html'],'news-detail':['news.html'],
       about:['about.html'],locations:['locations.html','about.html'],contact:['contact.html','about.html'],'preview-guide':['about.html']
     }[page]||[];
-    const nav=document.querySelector('.desktop-nav');
-    if(!nav){navApplying=false;return}
     const nodes=[...nav.children];
-    nodes.forEach(node=>{
-      node.classList.remove('current');
-      const a=node.matches('a')?node:node.querySelector(':scope > a');
-      a?.classList.remove('current');
-      a?.removeAttribute('aria-current');
-    });
-    let active=null;
     for(const target of targets){
-      active=nodes.find(node=>{
+      const found=nodes.find(node=>{
         const a=node.matches('a')?node:node.querySelector(':scope > a');
         const href=(a?.getAttribute('href')||'').split('?')[0].split('#')[0];
         return href===target;
       });
-      if(active)break;
+      if(found)return found;
     }
-    if(active){
-      const a=active.matches('a')?active:active.querySelector(':scope > a');
-      active.classList.add('current');
-      a?.classList.add('current');
-      a?.setAttribute('aria-current','page');
-    }
+    return null;
+  }
+
+  function currentNav(){
+    if(document.body.dataset.page==='admin'||navApplying)return;
+    const nav=document.querySelector('.desktop-nav');
+    if(!nav)return;
+    const active=desiredNavNode(nav);
+    if(!active)return;
+    const nodes=[...nav.children];
+    const activeLink=active.matches('a')?active:active.querySelector(':scope > a');
+    const alreadyCorrect=active.classList.contains('current')&&activeLink?.getAttribute('aria-current')==='page'&&nodes.every(node=>node===active||!node.classList.contains('current'));
+    if(alreadyCorrect)return;
+
+    navApplying=true;
+    nodes.forEach(node=>{
+      const a=node.matches('a')?node:node.querySelector(':scope > a');
+      const should=node===active;
+      node.classList.toggle('current',should);
+      a?.classList.toggle('current',should);
+      if(should)a?.setAttribute('aria-current','page');
+      else a?.removeAttribute('aria-current');
+    });
     navApplying=false;
   }
 
   function observeNav(){
     const nav=document.querySelector('.desktop-nav');
-    if(!nav||navObserver)return;
+    if(!nav)return;
+    if(navObserver)navObserver.disconnect();
     navObserver=new MutationObserver(mutations=>{
-      if(mutations.some(m=>m.type==='childList'))requestAnimationFrame(currentNav);
+      if(navApplying)return;
+      if(mutations.some(m=>m.type==='childList'||m.type==='attributes'))requestAnimationFrame(currentNav);
     });
-    navObserver.observe(nav,{childList:true,subtree:true});
+    navObserver.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','aria-current']});
   }
 
   function locationLinks(){
@@ -83,9 +91,9 @@
   function run(){currentNav();observeNav();locationLinks();externalLinkSafety()}
   document.addEventListener('DOMContentLoaded',()=>{
     setTimeout(run,40);
-    setTimeout(run,420);
-    setTimeout(run,1100);
-    setTimeout(run,2200);
+    setTimeout(currentNav,420);
+    setTimeout(currentNav,1100);
+    setTimeout(currentNav,2200);
   });
   if(document.readyState!=='loading')setTimeout(run,40);
   window.addEventListener('farbeyound:datachange',()=>setTimeout(run,120));
