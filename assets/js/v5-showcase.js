@@ -11,6 +11,17 @@
     contact:['設備','耗材','維修','系統整合']
   };
 
+  function runtimeFixes(){
+    if(document.getElementById('v5RuntimeFixes'))return;
+    const style=document.createElement('style');
+    style.id='v5RuntimeFixes';
+    style.textContent=`
+      .mobile-contact-phone{display:none!important}
+      @media(max-width:980px){.mobile-contact-phone.is-open{display:block!important}}
+    `;
+    document.head.appendChild(style);
+  }
+
   function pageMeta(){
     const page=document.body.dataset.page||'';
     const items=PAGE_META[page];
@@ -142,6 +153,7 @@
   }
 
   function run(){
+    runtimeFixes();
     document.documentElement.classList.add('v5-ready');
     heroMeta();
     pageMeta();
