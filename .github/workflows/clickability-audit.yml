@@ -1,0 +1,130 @@
+name: Public clickability audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*.html'
+      - 'assets/js/**'
+      - 'assets/css/**'
+      - '.github/workflows/clickability-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start preview
+        run: |
+          python3 -m http.server 8080 >/tmp/fb-click.log 2>&1 &
+          sleep 2
+      - name: Render representative pages
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          test -n "$CHROME"
+          mkdir -p qa-click
+          for spec in \
+            'home|index.html' \
+            'about|about.html' \
+            'cases|cases.html' \
+            'news|news.html' \
+            'locations|locations.html' \
+            'product|product.html?id=zebra-zt411-zt421' \
+            'products|products.html' \
+            'downloads|downloads.html'; do
+            name=${spec%%|*}; path=${spec#*|}
+            "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom "http://127.0.0.1:8080/$path" > "qa-click/$name.html"
+          done
+      - name: Audit clickable affordances
+        run: |
+          pip install --disable-pip-version-check beautifulsoup4 >/dev/null
+          python3 - <<'PY'
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+          from urllib.parse import urlparse, parse_qs
+
+          def load(name):
+              return BeautifulSoup(Path('qa-click',name+'.html').read_text(), 'html.parser')
+
+          home=load('home'); about=load('about'); cases=load('cases'); news=load('news')
+          locations=load('locations'); product=load('product'); products=load('products'); downloads=load('downloads')
+
+          errors=[]
+          def check(cond,msg):
+              if not cond: errors.append(msg)
+
+          # User-facing items that visually read as navigation/actions must really be links.
+          trust=home.select('.hero-trust > a')
+          check(len(trust)==4,f'home hero trust links: expected 4, got {len(trust)}')
+          expected=['products.html','products.html?category=labels','products.html?category=parts','solutions.html']
+          check([a.get('href') for a in trust]==expected,f'home hero trust destinations wrong: {[a.get("href") for a in trust]}')
+
+          creds=home.select('.v5-credibility a.v5-cred-item')
+          check(len(creds)==4,f'credibility cards clickable: expected 4, got {len(creds)}')
+          check(all((a.get('href') or '').strip() for a in creds),'credibility card missing href')
+
+          check(len(home.select('.brand-portfolio a.brand-wordmark'))==12,'homepage brand logos are not all clickable')
+          check(len(home.select('.v2-service-grid a.v2-service-item'))==4,'homepage service strip is not fully clickable')
+          check(len(home.select('#homeCategories a.category-card'))>=8,'homepage product/service categories not fully clickable')
+          check(len(home.select('#homeProducts a.product-card'))>=1,'homepage featured products not clickable')
+          check(len(home.select('#homeSolutions a.solution-card'))>=4,'homepage solution cards not fully clickable')
+          check(len(home.select('.v5-case-grid a.v5-case-card'))==4,'homepage case cards not fully clickable')
+
+          scope=about.select('.service-scope a.scope-card')
+          check(len(scope)==4,f'about service scope links: expected 4, got {len(scope)}')
+
+          case_links=cases.select('#casePageGrid a.case-page-card')
+          check(len(case_links)>=4,f'case page cards clickable: expected >=4, got {len(case_links)}')
+          check(all('solutions.html#' in (a.get('href') or '') for a in case_links),'case card target is not a related solution')
+
+          news_cards=news.select('#newsList a.news-card')
+          check(len(news_cards)>=1,'news cards were not upgraded to whole-card links')
+          check(all('news-detail.html?id=' in (a.get('href') or '') for a in news_cards),'news card missing detail destination')
+          home_news=home.select('#homeNews a.news-row')
+          check(all('news-detail.html?id=' in (a.get('href') or '') for a in home_news),'homepage news row still points only to news index')
+
+          tels=locations.select('.location-card a[href^="tel:"]')
+          mails=locations.select('.location-card a[href^="mailto:"]')
+          maps=locations.select('.location-card a[href^="https://www.google.com/maps/dir/"]')
+          check(len(tels)>=4,f'location phone links expected >=4, got {len(tels)}')
+          check(len(mails)>=2,f'location email links expected >=2, got {len(mails)}')
+          check(len(maps)>=4,f'location map links expected >=4, got {len(maps)}')
+
+          check(product.select_one('.product-image-zoom') is not None,'product main image has no zoom action')
+          check(product.select_one('.product-lightbox') is not None,'product image lightbox missing')
+          check(product.select_one('.product-actions a[href^="contact.html?item="]') is not None,'product inquiry button missing')
+
+          product_cards=products.select('#productGrid a.product-card')
+          check(len(product_cards)==150,f'product catalog expected 150 clickable cards, got {len(product_cards)}')
+          check(all(parse_qs(urlparse(a.get('href') or '').query).get('id') for a in product_cards),'catalog card missing product id')
+
+          # General dead-link smells on rendered public pages.
+          for name,soup in [('home',home),('about',about),('cases',cases),('news',news),('locations',locations),('product',product),('products',products),('downloads',downloads)]:
+              for a in soup.select('a'):
+                  href=(a.get('href') or '').strip()
+                  if not href or href.lower().startswith('javascript:'):
+                      errors.append(f'{name}: dead anchor: {a.get_text(" ",strip=True)[:50]!r} -> {href!r}')
+
+          print('HOME_TRUST_LINKS=',len(trust))
+          print('HOME_CREDIBILITY_LINKS=',len(creds))
+          print('HOME_BRAND_LINKS=',len(home.select('.brand-portfolio a.brand-wordmark')))
+          print('HOME_SERVICE_LINKS=',len(home.select('.v2-service-grid a.v2-service-item')))
+          print('ABOUT_SCOPE_LINKS=',len(scope))
+          print('CASE_CARD_LINKS=',len(case_links))
+          print('NEWS_CARD_LINKS=',len(news_cards))
+          print('LOCATION_TEL_LINKS=',len(tels))
+          print('LOCATION_MAIL_LINKS=',len(mails))
+          print('LOCATION_MAP_LINKS=',len(maps))
+          print('PRODUCT_CARD_LINKS=',len(product_cards))
+          print('PRODUCT_IMAGE_ZOOM=',bool(product.select_one('.product-image-zoom')))
+
+          if errors:
+              print('\nFAILURES:')
+              for e in errors: print('-',e)
+              raise SystemExit(1)
+          print('\nCLICKABILITY AUDIT PASSED')
+          PY
