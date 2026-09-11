@@ -1,8 +1,9 @@
-name: Inject enhanced navigation
+name: Verify enhanced navigation wiring
 
 on:
   push:
     paths:
+      - '*.html'
       - 'assets/js/nav-menu.js'
       - 'assets/js/presentation-polish.js'
       - 'assets/js/final-fixes.js'
@@ -22,103 +23,63 @@ on:
       - '.github/workflows/inject-nav-menu.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  inject:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Add public presentation scripts favicon and V5 stylesheets
+      - name: Verify public presentation wiring
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          import subprocess
 
-          changed=[]
-          version=subprocess.check_output(['git','rev-parse','--short','HEAD'], text=True).strip()
-          phone_script='assets/js/contact-youtube-upgrade.js'
-          phone_versioned=f'{phone_script}?v={version}'
-          desktop_phone_script='assets/js/desktop-phone-popover.js'
-          desktop_phone_versioned=f'{desktop_phone_script}?v={version}'
+          required_css = [
+              'assets/css/v2-corporate.css',
+              'assets/css/v4-polish.css',
+              'assets/css/v4-inner-polish.css',
+              'assets/css/v5-showcase.css',
+          ]
+          required_js = [
+              'assets/js/nav-menu.js',
+              'assets/js/presentation-polish.js',
+              'assets/js/final-fixes.js',
+              'assets/js/v2-corporate.js',
+              'assets/js/v4-polish.js',
+              'assets/js/v5-showcase.js',
+              'assets/js/interaction-upgrade.js',
+              'assets/js/product-docs.js',
+              'assets/js/site-social.js',
+              'assets/js/product-resources.js',
+          ]
+          versioned_js = [
+              'assets/js/contact-youtube-upgrade.js',
+              'assets/js/desktop-phone-popover.js',
+          ]
 
-          for p in Path('.').glob('*.html'):
-              if p.name in {'admin.html'}:
+          failures = []
+          checked = 0
+          for p in sorted(Path('.').glob('*.html')):
+              if p.name == 'admin.html':
                   continue
-              text=p.read_text(encoding='utf-8')
-              original=text
+              text = p.read_text(encoding='utf-8')
               if 'assets/js/app.js' not in text:
                   continue
-              if 'assets/css/v2-corporate.css' not in text:
-                  text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v2-corporate.css"></head>')
-              if 'assets/css/v4-polish.css' not in text:
-                  marker='<link rel="stylesheet" href="assets/css/v3-refinement.css">'
-                  if marker in text:
-                      text=text.replace(marker, marker+'<link rel="stylesheet" href="assets/css/v4-polish.css">')
-                  else:
-                      text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v4-polish.css"></head>')
-              if 'assets/css/v4-inner-polish.css' not in text:
-                  marker='<link rel="stylesheet" href="assets/css/v4-polish.css">'
-                  if marker in text:
-                      text=text.replace(marker, marker+'<link rel="stylesheet" href="assets/css/v4-inner-polish.css">')
-                  else:
-                      text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v4-inner-polish.css"></head>')
-              if 'assets/css/v5-showcase.css' not in text:
-                  marker='<link rel="stylesheet" href="assets/css/v4-inner-polish.css">'
-                  if marker in text:
-                      text=text.replace(marker, marker+'<link rel="stylesheet" href="assets/css/v5-showcase.css">')
-                  else:
-                      text=text.replace('</head>', '<link rel="stylesheet" href="assets/css/v5-showcase.css"></head>')
-              for script in [
-                  'assets/js/nav-menu.js',
-                  'assets/js/presentation-polish.js',
-                  'assets/js/final-fixes.js',
-                  'assets/js/v2-corporate.js',
-                  'assets/js/v4-polish.js',
-                  'assets/js/v5-showcase.js',
-                  'assets/js/interaction-upgrade.js',
-                  'assets/js/product-docs.js',
-                  'assets/js/site-social.js',
-                  'assets/js/product-resources.js',
-                  phone_script,
-                  desktop_phone_script
-              ]:
-                  if script not in text:
-                      if script==phone_script:
-                          src=phone_versioned
-                      elif script==desktop_phone_script:
-                          src=desktop_phone_versioned
-                      else:
-                          src=script
-                      text=text.replace('</body>', f'<script src="{src}"></script></body>')
-
-              text=re.sub(
-                  r'assets/js/contact-youtube-upgrade\.js(?:\?v=[^"\']*)?',
-                  phone_versioned,
-                  text
-              )
-              text=re.sub(
-                  r'assets/js/desktop-phone-popover\.js(?:\?v=[^"\']*)?',
-                  desktop_phone_versioned,
-                  text
-              )
-
+              checked += 1
+              for asset in required_css + required_js:
+                  if asset not in text:
+                      failures.append(f'{p.name}: missing {asset}')
+              for asset in versioned_js:
+                  if not re.search(re.escape(asset) + r'(?:\?v=[^"\']*)?', text):
+                      failures.append(f'{p.name}: missing {asset}')
               if 'rel="icon"' not in text:
-                  text=text.replace('</head>', '<link rel="icon" type="image/png" href="assets/images/brand/far-beyound-logo.png"></head>')
-              if text != original:
-                  p.write_text(text, encoding='utf-8')
-                  changed.append(p.name)
-          print('updated:', ', '.join(changed) if changed else 'none')
+                  failures.append(f'{p.name}: missing favicon')
+
+          print(f'PUBLIC_PAGES_CHECKED={checked}')
+          if failures:
+              print('\n'.join(failures))
+              raise SystemExit(1)
+          print('PUBLIC_PRESENTATION_WIRING=OK')
           PY
-      - name: Commit HTML wiring
-        run: |
-          if git diff --quiet; then
-            echo 'No changes required'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add '*.html'
-          git commit -m 'Wire independent desktop phone popover across public pages'
-          git push
