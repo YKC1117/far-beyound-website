@@ -110,11 +110,31 @@ body[data-page="home"] .solution-card small,body[data-page="home"] .solution-car
 .footer-location{transition:background .18s ease,border-color .18s ease,transform .18s ease!important}
 .footer-location:hover{transform:translateX(2px)}
 
-/* Floating utility rail: keep it fixed, make it feel like one composed control. */
-.quick-contact{box-shadow:0 12px 32px rgba(17,43,67,.12)!important;border:1px solid #e0e6eb!important;overflow:hidden}
-.quick-contact-item+.quick-contact-item{border-top:1px solid #e5eaee}
-.quick-contact-btn{transition:background .16s ease,color .16s ease!important}
+/* Floating utility rail: one clean rounded shell; individual buttons stay square inside. */
+.quick-contact{
+  border:1px solid #dfe6eb!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  background:#fff!important;
+  box-shadow:0 12px 32px rgba(17,43,67,.12)!important;
+}
+.quick-contact-item{
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+.quick-contact-item+.quick-contact-item{border-top:1px solid #e5eaee!important}
+.quick-contact-btn{
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transition:background .16s ease,color .16s ease!important;
+}
 .quick-contact-btn:hover{background:#eef7f8!important;color:var(--v4-cyan)!important}
+.quick-contact-item:first-child .quick-contact-btn{border-radius:13px 13px 0 0!important}
+.quick-contact-item:last-child .quick-contact-btn{border-radius:0 0 13px 13px!important}
 
 /* Inner pages: cleaner entry and content focus. */
 .page-hero{position:relative;overflow:hidden}
