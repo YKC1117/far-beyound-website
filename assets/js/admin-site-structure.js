@@ -1,0 +1,28 @@
+(function(){
+'use strict';
+const $=(s,p=document)=>p.querySelector(s),$$=(s,p=document)=>[...p.querySelectorAll(s)];
+const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PAGE_DEFAULTS={
+ products:{label:'產品資訊',title:'產品資訊',subtitle:'提供條碼列印、掃描、RFID、行動設備、標籤耗材與維修相關產品資訊。',seoTitle:'產品資訊｜萬里資訊',seoDescription:'萬里資訊產品資訊：標籤條碼列印機、掃描器、RFID、行動電腦、標籤耗材與維修配件。'},
+ downloads:{label:'下載服務',title:'下載服務',subtitle:'依產品品牌與類型快速找到驅動程式、工具、手冊與相關下載資源。',seoTitle:'下載服務｜萬里資訊',seoDescription:'萬里資訊下載中心，提供條碼設備驅動程式、工具、手冊與相關資源。'},
+ solutions:{label:'系統方案',title:'系統方案',subtitle:'依生產、倉儲、SMT 與條碼應用需求，提供可與現場流程整合的系統方案。',seoTitle:'系統方案｜萬里資訊',seoDescription:'萬里資訊提供 SFIS、WMS、SMT 防錯與條碼系統整合方案。'},
+ cases:{label:'客戶案例',title:'客戶案例',subtitle:'了解萬里資訊在生產、倉儲、條碼與系統整合上的實際應用案例。',seoTitle:'客戶案例｜萬里資訊',seoDescription:'萬里資訊客戶案例與系統導入經驗。'},
+ news:{label:'最新消息',title:'最新消息',subtitle:'產品、系統、公司與服務相關最新資訊。',seoTitle:'最新消息｜萬里資訊',seoDescription:'萬里資訊最新消息、產品資訊與公司公告。'},
+ about:{label:'關於我們',title:'關於萬里資訊',subtitle:'專注企業條碼、自動識別設備、耗材、維修與智慧製造系統整合。',seoTitle:'關於我們｜萬里資訊',seoDescription:'認識萬里資訊與企業條碼、自動識別及系統整合服務。'},
+ locations:{label:'服務據點',title:'服務據點',subtitle:'台北與台南服務據點，提供設備、耗材與技術服務窗口。',seoTitle:'服務據點｜萬里資訊',seoDescription:'萬里資訊台北與台南服務據點資訊。'},
+ contact:{label:'聯絡我們',title:'聯絡我們',subtitle:'設備、耗材、維修或系統需求，歡迎與萬里資訊聯絡。',seoTitle:'聯絡我們｜萬里資訊',seoDescription:'聯絡萬里資訊，洽詢條碼設備、耗材、維修與系統整合服務。'}
+};
+function toast(t){window.FBPages?.toast?FBPages.toast(t):alert(t)}
+function getPages(){const d=FBStore.getData();return Object.assign({},PAGE_DEFAULTS,d.pageSettings||{})}
+function render(){const host=$('#siteStructureAdmin');if(!host)return;const d=FBStore.getData(),pages=getPages();
+ const pageCards=Object.entries(PAGE_DEFAULTS).map(([key,def])=>{const x=Object.assign({},def,pages[key]||{});return `<details class="admin-structure-item"><summary><span><b>${def.label}</b><small>${key}.html</small></span><span>編輯</span></summary><div class="admin-structure-body form-grid"><div class="field"><label>頁面主標題</label><input data-page="${key}" data-k="title" value="${esc(x.title)}"></div><div class="field"><label>SEO 標題</label><input data-page="${key}" data-k="seoTitle" value="${esc(x.seoTitle)}"></div><div class="field full"><label>頁面說明</label><textarea data-page="${key}" data-k="subtitle" rows="2">${esc(x.subtitle)}</textarea></div><div class="field full"><label>Meta Description</label><textarea data-page="${key}" data-k="seoDescription" rows="2">${esc(x.seoDescription)}</textarea></div></div></details>`}).join('');
+ const cats=(d.categories||[]).map((c,i)=>`<div class="admin-category-row" data-i="${i}"><div class="admin-category-main"><input data-cat="name" value="${esc(c.name||'')}" aria-label="分類名稱"><input data-cat="en" value="${esc(c.en||'')}" aria-label="英文名稱"><textarea data-cat="desc" rows="2" aria-label="分類說明">${esc(c.desc||'')}</textarea></div><div class="admin-category-actions"><button type="button" data-act="up" ${i===0?'disabled':''}>↑</button><button type="button" data-act="down" ${i===d.categories.length-1?'disabled':''}>↓</button></div></div>`).join('');
+ host.innerHTML=`<section class="admin-panel"><div class="admin-panel-head"><div><span class="eyebrow">SITE STRUCTURE</span><h2>內頁／分類管理</h2><p>各內頁標題、說明、SEO 與產品分類集中管理。</p></div><a class="btn btn-secondary btn-sm" href="products.html" target="_blank">預覽內頁</a></div><form id="siteStructureForm" class="admin-settings"><div class="admin-editor-section"><h3>各內頁標題與 SEO</h3><div class="admin-structure-list">${pageCards}</div></div><div class="admin-editor-section"><div class="admin-inline-head"><div><h3>產品分類</h3><p>順序會同步影響前台產品分類與主選單大型選單。</p></div></div><div id="categoryManager" class="admin-category-list">${cats}</div></div><div class="admin-control-save"><span>目前資料仍儲存在這台瀏覽器。</span><button class="btn btn-primary" type="submit">儲存內頁與分類</button></div></form></section>`;
+ $('#siteStructureForm').onsubmit=save;
+ $$('#categoryManager [data-act]').forEach(b=>b.onclick=()=>moveCategory(+b.closest('.admin-category-row').dataset.i,b.dataset.act));
+}
+function moveCategory(i,act){const d=FBStore.getData(),a=d.categories||[],j=act==='up'?i-1:i+1;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];d.categories=a;FBStore.saveData(d);render();toast('分類順序已更新')}
+function save(e){e.preventDefault();const d=FBStore.getData(),pages=getPages();Object.keys(PAGE_DEFAULTS).forEach(key=>{pages[key]=pages[key]||{};$$(`[data-page="${key}"]`).forEach(el=>pages[key][el.dataset.k]=el.value.trim())});d.pageSettings=pages;$$('.admin-category-row').forEach(row=>{const i=+row.dataset.i;if(!d.categories[i])return;d.categories[i].name=row.querySelector('[data-cat="name"]').value.trim();d.categories[i].en=row.querySelector('[data-cat="en"]').value.trim();d.categories[i].desc=row.querySelector('[data-cat="desc"]').value.trim()});FBStore.saveData(d);toast('內頁與分類設定已儲存');render()}
+function init(){if(document.body.dataset.page!=='admin'||!window.FBStore)return;let host=$('#siteStructureAdmin');if(!host){host=document.createElement('div');host.id='siteStructureAdmin';$('#products')?.before(host)}render()}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(init,120));if(document.readyState!=='loading')setTimeout(init,120);
+})();
