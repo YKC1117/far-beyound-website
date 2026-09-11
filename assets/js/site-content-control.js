@@ -3,7 +3,7 @@
   const DEFAULT={
     seoTitle:'萬里資訊｜條碼設備、自動識別與系統整合',
     seoDescription:'萬里資訊提供標籤條碼列印機、條碼掃描器、RFID、行動電腦、標籤耗材、維修與智慧製造系統整合服務。',
-    navProducts:'產品資訊',navDownloads:'下載服務',navSolutions:'系統方案',navCases:'客戶案例',navNews:'最新消息',navContact:'聯絡我們',consultText:'免費諮詢',
+    navProducts:'產品資訊',navDownloads:'下載服務',navSolutions:'系統方案',navCases:'客戶案例',navNews:'最新消息',navContact:'聯絡我們',navCompany:'公司資訊',consultText:'免費諮詢',
     footerIntro:'條碼列印、掃描、RFID、企業行動設備與智慧製造系統整合，協助企業建立穩定且可追蹤的現場作業流程。',
     homeBrandTitle:'代理與經銷品牌',homeBrandDesc:'多品牌設備選型、耗材供應與技術服務',
     homeCategoriesTitle:'產品與服務',homeCategoriesDesc:'依設備類型快速進入完整目錄，從硬體、耗材、軟體到維修服務集中查找。',
@@ -19,10 +19,29 @@
   const cfg=()=>Object.assign({},DEFAULT,(window.FBStore?.getData?.().siteContent||{}));
   const setText=(el,val)=>{if(el&&val!=null)el.textContent=val};
   function setMeta(name,content){let m=document.querySelector(`meta[name="${name}"]`);if(!m){m=document.createElement('meta');m.name=name;document.head.appendChild(m)}m.content=content||''}
+  function setAnchorLabel(a,label){
+    if(!a||label==null)return;
+    const elementChildren=[...a.children];
+    if(!elementChildren.length){a.textContent=label;return}
+    const textNodes=[...a.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE);
+    if(textNodes.length){textNodes[0].textContent=label+' ';textNodes.slice(1).forEach(n=>n.textContent='')}
+    else a.insertBefore(document.createTextNode(label+' '),a.firstChild);
+  }
   function applyNav(c){
-    const nav=[...document.querySelectorAll('.desktop-nav > a,.desktop-nav > .nav-item > a')];
-    const vals=[c.navProducts,c.navDownloads,c.navSolutions,c.navCases,c.navNews,c.navContact];
-    nav.slice(0,6).forEach((a,i)=>{if(!a||!vals[i])return;if(i===0){const caret=a.querySelector('.nav-caret');a.childNodes.forEach(n=>{if(n.nodeType===3)n.textContent=''});a.insertBefore(document.createTextNode(vals[i]+' '),caret||null)}else a.textContent=vals[i]});
+    const labels={
+      'products.html':c.navProducts,
+      'downloads.html':c.navDownloads,
+      'solutions.html':c.navSolutions,
+      'cases.html':c.navCases,
+      'news.html':c.navNews,
+      'contact.html':c.navContact,
+      'about.html':c.navCompany||'公司資訊'
+    };
+    document.querySelectorAll('.desktop-nav > a,.desktop-nav > .nav-item > a').forEach(a=>{
+      const href=(a.getAttribute('href')||'').split('?')[0].split('#')[0];
+      const label=labels[href];
+      if(label)setAnchorLabel(a,label);
+    });
     setText(document.querySelector('.header-actions .btn-primary'),c.consultText);
   }
   function applyFooter(c){setText(document.querySelector('.footer-brand p'),c.footerIntro)}
