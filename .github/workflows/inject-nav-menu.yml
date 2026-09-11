@@ -32,7 +32,14 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
+          import subprocess
+
           changed=[]
+          version=subprocess.check_output(['git','rev-parse','--short','HEAD'], text=True).strip()
+          phone_script='assets/js/contact-youtube-upgrade.js'
+          phone_versioned=f'{phone_script}?v={version}'
+
           for p in Path('.').glob('*.html'):
               if p.name in {'admin.html'}:
                   continue
@@ -71,10 +78,19 @@ jobs:
                   'assets/js/product-docs.js',
                   'assets/js/site-social.js',
                   'assets/js/product-resources.js',
-                  'assets/js/contact-youtube-upgrade.js'
+                  phone_script
               ]:
                   if script not in text:
-                      text=text.replace('</body>', f'<script src="{script}"></script></body>')
+                      src=phone_versioned if script==phone_script else script
+                      text=text.replace('</body>', f'<script src="{src}"></script></body>')
+
+              # Always version the final phone/contact script so browsers cannot keep an old broken copy.
+              text=re.sub(
+                  r'assets/js/contact-youtube-upgrade\.js(?:\?v=[^"\']*)?',
+                  phone_versioned,
+                  text
+              )
+
               if 'rel="icon"' not in text:
                   text=text.replace('</head>', '<link rel="icon" type="image/png" href="assets/images/brand/far-beyound-logo.png"></head>')
               if text != original:
@@ -91,5 +107,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add '*.html'
-          git commit -m 'Apply interaction upgrade across public pages'
+          git commit -m 'Version contact controls across public pages'
           git push
