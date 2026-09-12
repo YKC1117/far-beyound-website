@@ -21,3 +21,4 @@ source,target,kind,label
 /product/20,/products.html?category=printing,product-category,標籤貼紙代印
 /product/65,/products.html?category=parts,product-category,標籤機維修與配件
 /product/automation/bzj.asp,/products.html?category=software,product-category,BarTender 與 CodeSoft 標籤軟體
+/product/label.asp,/products.html?category=printing,product-category,舊標籤代印入口
