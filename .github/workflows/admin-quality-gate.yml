@@ -1,0 +1,68 @@
+name: Admin quality gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  admin-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Static admin readiness audit
+        run: python3 tools/audit_admin_readiness.py
+
+      - name: JavaScript syntax audit
+        run: |
+          set -e
+          for f in assets/js/admin-*.js assets/js/cloud-sync.js assets/js/front-feature-control.js assets/js/media-patch.js; do
+            node --check "$f"
+          done
+
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 >/tmp/farbeyound-admin-http.log 2>&1 &
+          sleep 2
+
+      - name: Render admin and verify dynamic modules
+        run: |
+          set -e
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          test -n "$CHROME"
+          mkdir -p qa-admin
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --virtual-time-budget=7000 --dump-dom http://127.0.0.1:8080/admin.html > qa-admin/admin-rendered.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --virtual-time-budget=7000 --screenshot=qa-admin/admin-desktop.png http://127.0.0.1:8080/admin.html
+          pip install --disable-pip-version-check beautifulsoup4 >/dev/null
+          python3 - <<'PY'
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+          html=Path('qa-admin/admin-rendered.html').read_text(encoding='utf-8')
+          soup=BeautifulSoup(html,'html.parser')
+          required=['adminDashboard','adminSelfCheck','adminSeoCenter','adminAccessCenter','adminSecurityCenter','adminBackupCenter','adminTransitionSecurityNote','adminFrontFeatureManager','adminBrandManager','adminLocationManager']
+          missing=[x for x in required if not soup.find(id=x)]
+          assert not missing, f'Missing rendered admin modules: {missing}'
+          ids=[x.get('id') for x in soup.find_all(id=True)]
+          dup=sorted({x for x in ids if ids.count(x)>1})
+          assert not dup, f'Duplicate DOM ids: {dup[:20]}'
+          form=soup.find(id='adminPasswordForm')
+          assert form is not None and form.has_attr('hidden'), 'Legacy online password-change form must be hidden by transition hardening'
+          print(f'RENDERED_ADMIN_IDS={len(ids)}')
+          print('ADMIN_DYNAMIC_MODULES=PASS')
+          PY
+
+      - name: Capture mobile admin
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=7000 --screenshot=qa-admin/admin-mobile.png http://127.0.0.1:8080/admin.html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: admin-quality-gate
+          path: qa-admin/
+          retention-days: 3
