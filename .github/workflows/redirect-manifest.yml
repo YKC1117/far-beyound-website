@@ -38,6 +38,7 @@ jobs:
           assert not any('far-beyound.com.tw' in r['source'].lower() or 'far-beyound.com.tw' in r['target'].lower() for r in rows), 'manifest must store paths, not host dependencies'
           summary=json.loads(Path('migration/generated/summary.json').read_text(encoding='utf-8'))
           assert summary['counts'].get('product',0)==150, 'product redirect coverage changed unexpectedly'
+          assert summary['counts'].get('product-category',0)==9, 'missing product root/category/software redirects'
           assert summary['counts'].get('download',0)>0, 'missing download redirects'
           assert summary['counts'].get('news',0)==summary.get('news_imported'), 'legacy news coverage is incomplete'
           assert summary.get('news_covered')==summary.get('news_imported'), 'legacy news coverage mismatch'
@@ -58,8 +59,22 @@ jobs:
           for source,target in expected_products.items():
               assert product_map.get(source)==target, f'brand+model redirect mismatch: {source} -> {product_map.get(source)}'
 
+          expected_product_categories={
+              '/product':'/products.html',
+              '/product/1':'/products.html?category=printers',
+              '/product/2':'/products.html?category=scanners',
+              '/product/3':'/products.html?category=rfid',
+              '/product/4':'/products.html?category=mobile',
+              '/product/16':'/products.html?category=labels',
+              '/product/20':'/products.html?category=printing',
+              '/product/65':'/products.html?category=parts',
+              '/product/automation/bzj.asp':'/products.html?category=software',
+          }
+          actual_product_categories={r['source']:r['target'] for r in rows if r['kind']=='product-category'}
+          assert actual_product_categories==expected_product_categories, f'product category redirect mismatch: {actual_product_categories}'
+
           sources={r['source'] for r in rows}
-          for required in ['/news','/news/1','/news/2','/news/3','/system','/system/2','/system/2/5','/system/3','/system/3/6','/system/4','/system/4/7','/system/6','/case','/case/5','/case/6','/case/7','/case/11']:
+          for required in ['/news','/news/1','/news/2','/news/3','/system','/system/2','/system/2/5','/system/3','/system/3/6','/system/4','/system/4/7','/system/6','/case','/case/5','/case/6','/case/7','/case/11',*expected_product_categories.keys()]:
               assert required in sources, f'missing required redirect: {required}'
           news_rows=[r for r in rows if r['kind']=='news']
           assert news_rows and all(re.fullmatch(r'/news/\d+/\d+',r['source']) for r in news_rows), 'invalid news article source path'
@@ -87,6 +102,7 @@ jobs:
           assert actual_case==expected_case, f'case redirect mismatch: {actual_case}'
           print(summary)
           print('PRODUCT_CANONICAL_URLS=PASS')
+          print('PRODUCT_CATEGORY_REDIRECTS=PASS')
           print('REDIRECT_COVERAGE=PASS')
           PY
       - name: Upload redirect package
