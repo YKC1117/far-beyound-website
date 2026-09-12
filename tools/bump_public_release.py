@@ -1,10 +1,11 @@
 from pathlib import Path
 import re
 
-VERSION = "20260912-2022"
+VERSION = "20260912-2038"
 PATTERNS = [
     (re.compile(r'assets/js/site-social\.js\?v=[^"\']+'), f'assets/js/site-social.js?v={VERSION}'),
     (re.compile(r'assets/js/catalog-merge\.js\?v=[^"\']+'), f'assets/js/catalog-merge.js?v={VERSION}'),
+    (re.compile(r'assets/js/product-catalog-upgrade\.js\?v=[^"\']+'), f'assets/js/product-catalog-upgrade.js?v={VERSION}'),
 ]
 
 changed = []
