@@ -1,1 +1,6 @@
 source,target,kind,label
+/system,/solutions.html,system,系統方案總覽
+/system/2,/solutions.html#sfis,system,SFIS 生產管控系統
+/system/3,/solutions.html#wms,system,WMS 電子倉庫系統
+/system/4,/solutions.html#smt,system,SMT 防錯料系統
+/system/6,/solutions.html#barcode,system,條碼整合系統
