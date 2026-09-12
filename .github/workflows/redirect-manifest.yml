@@ -6,6 +6,7 @@ on:
     paths:
       - 'assets/js/legacy-catalog.js'
       - 'assets/js/legacy-downloads.js'
+      - 'assets/js/legacy-news.js'
       - 'migration/manual-redirects.csv'
       - 'tools/build_redirect_manifest.py'
       - '.github/workflows/redirect-manifest.yml'
@@ -21,10 +22,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build redirect manifest
         run: python3 tools/build_redirect_manifest.py
-      - name: Validate generated manifest
+      - name: Validate generated manifest and coverage
         run: |
           python3 - <<'PY'
-          import csv,json
+          import csv,json,re
           from pathlib import Path
           p=Path('migration/generated/redirects.csv')
           rows=list(csv.DictReader(p.open(encoding='utf-8-sig')))
@@ -33,10 +34,21 @@ jobs:
           assert all(r['status']=='301' for r in rows), 'non-301 redirect found'
           assert all(r['source'].startswith('/') and r['target'].startswith('/') for r in rows), 'invalid path'
           assert not any(r['source']==r['target'] for r in rows), 'redirect loop found'
+          assert not any('far-beyound.com.tw' in r['source'].lower() or 'far-beyound.com.tw' in r['target'].lower() for r in rows), 'manifest must store paths, not host dependencies'
           summary=json.loads(Path('migration/generated/summary.json').read_text(encoding='utf-8'))
           assert summary['counts'].get('product',0)>0, 'missing product redirects'
           assert summary['counts'].get('download',0)>0, 'missing download redirects'
+          assert summary['counts'].get('news',0)==summary.get('news_imported'), 'legacy news coverage is incomplete'
+          assert summary.get('news_covered')==summary.get('news_imported'), 'legacy news coverage mismatch'
+          assert summary['counts'].get('news-category',0)==4, 'missing news root/category redirects'
+          sources={r['source'] for r in rows}
+          for required in ['/news','/news/1','/news/2','/news/3']:
+              assert required in sources, f'missing required news redirect: {required}'
+          news_rows=[r for r in rows if r['kind']=='news']
+          assert news_rows and all(re.fullmatch(r'/news/\d+/\d+',r['source']) for r in news_rows), 'invalid news article source path'
+          assert all(r['target'].startswith('/news-detail.html?id=') for r in news_rows), 'news article must redirect to exact detail page'
           print(summary)
+          print('REDIRECT_COVERAGE=PASS')
           PY
       - name: Upload redirect package
         uses: actions/upload-artifact@v4
