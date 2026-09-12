@@ -1,0 +1,94 @@
+name: Public release gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  public-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JavaScript syntax audit
+        run: node --check assets/js/public-release-polish.js
+
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 >/tmp/farbeyound-public-http.log 2>&1 &
+          sleep 2
+
+      - name: Render public pages and reject development copy
+        shell: bash
+        run: |
+          set -e
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          test -n "$CHROME"
+          mkdir -p qa-public
+          pages=(
+            "index.html"
+            "products.html"
+            "product.html?id=zebra-zt411-zt421"
+            "downloads.html"
+            "news.html"
+            "news-detail.html?id=material-price"
+            "solutions.html"
+            "cases.html"
+            "about.html"
+            "locations.html"
+            "contact.html"
+          )
+          i=0
+          for page in "${pages[@]}"; do
+            i=$((i+1))
+            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --virtual-time-budget=8000 --dump-dom "http://127.0.0.1:8080/$page" > "qa-public/page-$i.html"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          from html import unescape
+          import re
+
+          banned=[
+              '測試版',
+              '測試環境',
+              '正式檔案空間尚未接入',
+              '新聞內頁將於完整資料搬移階段接入',
+              '正式版可由後台上傳',
+              '可透過管理介面新增產品資料',
+          ]
+          failures=[]
+          for path in sorted(Path('qa-public').glob('page-*.html')):
+              raw=path.read_text(encoding='utf-8',errors='replace')
+              visible=re.sub(r'<script\b[^>]*>.*?</script>', '', raw, flags=re.I|re.S)
+              visible=re.sub(r'<style\b[^>]*>.*?</style>', '', visible, flags=re.I|re.S)
+              visible=unescape(re.sub(r'<[^>]+>', ' ', visible))
+              visible=re.sub(r'\s+', ' ', visible)
+              for phrase in banned:
+                  if phrase in visible:
+                      failures.append(f'{path.name}: {phrase}')
+              if 'demo-download' in raw or 'demo-news' in raw:
+                  failures.append(f'{path.name}: unresolved demo control remains in rendered DOM')
+          if failures:
+              raise SystemExit('PUBLIC RELEASE GATE FAILED\n'+'\n'.join(failures))
+          print('PUBLIC_RELEASE_COPY=PASS')
+          PY
+
+      - name: Capture representative public screenshots
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --virtual-time-budget=8000 --screenshot=qa-public/home-desktop.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=qa-public/home-mobile.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --virtual-time-budget=8000 --screenshot=qa-public/product-desktop.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-release-gate
+          path: qa-public/
+          retention-days: 3
