@@ -42,7 +42,7 @@
     $('#productPageTitle').textContent=cat?cat.name:'產品資訊';
     $('#productPageSubtitle').textContent=cat?cat.desc:'從標籤列印、掃描、RFID 到行動設備與耗材，依現場需求選擇合適的設備與方案。';
     $('#productCount').textContent=`${list.length} 項產品`;
-    $('#productGrid').innerHTML=list.length?list.map(productCard).join(''):'<div class="empty-state wide"><b>目前此分類尚未建立展示產品</b><span>可透過管理介面新增產品資料。</span></div>';
+    $('#productGrid').innerHTML=list.length?list.map(productCard).join(''):'<div class="empty-state wide"><b>目前此分類尚無公開產品資料</b><span>歡迎與我們聯絡，我們將協助您確認適合的產品。</span></div>';
   }
 
   function product(){
@@ -52,8 +52,7 @@
     $('#productHero').innerHTML=`<div class="product-detail-visual">${deviceVisual(p.device,p.brand,p.family)}</div><div class="product-detail-copy"><div class="product-meta"><span>${e(p.brand)}</span><span>${e(p.type)}</span><span class="status-dot">${e(p.status)}</span></div><h1>${e(p.name)}</h1><h2>${e(p.subtitle)}</h2><p>${e(p.intro)}</p><div class="product-actions"><a class="btn btn-primary" href="contact.html?item=${enc(p.name)}">洽詢此產品</a>${p.files.length?`<a class="btn btn-secondary" href="#downloads">文件下載</a>`:''}</div></div>`;
     $('#productHighlights').innerHTML=p.highlights.map(x=>`<li>${icon('check')}<span>${e(x)}</span></li>`).join('');
     $('#specTable').innerHTML=p.specs.map(([k,v])=>`<div class="spec-row"><dt>${e(k)}</dt><dd>${e(v)}</dd></div>`).join('');
-    $('#productFiles').innerHTML=p.files.length?p.files.map(f=>`<button class="download-row demo-download" data-file="${e(f.label)}"><span class="download-icon">${icon('download')}</span><span><small>${e(f.type)}</small><b>${e(f.label)}</b></span><span class="download-cta">測試版</span></button>`).join(''):'<div class="empty-state"><b>此產品目前沒有展示文件</b><span>正式版可由後台上傳型錄、手冊與快速指南。</span></div>';
-    $$('.demo-download').forEach(b=>b.addEventListener('click',()=>toast(`${b.dataset.file}：測試環境尚未掛載正式檔案`)));
+    $('#productFiles').innerHTML=p.files.length?p.files.map(f=>`<a class="download-row" href="contact.html?item=${enc((p.name||'產品')+' '+(f.label||'技術文件'))}"><span class="download-icon">${icon('download')}</span><span><small>${e(f.type)}</small><b>${e(f.label)}</b></span><span class="download-cta">洽詢取得</span></a>`).join(''):'<div class="empty-state"><b>需要產品文件？</b><span>如需產品型錄、手冊或技術文件，歡迎與我們聯絡索取。</span></div>';
     const related=d.products.filter(x=>x.id!==p.id&&(x.category===p.category||x.brand===p.brand)).slice(0,3);
     $('#relatedProducts').innerHTML=related.map(productCard).join('');
   }
@@ -66,8 +65,7 @@
       $$('.download-brand').forEach(b=>b.classList.toggle('active',b.dataset.brand===active));
       const rows=d.downloads.filter(x=>x.brand===active);
       $('#downloadTitle').textContent=active;
-      $('#downloadList').innerHTML=rows.map(x=>`<div class="download-item"><span class="download-icon">${icon('download')}</span><div class="download-main"><span class="tag">${e(x.category)}</span><h3>${e(x.name)}</h3><p>${e(x.note)}</p><div class="download-meta"><span>版本 ${e(x.version)}</span><span>更新 ${e(x.updated)}</span><span>${e(x.size)}</span></div></div><button class="btn btn-secondary btn-sm demo-download" data-file="${e(x.name)}">檔案下載</button></div>`).join('');
-      $$('.demo-download').forEach(b=>b.addEventListener('click',()=>toast(`${b.dataset.file}：正式檔案空間尚未接入`)));
+      $('#downloadList').innerHTML=rows.map(x=>`<div class="download-item"><span class="download-icon">${icon('download')}</span><div class="download-main"><span class="tag">${e(x.category)}</span><h3>${e(x.name)}</h3><p>${e(x.note)}</p><div class="download-meta"><span>版本 ${e(x.version)}</span><span>更新 ${e(x.updated)}</span><span>${e(x.size)}</span></div></div><a class="btn btn-secondary btn-sm" href="contact.html?item=${enc(x.name||'下載資料')}">洽詢取得</a></div>`).join('');
     }
     $$('.download-brand').forEach(b=>b.addEventListener('click',()=>{active=b.dataset.brand;draw()})); draw();
   }
