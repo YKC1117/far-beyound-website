@@ -13,6 +13,7 @@ NEWS_URL = BASE + '/news'
 OUT = Path('assets/js/legacy-news.js')
 UA = 'FarBeyoundMigrationAudit/1.0 (+https://www.far-beyound.com.tw/)'
 CATEGORY_NAMES = {'1': '產品消息', '2': '系統消息', '3': '公司公告'}
+MOJIBAKE_RE = re.compile(r'[\u0400-\u04ff]')
 
 KNOWN_SLUGS = [
     (re.compile(r'2026.*員工旅遊'), 'travel-2026'),
@@ -21,6 +22,11 @@ KNOWN_SLUGS = [
     (re.compile(r'zt411.*zt421|zt421.*zt411', re.I), 'zt411-news'),
     (re.compile(r'zt610.*zt620|zt620.*zt610', re.I), 'zt610-news'),
 ]
+
+TITLE_OVERRIDES = {
+    ('3', '29'): '2026 年度萬里資訊員工旅遊公告',
+    ('1', '28'): '原物料價格調整公告',
+}
 
 DROP_LINE_PATTERNS = [
     re.compile(r'^(首頁|產品資訊|系統方案|成功案例|下載服務|最新消息|關於萬里|聯絡我們)$'),
@@ -36,6 +42,14 @@ def clean_text(value: str) -> str:
     return value.strip()
 
 
+def clean_list_title(value: str) -> str:
+    text = clean_text(value)
+    text = re.sub(r'^20\d{2}[./\-年]\s*\d{1,2}[./\-月]\s*\d{1,2}(?:日)?\s*', '', text)
+    text = re.sub(r'^(產品消息|系統消息|公司公告|最新消息)\s*', '', text)
+    text = re.sub(r'\s*[｜|]\s*萬里資訊.*$', '', text).strip()
+    return text
+
+
 def stable_id(category: str, old_id: str, title: str) -> str:
     for pattern, slug in KNOWN_SLUGS:
         if pattern.search(title):
@@ -43,11 +57,26 @@ def stable_id(category: str, old_id: str, title: str) -> str:
     return f'legacy-news-{category}-{old_id}'
 
 
+def decode_html(response: requests.Response) -> str:
+    raw = response.content
+    # The current official site is predominantly UTF-8. requests' statistical
+    # detector can misclassify Chinese-only notices as a Cyrillic code page,
+    # producing readable-looking but corrupted text. Prefer strict UTF-8 first.
+    for encoding in ('utf-8', 'cp950', 'big5'):
+        try:
+            text = raw.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+        if encoding == 'utf-8' or not MOJIBAKE_RE.search(text):
+            return text
+    encoding = response.apparent_encoding or response.encoding or 'utf-8'
+    return raw.decode(encoding, errors='replace')
+
+
 def get(session: requests.Session, url: str) -> BeautifulSoup:
     response = session.get(url, timeout=25)
     response.raise_for_status()
-    response.encoding = response.apparent_encoding or response.encoding or 'utf-8'
-    return BeautifulSoup(response.text, 'html.parser')
+    return BeautifulSoup(decode_html(response), 'html.parser')
 
 
 def discover_articles(session: requests.Session) -> dict[str, dict]:
@@ -83,21 +112,28 @@ def discover_articles(session: requests.Session) -> dict[str, dict]:
     return found
 
 
-def choose_title(soup: BeautifulSoup, list_title: str) -> str:
+def choose_title(soup: BeautifulSoup, list_title: str, category: str, old_id: str) -> str:
+    override = TITLE_OVERRIDES.get((category, old_id))
+    if override:
+        return override
+
+    list_clean = clean_list_title(list_title)
+    if 4 <= len(list_clean) <= 180 and not MOJIBAKE_RE.search(list_clean):
+        return list_clean
+
     og = soup.find('meta', attrs={'property': 'og:title'})
     candidates = []
     if og and og.get('content'):
         candidates.append(clean_text(og['content']))
     candidates.extend(clean_text(x.get_text(' ', strip=True)) for x in soup.find_all(['h1', 'h2']))
-    if list_title:
-        candidates.append(clean_text(list_title))
     if soup.title:
         candidates.append(clean_text(soup.title.get_text(' ', strip=True)))
     for text in candidates:
         text = re.sub(r'\s*[｜|]\s*萬里資訊.*$', '', text).strip()
-        if len(text) >= 4 and text not in {'最新消息', '萬里資訊'}:
-            return text[:300]
-    return clean_text(list_title)[:300]
+        text = clean_list_title(text)
+        if 4 <= len(text) <= 180 and text not in {'最新消息', '萬里資訊'} and not MOJIBAKE_RE.search(text):
+            return text
+    return list_clean[:180]
 
 
 def find_date(soup: BeautifulSoup) -> str:
@@ -168,6 +204,8 @@ def body_lines(container, title: str, date: str) -> list[str]:
             continue
         if any(p.search(line) for p in DROP_LINE_PATTERNS):
             continue
+        if MOJIBAKE_RE.search(line):
+            continue
         if len(line) > 2500:
             line = line[:2500].rstrip() + '…'
         key = re.sub(r'\s+', '', line)
@@ -180,19 +218,21 @@ def body_lines(container, title: str, date: str) -> list[str]:
 
 def excerpt_from(body: list[str], fallback: str = '') -> str:
     useful = [x for x in body if len(x) >= 12]
-    text = ' '.join(useful[:2]) or fallback
+    text = ' '.join(useful[:2]) or clean_list_title(fallback)
     text = clean_text(text)
     return (text[:177].rstrip() + '…') if len(text) > 180 else text
 
 
 def parse_article(session: requests.Session, url: str, seed: dict) -> dict:
     soup = get(session, url)
-    title = choose_title(soup, seed.get('listTitle', ''))
-    date = find_date(soup)
     category = seed['category']
     old_id = seed['oldId']
+    title = choose_title(soup, seed.get('listTitle', ''), category, old_id)
+    date = find_date(soup)
     container = likely_article_container(soup, title)
     body = body_lines(container, title, date)
+    if MOJIBAKE_RE.search(title) or any(MOJIBAKE_RE.search(x) for x in body):
+        raise ValueError('mojibake detected')
     return {
         'id': stable_id(category, old_id, title),
         'date': date,
@@ -228,10 +268,7 @@ def main() -> None:
         raise SystemExit('Too many article parse failures:\n' + '\n'.join(errors[:20]))
 
     items.sort(key=lambda x: (x.get('date', ''), int(x.get('legacyId') or 0)), reverse=True)
-    payload = {
-        'source': NEWS_URL,
-        'items': items,
-    }
+    payload = {'source': NEWS_URL, 'items': items}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     encoded = json.dumps(payload, ensure_ascii=False, separators=(',', ':'))
     OUT.write_text('window.FBLegacyNews=' + encoded + ';\n', encoding='utf-8')
