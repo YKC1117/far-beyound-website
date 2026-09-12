@@ -12,3 +12,12 @@ source,target,kind,label
 /case/6,/cases.html?system=wms,case,WMS 客戶案例
 /case/7,/cases.html?system=smt,case,SMT 客戶案例
 /case/11,/cases.html?system=barcode,case,條碼整合客戶案例
+/product,/products.html,product-category,產品資訊總覽
+/product/1,/products.html?category=printers,product-category,標籤條碼列印機
+/product/2,/products.html?category=scanners,product-category,條碼掃描器
+/product/3,/products.html?category=rfid,product-category,RFID 設備
+/product/4,/products.html?category=mobile,product-category,行動電腦
+/product/16,/products.html?category=labels,product-category,標籤貼紙與碳帶
+/product/20,/products.html?category=printing,product-category,標籤貼紙代印
+/product/65,/products.html?category=parts,product-category,標籤機維修與配件
+/product/automation/bzj.asp,/products.html?category=software,product-category,BarTender 與 CodeSoft 標籤軟體
