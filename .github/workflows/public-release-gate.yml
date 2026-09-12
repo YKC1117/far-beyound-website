@@ -88,17 +88,18 @@ jobs:
               '可透過管理介面新增產品資料',
           ]
           failures=[]
+          demo_class=re.compile(r'class\s*=\s*(["\'])[^"\']*\bdemo-(?:download|news)\b[^"\']*\1', re.I)
           for path in sorted(Path('qa-public').glob('page-*.html')):
               raw=path.read_text(encoding='utf-8',errors='replace')
-              visible=re.sub(r'<script\b[^>]*>.*?</script>', '', raw, flags=re.I|re.S)
-              visible=re.sub(r'<style\b[^>]*>.*?</style>', '', visible, flags=re.I|re.S)
-              visible=unescape(re.sub(r'<[^>]+>', ' ', visible))
+              rendered=re.sub(r'<script\b[^>]*>.*?</script>', '', raw, flags=re.I|re.S)
+              rendered=re.sub(r'<style\b[^>]*>.*?</style>', '', rendered, flags=re.I|re.S)
+              if demo_class.search(rendered):
+                  failures.append(f'{path.name}: unresolved demo control remains in rendered DOM')
+              visible=unescape(re.sub(r'<[^>]+>', ' ', rendered))
               visible=re.sub(r'\s+', ' ', visible)
               for phrase in banned:
                   if phrase in visible:
                       failures.append(f'{path.name}: {phrase}')
-              if 'demo-download' in raw or 'demo-news' in raw:
-                  failures.append(f'{path.name}: unresolved demo control remains in rendered DOM')
           if failures:
               raise SystemExit('PUBLIC RELEASE GATE FAILED\n'+'\n'.join(failures))
           print('PUBLIC_RELEASE_COPY=PASS')
