@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 
-VERSION = "20260912-1705"
+VERSION = "20260912-1956"
 PATTERN = re.compile(r'assets/js/site-social\.js\?v=[^"\']+')
 
 changed = []
