@@ -52,10 +52,11 @@
     if(seq!==publishSeq)return;status('共用資料：正在上傳');publishAbort?.abort();const controller=new AbortController();publishAbort=controller;
     try{
       const headers={'Content-Type':'application/json'};if(auth?.token)headers.Authorization=`Bearer ${auth.token}`;else if(auth?.pass)headers['x-admin-pass']=auth.pass;else throw new Error('cancelled');
-      const r=await fetch(ENDPOINT,{method:'POST',headers,body:JSON.stringify({data:next}),signal:controller.signal});const body=await r.json().catch(()=>({}));
+      const base=sessionStorage.getItem(VERSION_KEY)||null;
+      const r=await fetch(ENDPOINT,{method:'POST',headers,body:JSON.stringify({data:next,base_updated_at:base}),signal:controller.signal});const body=await r.json().catch(()=>({}));
       if(!r.ok){const e=new Error(body.error||('HTTP '+r.status));e.detail=body;throw e}if(seq!==publishSeq)return;
       pendingBaseRaw=undefined;if(body.updated_at)sessionStorage.setItem(VERSION_KEY,body.updated_at);status('共用資料：已上傳 '+stamp());window.dispatchEvent(new CustomEvent('farbeyound:cloudsaved',{detail:{updatedAt:body.updated_at||null}}));
-    }catch(err){if(err.name==='AbortError'||seq!==publishSeq)return;console.error('[cloud-sync] publish failed',err);status('共用資料：上傳失敗，已還原','error');if(rollbackOnFail)rollback(err.message);if(document.body?.dataset.page==='admin'){let msg='發布失敗，這次修改已還原，沒有只留在目前瀏覽器。';if(err.message==='personal_login_required')msg='後台已啟用個人管理帳號，請先登入個人帳號再修改。這次修改已還原。';else if(err.message==='forbidden')msg=`目前個人帳號沒有此項目的修改權限${err.detail?.scope?'（'+err.detail.scope+'）':''}。這次修改已還原。`;else if(err.message==='unauthorized')msg='發布密碼驗證失敗，這次修改已還原。';alert(msg)}
+    }catch(err){if(err.name==='AbortError'||seq!==publishSeq)return;console.error('[cloud-sync] publish failed',err);status('共用資料：上傳失敗，已還原','error');if(rollbackOnFail)rollback(err.message);if(err.message==='version_conflict')setTimeout(()=>pull({allowReload:false}),80);if(document.body?.dataset.page==='admin'){let msg='發布失敗，這次修改已還原，沒有只留在目前瀏覽器。';if(err.message==='personal_login_required')msg='後台已啟用個人管理帳號，請先登入個人帳號再修改。這次修改已還原。';else if(err.message==='forbidden')msg=`目前個人帳號沒有此項目的修改權限${err.detail?.scope?'（'+err.detail.scope+'）':''}。這次修改已還原。`;else if(err.message==='unauthorized')msg='發布密碼驗證失敗，這次修改已還原。';else if(err.message==='version_conflict')msg='其他管理者已先發布較新的版本。這次修改已取消並重新載入最新資料，避免互相覆蓋。';alert(msg)}
     }
   }
   async function preparePublish(next,seq,rollbackOnFail=true){
