@@ -40,6 +40,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
+          import re
           from pathlib import Path
 
           path=Path('assets/js/legacy-news.js')
@@ -52,11 +53,13 @@ jobs:
           if len(items) < 10:
               raise SystemExit(f'Only {len(items)} imported articles')
           ids=[str(x.get('id') or '') for x in items]
-          urls=[str(x.get('legacyUrl') or '') for x in items]
+          paths=[str(x.get('legacyPath') or '') for x in items]
           if any(not x for x in ids) or len(ids) != len(set(ids)):
               raise SystemExit('Missing or duplicate article id')
-          if any(not x.startswith('https://www.far-beyound.com.tw/news/') for x in urls) or len(urls) != len(set(urls)):
-              raise SystemExit('Missing, duplicate or unexpected legacy URL')
+          if any(not re.fullmatch(r'/news/\d+/\d+', x) for x in paths) or len(paths) != len(set(paths)):
+              raise SystemExit('Missing, duplicate or unexpected legacy path')
+          if 'far-beyound.com.tw' in raw.lower():
+              raise SystemExit('Public legacy archive must not depend on the legacy hostname')
           for item in items:
               if not item.get('title') or not isinstance(item.get('body'), list):
                   raise SystemExit('Invalid article content shape')
