@@ -30,7 +30,7 @@
   function currentProduct(){
     const id=new URLSearchParams(location.search).get('id')||'';
     const data=window.FBStore?.getData?.();
-    return data?.products?.find?.(p=>String(p.id)===id) || null;
+    return data?.products?.find?.(p=>String(p.id)===id)||null;
   }
 
   function polishProductFiles(){
@@ -41,9 +41,13 @@
     if(!p)return;
     const files=Array.isArray(p.files)?p.files:[];
     if(!files.length){
-      box.innerHTML='<div class="empty-state"><b>需要產品文件？</b><span>如需產品型錄、使用手冊或技術文件，歡迎與我們聯絡索取。</span><a class="btn btn-secondary btn-sm" href="contact.html?item='+encodeURIComponent(p.name||'產品文件')+'">聯絡我們</a></div>';
+      if(box.querySelector('[data-release-empty="1"]'))return;
+      box.innerHTML='<div class="empty-state" data-release-empty="1"><b>需要產品文件？</b><span>如需產品型錄、使用手冊或技術文件，歡迎與我們聯絡索取。</span><a class="btn btn-secondary btn-sm" href="contact.html?item='+encodeURIComponent(p.name||'產品文件')+'">聯絡我們</a></div>';
       return;
     }
+    const signature=JSON.stringify(files.map(f=>[f?.label||'',f?.type||'',f?.url||'']));
+    if(box.dataset.releaseSignature===signature && !box.querySelector('.demo-download'))return;
+    box.dataset.releaseSignature=signature;
     box.innerHTML=files.map(file=>{
       const label=esc(file?.label||'技術文件');
       const type=esc(file?.type||'文件');
@@ -89,7 +93,7 @@
       if(!old)return;
       const a=document.createElement('a');
       a.className='text-link';
-      a.href=slug?('news-detail.html?id='+encodeURIComponent(slug)):'news.html';
+      a.href=slug?('news-detail.html?id='+encodeURIComponent(slug)):'contact.html?item='+encodeURIComponent(title||'消息內容');
       a.innerHTML=old.innerHTML||'閱讀內容 →';
       old.replaceWith(a);
     });
@@ -115,16 +119,45 @@
     });
   }
 
+  let cleaning=false;
   function run(){
-    polishProductFiles();
-    polishDownloadFallback();
-    polishHomeNews();
-    polishNewsList();
-    cleanCustomerFacingCopy();
+    if(cleaning)return;
+    cleaning=true;
+    try{
+      polishProductFiles();
+      polishDownloadFallback();
+      polishHomeNews();
+      polishNewsList();
+      cleanCustomerFacingCopy();
+    }finally{
+      cleaning=false;
+    }
   }
 
-  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,80);setTimeout(run,450);},{once:true});
-  window.addEventListener('load',()=>setTimeout(run,120));
-  window.addEventListener('farbeyound:datachange',()=>setTimeout(run,120));
-  if(document.readyState!=='loading')setTimeout(run,0);
+  function observeDynamic(){
+    const configs=[
+      ['newsList',()=>document.querySelector('#newsList .demo-news')&&run()],
+      ['downloadList',()=>document.querySelector('#downloadList .demo-download')&&run()],
+      ['productFiles',run],
+      ['homeNews',run]
+    ];
+    configs.forEach(([id,fn])=>{
+      const el=document.getElementById(id);
+      if(!el||el.dataset.releaseObserved==='1')return;
+      el.dataset.releaseObserved='1';
+      let queued=false;
+      const observer=new MutationObserver(()=>{
+        if(queued||cleaning)return;
+        queued=true;
+        setTimeout(()=>{queued=false;fn();},0);
+      });
+      observer.observe(el,{childList:true,subtree:true});
+    });
+  }
+
+  function boot(){run();observeDynamic();setTimeout(()=>{run();observeDynamic();},80);setTimeout(()=>{run();observeDynamic();},450);}
+  document.addEventListener('DOMContentLoaded',boot,{once:true});
+  window.addEventListener('load',()=>setTimeout(boot,120));
+  window.addEventListener('farbeyound:datachange',()=>setTimeout(boot,120));
+  if(document.readyState!=='loading')setTimeout(boot,0);
 })();
