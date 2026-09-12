@@ -25,14 +25,30 @@ old_handler = "; $$('.demo-news').forEach(b=>b.onclick=()=>toast('新聞內頁�
 if old_handler in pages:
     pages = pages.replace(old_handler, '', 1)
 
-if 'demo-news' in pages:
-    raise SystemExit('demo-news remains in assets/js/pages.js after patch')
+# Remove development/demo fallback renderers at the source. Later public polish
+# remains as defense-in-depth, not as the primary implementation.
+lines = []
+for line in pages.splitlines():
+    if "$('#productFiles').innerHTML=" in line:
+        line = "    $('#productFiles').innerHTML=p.files.length?p.files.map(f=>`<a class=\"download-row\" href=\"contact.html?item=${enc((p.name||'產品')+' '+(f.label||'技術文件'))}\"><span class=\"download-icon\">${icon('download')}</span><span><small>${e(f.type)}</small><b>${e(f.label)}</b></span><span class=\"download-cta\">洽詢取得</span></a>`).join(''):'<div class=\"empty-state\"><b>需要產品文件？</b><span>如需產品型錄、手冊或技術文件，歡迎與我們聯絡索取。</span></div>';"
+    elif "$$('.demo-download').forEach" in line:
+        continue
+    elif "$('#downloadList').innerHTML=rows.map" in line:
+        line = "      $('#downloadList').innerHTML=rows.map(x=>`<div class=\"download-item\"><span class=\"download-icon\">${icon('download')}</span><div class=\"download-main\"><span class=\"tag\">${e(x.category)}</span><h3>${e(x.name)}</h3><p>${e(x.note)}</p><div class=\"download-meta\"><span>版本 ${e(x.version)}</span><span>更新 ${e(x.updated)}</span><span>${e(x.size)}</span></div></div><a class=\"btn btn-secondary btn-sm\" href=\"contact.html?item=${enc(x.name||'下載資料')}\">洽詢取得</a></div>`).join('');"
+    lines.append(line)
+pages = '\n'.join(lines) + ('\n' if pages.endswith('\n') else '')
+pages = pages.replace('目前此分類尚未建立展示產品', '目前此分類尚無公開產品資料')
+pages = pages.replace('可透過管理介面新增產品資料。', '歡迎與我們聯絡，我們將協助您確認適合的產品。')
+
+for forbidden in ('demo-news', 'demo-download', '測試版', '測試環境尚未掛載正式檔案', '正式檔案空間尚未接入', '新聞內頁將於完整資料搬移階段接入', '正式版可由後台上傳'):
+    if forbidden in pages:
+        raise SystemExit(f'Customer-facing development code remains in assets/js/pages.js: {forbidden}')
 
 if pages != pages_original:
     pages_path.write_text(pages, encoding='utf-8')
-    print('Updated assets/js/pages.js: news links now use real destinations.')
+    print('Updated assets/js/pages.js: public renderers are production-facing.')
 else:
-    print('assets/js/pages.js already uses real news links.')
+    print('assets/js/pages.js public renderers already clean.')
 
 # Public defaults must never expose development/migration wording to customers.
 data_path = Path('assets/js/data.js')
