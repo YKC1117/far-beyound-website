@@ -20,6 +20,7 @@ jobs:
         run: |
           node --check assets/js/public-release-polish.js
           node --check assets/js/pages.js
+          node --check assets/js/data.js
 
       - name: Public source integrity
         run: |
@@ -31,6 +32,17 @@ jobs:
               raise SystemExit('assets/js/pages.js still contains demo-news')
           if 'function newsHref(n)' not in pages:
               raise SystemExit('assets/js/pages.js is missing the real news link resolver')
+
+          data = Path('assets/js/data.js').read_text(encoding='utf-8')
+          forbidden_source = [
+              '正式版將連接公司檔案空間',
+              '正式版可由後台上傳',
+              '測試環境尚未掛載正式檔案',
+              '新聞內頁將於完整資料搬移階段接入',
+          ]
+          source_hits=[x for x in forbidden_source if x in data]
+          if source_hits:
+              raise SystemExit('Customer-facing development copy remains in assets/js/data.js: '+', '.join(source_hits))
 
           expected='assets/js/site-social.js?v=20260912-1705'
           required=['index.html','about.html','cases.html','downloads.html','news.html','news-detail.html','product.html','solutions.html']
@@ -85,6 +97,7 @@ jobs:
               '正式檔案空間尚未接入',
               '新聞內頁將於完整資料搬移階段接入',
               '正式版可由後台上傳',
+              '正式版將連接公司檔案空間',
               '可透過管理介面新增產品資料',
           ]
           failures=[]
