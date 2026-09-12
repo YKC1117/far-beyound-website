@@ -6,7 +6,7 @@
   const COMMON = ['工業型條碼列印機','商業型條碼列印機','桌上型條碼列印機','攜帶型標籤條碼列印機','標籤條碼列印機','條碼列印機','條碼掃描器','工業型','商業型','桌上型','攜帶型','通用型','超耐用型','固定式'];
   const CATEGORY_SLUG={printers:'printer',scanners:'scanner',rfid:'rfid',mobile:'mobile',labels:'labels',printing:'printing',software:'software',parts:'parts'};
   const FASTECH_FALLBACK={labels:'label',printing:'label-printing',software:'label-software',parts:'printer-parts',rfid:'rfid',mobile:'mobile',printers:'printer',scanners:'scanner'};
-  const CURATED_IDS=new Set(['software-bartender','software-codesoft','urovo-enterprise-mobile']);
+  const CURATED_IDS=new Set(['software-bartender','software-codesoft','urovo-dt66-ct48c-dt50-dt40-rt40s']);
   const VERIFIED_PATH_IDS={
     '/product/1/22/33/181':'tsc-da210-da220',
     '/product/1/22/93/180':'tsc-alpha-3r-alpha-30r-alpha-30l-alpha-30lhc'
