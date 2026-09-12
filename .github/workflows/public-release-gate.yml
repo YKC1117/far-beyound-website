@@ -30,7 +30,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import json
+          import json,re
 
           pages = Path('assets/js/pages.js').read_text(encoding='utf-8')
           if 'demo-news' in pages:
@@ -62,7 +62,12 @@ jobs:
           if not all(str(x.get('legacyPath') or '').startswith('/news/') for x in items):
               raise SystemExit('Legacy news archive contains an invalid migration path')
 
-          expected='assets/js/site-social.js?v=20260912-2022'
+          bump=Path('tools/bump_public_release.py').read_text(encoding='utf-8')
+          match=re.search(r'VERSION\s*=\s*["\']([^"\']+)',bump)
+          if not match:
+              raise SystemExit('Cannot resolve public release cache version')
+          version=match.group(1)
+          expected=f'assets/js/site-social.js?v={version}'
           required=['index.html','about.html','cases.html','downloads.html','news.html','news-detail.html','product.html','solutions.html']
           bad=[]
           for name in required:
@@ -70,8 +75,8 @@ jobs:
               if expected not in text:
                   bad.append(name)
           if bad:
-              raise SystemExit('Public loader cache version is stale: '+', '.join(bad))
-          print('PUBLIC_SOURCE_INTEGRITY=PASS')
+              raise SystemExit(f'Public loader cache version {version} is stale: '+', '.join(bad))
+          print(f'PUBLIC_SOURCE_INTEGRITY=PASS version={version}')
           PY
 
       - name: Start local preview
