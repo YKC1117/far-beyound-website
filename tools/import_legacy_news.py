@@ -52,8 +52,6 @@ def clean_list_title(value: str) -> str:
     text = re.sub(r'^20\d{2}[./\-年]\s*\d{1,2}[./\-月]\s*\d{1,2}(?:日)?\s*', '', text)
     text = re.sub(r'^(產品消息|系統消息|公司公告|最新消息)\s*', '', text)
     text = re.sub(r'\s*[｜|]\s*萬里資訊.*$', '', text).strip()
-    # Old announcement links sometimes include the first sentence after the title.
-    # Keep the concise announcement title and discard the appended body fragment.
     if '公告' in text:
         end = text.find('公告') + len('公告')
         if len(text) - end > 8:
@@ -245,7 +243,7 @@ def parse_article(session: requests.Session, url: str, seed: dict) -> dict:
         'title': title,
         'excerpt': excerpt_from(body, seed.get('listTitle', '')),
         'body': body,
-        'legacyUrl': url,
+        'legacyPath': urlparse(url).path,
         'legacyCategory': category,
         'legacyId': old_id,
     }
@@ -270,7 +268,7 @@ def main() -> None:
     if len(items) < max(10, int(len(seeds) * 0.85)):
         raise SystemExit('Too many article parse failures:\n' + '\n'.join(errors[:20]))
     items.sort(key=lambda x: (x.get('date', ''), int(x.get('legacyId') or 0)), reverse=True)
-    payload = {'source': NEWS_URL, 'items': items}
+    payload = {'sourcePath': '/news', 'items': items}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     encoded = json.dumps(payload, ensure_ascii=False, separators=(',', ':'))
     OUT.write_text('window.FBLegacyNews=' + encoded + ';\n', encoding='utf-8')
