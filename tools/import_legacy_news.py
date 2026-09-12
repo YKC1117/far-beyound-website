@@ -30,9 +30,14 @@ TITLE_OVERRIDES = {
 
 DROP_LINE_PATTERNS = [
     re.compile(r'^(首頁|產品資訊|系統方案|成功案例|下載服務|最新消息|關於萬里|聯絡我們)$'),
-    re.compile(r'^(上一頁|下一頁|返回|TOP|MENU|Copyright)', re.I),
+    re.compile(r'^(上一頁|下一頁|返回|回列表|TOP|MENU|Copyright)', re.I),
     re.compile(r'萬里資訊股份有限公司.*版權', re.I),
+    re.compile(r'.*\|\s*萬里資訊\s*$', re.I),
+    re.compile(r'^(台北|台南|新北|深圳|昆山)\s*[:：+0-9-]', re.I),
     re.compile(r'^(台北|台南|新北|深圳|昆山).*(電話|TEL|FAX|地址)', re.I),
+    re.compile(r'^免費諮詢$'),
+    re.compile(r'^@\S+$'),
+    re.compile(r'^20\d{2}[./-]\d{1,2}[./-]\d{1,2}$'),
 ]
 
 
@@ -47,7 +52,13 @@ def clean_list_title(value: str) -> str:
     text = re.sub(r'^20\d{2}[./\-年]\s*\d{1,2}[./\-月]\s*\d{1,2}(?:日)?\s*', '', text)
     text = re.sub(r'^(產品消息|系統消息|公司公告|最新消息)\s*', '', text)
     text = re.sub(r'\s*[｜|]\s*萬里資訊.*$', '', text).strip()
-    return text
+    # Old announcement links sometimes include the first sentence after the title.
+    # Keep the concise announcement title and discard the appended body fragment.
+    if '公告' in text:
+        end = text.find('公告') + len('公告')
+        if len(text) - end > 8:
+            text = text[:end]
+    return text.strip(' -｜|')
 
 
 def stable_id(category: str, old_id: str, title: str) -> str:
@@ -59,9 +70,6 @@ def stable_id(category: str, old_id: str, title: str) -> str:
 
 def decode_html(response: requests.Response) -> str:
     raw = response.content
-    # The current official site is predominantly UTF-8. requests' statistical
-    # detector can misclassify Chinese-only notices as a Cyrillic code page,
-    # producing readable-looking but corrupted text. Prefer strict UTF-8 first.
     for encoding in ('utf-8', 'cp950', 'big5'):
         try:
             text = raw.decode(encoding)
@@ -96,11 +104,10 @@ def discover_articles(session: requests.Session) -> dict[str, dict]:
             canonical = f'{BASE}/news/{category}/{old_id}'
             if canonical in found:
                 continue
-            text = clean_text(a.get_text(' ', strip=True))
             found[canonical] = {
                 'category': category,
                 'oldId': old_id,
-                'listTitle': text,
+                'listTitle': clean_text(a.get_text(' ', strip=True)),
             }
             page_new += 1
         if page_new == 0:
@@ -116,11 +123,9 @@ def choose_title(soup: BeautifulSoup, list_title: str, category: str, old_id: st
     override = TITLE_OVERRIDES.get((category, old_id))
     if override:
         return override
-
     list_clean = clean_list_title(list_title)
     if 4 <= len(list_clean) <= 180 and not MOJIBAKE_RE.search(list_clean):
         return list_clean
-
     og = soup.find('meta', attrs={'property': 'og:title'})
     candidates = []
     if og and og.get('content'):
@@ -252,7 +257,6 @@ def main() -> None:
     seeds = discover_articles(session)
     if len(seeds) < 10:
         raise SystemExit(f'Only discovered {len(seeds)} legacy news articles; refusing to overwrite output.')
-
     items = []
     errors = []
     for url, seed in sorted(seeds.items(), key=lambda kv: (int(kv[1]['category']), int(kv[1]['oldId']))):
@@ -263,10 +267,8 @@ def main() -> None:
             items.append(item)
         except Exception as exc:
             errors.append(f'{url}: {exc}')
-
     if len(items) < max(10, int(len(seeds) * 0.85)):
         raise SystemExit('Too many article parse failures:\n' + '\n'.join(errors[:20]))
-
     items.sort(key=lambda x: (x.get('date', ''), int(x.get('legacyId') or 0)), reverse=True)
     payload = {'source': NEWS_URL, 'items': items}
     OUT.parent.mkdir(parents=True, exist_ok=True)
