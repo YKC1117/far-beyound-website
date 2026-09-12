@@ -1,7 +1,7 @@
 (()=>{
   if(document.body.dataset.page!=='admin'||window.__fbAdminSessionHardening)return;
   window.__fbAdminSessionHardening=true;
-  const START='farbeyoundAdminAbsoluteStartV1',MAX_MS=8*60*60*1000,STAMP='後台介面更新：2026/09/12 14:44';
+  const START='farbeyoundAdminAbsoluteStartV1',MAX_MS=8*60*60*1000,STAMP='後台介面更新：2026/09/12 15:26';
   const URL='https://papqrnqbfauwuipjwwdh.supabase.co',KEY='sb_publishable_dDCh9hy183BipvxCbuZdiA_qPonsyxe',SERVER_CHECK_MS=2*60*1000;
   let expiring=false,serverChecking=false,serverInvalidating=false,lastServerCheck=0;
   function frameGuard(){try{if(window.top!==window.self){document.documentElement.innerHTML='';return false}}catch{document.documentElement.innerHTML='';return false}try{if(window.opener)window.opener=null}catch{}return true}
