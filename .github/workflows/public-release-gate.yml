@@ -111,6 +111,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           from html import unescape
+          from html.parser import HTMLParser
           import re
 
           banned=[
@@ -136,6 +137,22 @@ jobs:
                   if phrase in visible:
                       failures.append(f'{path.name}: {phrase}')
 
+          class Probe(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.news_cards=0
+                  self.case_systems=[]
+              def handle_starttag(self, tag, attrs):
+                  a=dict(attrs)
+                  classes=set((a.get('class') or '').split())
+                  if 'news-card' in classes:
+                      self.news_cards+=1
+                  if 'case-page-card' in classes:
+                      self.case_systems.append(a.get('data-system') or '')
+
+          def probe(raw):
+              p=Probe();p.feed(raw);return p
+
           news=Path('qa-public/page-5.html').read_text(encoding='utf-8',errors='replace')
           history=Path('qa-public/page-7.html').read_text(encoding='utf-8',errors='replace')
           solutions=Path('qa-public/page-8.html').read_text(encoding='utf-8',errors='replace')
@@ -145,7 +162,7 @@ jobs:
           smt=Path('qa-public/page-12.html').read_text(encoding='utf-8',errors='replace')
           barcode=Path('qa-public/page-13.html').read_text(encoding='utf-8',errors='replace')
 
-          news_cards=len(re.findall(r'class="news-card"',news))
+          news_cards=probe(news).news_cards
           if '2025年農曆春節休假公告' not in news or news_cards < 20:
               failures.append(f'news.html: migrated history is not stable after later renderers (cards={news_cards})')
           if '共用印表機' not in history or '歷史資訊提醒' not in history:
@@ -153,21 +170,21 @@ jobs:
           if 'id="barcode"' not in solutions or '條碼整合系統' not in solutions:
               failures.append('solutions.html: barcode integration solution is missing')
 
-          def card_count(raw): return len(re.findall(r'class="case-page-card"',raw))
-          def systems(raw): return re.findall(r'data-system="([^"]+)"',raw)
+          def systems(raw): return probe(raw).case_systems
+          def card_count(raw): return len(systems(raw))
           if card_count(all_cases) < 4 or '全部案例' not in all_cases:
               failures.append(f'cases.html: all-case view incomplete (cards={card_count(all_cases)})')
-          if card_count(sfis) < 3 or not systems(sfis) or any(x!='sfis' for x in systems(sfis)) or 'SFIS 客戶案例' not in sfis:
+          if card_count(sfis) < 3 or any(x!='sfis' for x in systems(sfis)) or 'SFIS 客戶案例' not in sfis:
               failures.append(f'cases.html?system=sfis: filter mismatch (cards={card_count(sfis)}, systems={systems(sfis)})')
-          if card_count(wms) < 1 or not systems(wms) or any(x!='wms' for x in systems(wms)) or 'WMS 客戶案例' not in wms:
+          if card_count(wms) < 1 or any(x!='wms' for x in systems(wms)) or 'WMS 客戶案例' not in wms:
               failures.append(f'cases.html?system=wms: filter mismatch (cards={card_count(wms)}, systems={systems(wms)})')
-          for label,raw,key in [('SMT',smt,'smt'),('條碼整合',barcode,'barcode')]:
+          for title,raw,key in [('SMT 客戶案例',smt,'smt'),('條碼整合客戶案例',barcode,'barcode')]:
               found=systems(raw)
               if found and any(x!=key for x in found):
                   failures.append(f'cases.html?system={key}: unrelated case leaked into filtered view: {found}')
               if not found and '目前未公開此分類案例' not in raw:
                   failures.append(f'cases.html?system={key}: missing honest empty state')
-              if f'{label} 客戶案例' not in raw:
+              if title not in raw:
                   failures.append(f'cases.html?system={key}: category heading missing')
 
           if failures:
@@ -176,7 +193,7 @@ jobs:
           print(f'LEGACY_NEWS_RENDER=PASS cards={news_cards}')
           print('HISTORICAL_TECH_NOTICE=PASS')
           print('BARCODE_SOLUTION_RENDER=PASS')
-          print(f'CASE_FILTER_RENDER=PASS all={card_count(all_cases)} sfis={card_count(sfis)} wms={card_count(wms)}')
+          print(f'CASE_FILTER_RENDER=PASS all={card_count(all_cases)} sfis={card_count(sfis)} wms={card_count(wms)} smt={card_count(smt)} barcode={card_count(barcode)}')
           PY
 
       - name: Capture representative public screenshots
