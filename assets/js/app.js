@@ -106,7 +106,7 @@
           <div><h4>支援資源</h4><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="cases.html">客戶案例</a><a href="news.html">最新消息</a><a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">免費諮詢</a></div>
           <div><h4>聯絡資訊</h4>${d.site.phones.map(p=>`<a href="tel:${p.value.replace(/-/g,'')}">${p.label} ${p.value}</a>`).join('')}<a href="mailto:${d.site.email}">${d.site.email}</a><span>${d.site.address}</span></div>
         </div>
-        <div class="container footer-bottom"><span>© ${new Date().getFullYear()} ${d.site.companyEn}. All Rights Reserved.</span><span>新版網站測試環境 · v0.1</span></div>
+        <div class="container footer-bottom"><span>© ${new Date().getFullYear()} ${d.site.companyEn}. All Rights Reserved.</span><span>萬里資訊股份有限公司</span></div>
       </footer>`;
   }
 
