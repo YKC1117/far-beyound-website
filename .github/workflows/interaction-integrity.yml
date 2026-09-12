@@ -55,8 +55,9 @@ jobs:
               tokens.append(token)
           assert len(set(tokens))==len(cards), 'Product public slugs are not unique'
           assert not problems, '\n'.join(problems[:30])
-          required={'software-bartender','software-codesoft','urovo-enterprise-mobile'}
+          required={'software-bartender','software-codesoft','urovo-dt66-ct48c-dt50-dt40-rt40s'}
           assert not required-set(tokens), f'Curated product entries missing: {sorted(required-set(tokens))}'
+          assert 'urovo-enterprise-mobile' not in tokens, 'Legacy UROVO id leaked into product cards'
 
           brands=home.select('.brand-portfolio a.brand-wordmark')
           assert len(brands)==12, f'Expected 12 brand entries, got {len(brands)}'
