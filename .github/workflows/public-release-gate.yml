@@ -60,7 +60,7 @@ jobs:
           if not all(str(x.get('legacyPath') or '').startswith('/news/') for x in items):
               raise SystemExit('Legacy news archive contains an invalid migration path')
 
-          expected='assets/js/site-social.js?v=20260912-1956'
+          expected='assets/js/site-social.js?v=20260912-2005'
           required=['index.html','about.html','cases.html','downloads.html','news.html','news-detail.html','product.html','solutions.html']
           bad=[]
           for name in required:
@@ -91,7 +91,7 @@ jobs:
             "downloads.html"
             "news.html"
             "news-detail.html?id=material-price"
-            "news-detail.html?id=legacy-news-3-24"
+            "news-detail.html?id=printer-share-error"
             "solutions.html"
             "cases.html"
             "about.html"
@@ -134,17 +134,19 @@ jobs:
           news=Path('qa-public/page-5.html').read_text(encoding='utf-8',errors='replace')
           history=Path('qa-public/page-7.html').read_text(encoding='utf-8',errors='replace')
           solutions=Path('qa-public/page-8.html').read_text(encoding='utf-8',errors='replace')
-          if '2025年農曆春節休假公告' not in news:
-              failures.append('news.html: migrated history is not rendered')
-          if '2025年農曆春節休假公告' not in history or '歷史資訊提醒' not in history:
-              failures.append('historical news detail: title or history notice is missing')
+          news_cards=len(re.findall(r'class="news-card"',news))
+          if '2025年農曆春節休假公告' not in news or news_cards < 20:
+              failures.append(f'news.html: migrated history is not stable after later renderers (cards={news_cards})')
+          if '共用印表機' not in history or '歷史資訊提醒' not in history:
+              failures.append('historical technical news detail: title or history notice is missing')
           if 'id="barcode"' not in solutions or '條碼整合系統' not in solutions:
               failures.append('solutions.html: barcode integration solution is missing')
 
           if failures:
               raise SystemExit('PUBLIC RELEASE GATE FAILED\n'+'\n'.join(failures))
           print('PUBLIC_RELEASE_COPY=PASS')
-          print('LEGACY_NEWS_RENDER=PASS')
+          print(f'LEGACY_NEWS_RENDER=PASS cards={news_cards}')
+          print('HISTORICAL_TECH_NOTICE=PASS')
           print('BARCODE_SOLUTION_RENDER=PASS')
           PY
 
