@@ -8,7 +8,8 @@ on:
       - 'assets/js/legacy-downloads.js'
       - 'assets/js/legacy-news.js'
       - 'migration/manual-redirects.csv'
-      - 'tools/build_redirect_manifest.py'
+      - 'tools/product_public_ids.py'
+      - 'tools/build_redirect_manifest_v2.py'
       - '.github/workflows/redirect-manifest.yml'
   workflow_dispatch:
 
@@ -20,8 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build redirect manifest
-        run: python3 tools/build_redirect_manifest.py
+      - name: Build redirect manifest V2
+        run: python3 tools/build_redirect_manifest_v2.py
       - name: Validate generated manifest and coverage
         run: |
           python3 - <<'PY'
@@ -36,13 +37,27 @@ jobs:
           assert not any(r['source']==r['target'] for r in rows), 'redirect loop found'
           assert not any('far-beyound.com.tw' in r['source'].lower() or 'far-beyound.com.tw' in r['target'].lower() for r in rows), 'manifest must store paths, not host dependencies'
           summary=json.loads(Path('migration/generated/summary.json').read_text(encoding='utf-8'))
-          assert summary['counts'].get('product',0)>0, 'missing product redirects'
+          assert summary['counts'].get('product',0)==150, 'product redirect coverage changed unexpectedly'
           assert summary['counts'].get('download',0)>0, 'missing download redirects'
           assert summary['counts'].get('news',0)==summary.get('news_imported'), 'legacy news coverage is incomplete'
           assert summary.get('news_covered')==summary.get('news_imported'), 'legacy news coverage mismatch'
           assert summary['counts'].get('news-category',0)==4, 'missing news root/category redirects'
           assert summary['counts'].get('system',0)==8, 'missing system solution redirects'
           assert summary['counts'].get('case',0)==5, 'missing case redirects'
+          assert summary.get('product_url_rule')=='brand-model-canonical', 'wrong product URL rule'
+
+          product_rows=[r for r in rows if r['kind']=='product']
+          assert all(r['target'].startswith('/product.html?id=') for r in product_rows), 'invalid product target format'
+          assert not any('id=legacy-' in r['target'] for r in product_rows), 'legacy product id exposed in public redirect target'
+          product_map={r['source']:r['target'] for r in product_rows}
+          expected_products={
+              '/product/1/5/11/6':'/product.html?id=zebra-zt610-zt620',
+              '/product/1/5/12/5':'/product.html?id=zebra-zt411-zt421',
+              '/product/1/22/33/184':'/product.html?id=tsc-th240-th340',
+          }
+          for source,target in expected_products.items():
+              assert product_map.get(source)==target, f'brand+model redirect mismatch: {source} -> {product_map.get(source)}'
+
           sources={r['source'] for r in rows}
           for required in ['/news','/news/1','/news/2','/news/3','/system','/system/2','/system/2/5','/system/3','/system/3/6','/system/4','/system/4/7','/system/6','/case','/case/5','/case/6','/case/7','/case/11']:
               assert required in sources, f'missing required redirect: {required}'
@@ -71,6 +86,7 @@ jobs:
           actual_case={r['source']:r['target'] for r in rows if r['kind']=='case'}
           assert actual_case==expected_case, f'case redirect mismatch: {actual_case}'
           print(summary)
+          print('PRODUCT_CANONICAL_URLS=PASS')
           print('REDIRECT_COVERAGE=PASS')
           PY
       - name: Upload redirect package
