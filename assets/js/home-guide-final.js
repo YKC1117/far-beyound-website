@@ -32,7 +32,7 @@
     },
     '行動裝置 PDA':{
       'Zebra':'products.html?category=mobile&brand=Zebra',
-      'UROVO':'product.html?id=urovo-enterprise-mobile'
+      'UROVO':'product.html?id=urovo-dt66-ct48c-dt50-dt40-rt40s'
     }
   };
 
