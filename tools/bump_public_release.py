@@ -6,6 +6,7 @@ PATTERNS = [
     (re.compile(r'assets/js/site-social\.js\?v=[^"\']+'), f'assets/js/site-social.js?v={VERSION}'),
     (re.compile(r'assets/js/catalog-merge\.js\?v=[^"\']+'), f'assets/js/catalog-merge.js?v={VERSION}'),
     (re.compile(r'assets/js/product-catalog-upgrade\.js\?v=[^"\']+'), f'assets/js/product-catalog-upgrade.js?v={VERSION}'),
+    (re.compile(r'assets/js/home-guide-final\.js\?v=[^"\']+'), f'assets/js/home-guide-final.js?v={VERSION}'),
 ]
 
 changed = []
