@@ -68,3 +68,18 @@ if data != data_original:
     print('Updated assets/js/data.js: removed customer-facing development wording.')
 else:
     print('assets/js/data.js public copy already clean.')
+
+# The base header/footer renderer must also be production-facing. Do not rely on
+# later presentation patches to hide development labels if another script fails.
+app_path = Path('assets/js/app.js')
+app = app_path.read_text(encoding='utf-8')
+app_original = app
+app = app.replace('<span>新版網站測試環境 · v0.1</span>', '<span>萬里資訊股份有限公司</span>')
+for forbidden in ('新版網站測試環境', 'Demo 網站', 'GitHub Pages 測試'):
+    if forbidden in app:
+        raise SystemExit(f'Customer-facing development copy remains in assets/js/app.js: {forbidden}')
+if app != app_original:
+    app_path.write_text(app, encoding='utf-8')
+    print('Updated assets/js/app.js: base footer is production-facing.')
+else:
+    print('assets/js/app.js base footer already clean.')
