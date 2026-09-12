@@ -1,26 +1,13 @@
 (function(){
   'use strict';
   if(window.__fbProductAnalytics)return;window.__fbProductAnalytics=true;
-  const PROJECT='https://papqrnqbfauwuipjwwdh.supabase.co';
-  const KEY='sb_publishable_dDCh9hy183BipvxCbuZdiA_qPonsyxe';
+  const ENDPOINT='https://papqrnqbfauwuipjwwdh.supabase.co/functions/v1/track-product-view';
 
   function currentProduct(){
     if(document.body?.dataset.page!=='product'||!window.FBStore)return null;
     const id=new URLSearchParams(location.search).get('id');
     if(!id)return null;
     return (FBStore.getData().products||[]).find(p=>String(p.id)===String(id))||null;
-  }
-
-  function inferModel(p){
-    const direct=String(p.model||'').trim();
-    if(direct)return direct;
-    const family=String(p.family||'').trim();
-    if(family && /\d/.test(family))return family;
-    const name=String(p.name||'').trim();
-    const brand=String(p.brand||'').trim();
-    const cleaned=name.replace(new RegExp('^'+brand.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*','i'),'').trim();
-    if(cleaned)return cleaned.slice(0,160);
-    return String(p.id||'').replace(/^legacy-/,'').replace(/^[^-]+-/,'').replace(/-/g,' ').toUpperCase().slice(0,160);
   }
 
   function sourceInfo(){
@@ -45,12 +32,12 @@
     const p=currentProduct();if(!p||p.published===false||inCooldown(p.id))return;
     try{
       const source=sourceInfo();
-      const r=await fetch(PROJECT+'/rest/v1/product_pageviews',{
+      const r=await fetch(ENDPOINT,{
         method:'POST',keepalive:true,
-        headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-        body:JSON.stringify({product_id:String(p.id).slice(0,160),brand:String(p.brand||'').slice(0,120),model:inferModel(p),referrer_domain:source.referrer_domain,traffic_source:source.traffic_source})
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({product_id:String(p.id).slice(0,160),referrer_domain:source.referrer_domain,traffic_source:source.traffic_source})
       });
-      if(r.ok)markCounted(p.id);
+      if(r.ok||r.status===429)markCounted(p.id);
     }catch(_){/* analytics must never block the page; failed views may retry later */}
   }
 
