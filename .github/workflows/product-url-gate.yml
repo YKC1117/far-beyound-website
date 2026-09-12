@@ -103,7 +103,7 @@ jobs:
           done
           python3 - <<'PY'
           from pathlib import Path
-          import re
+          import json,re
 
           expected=[
             ('page-1.html','Zebra ZT411'),
@@ -119,16 +119,46 @@ jobs:
             assert phrase in text, f'{filename}: expected product content missing: {phrase}'
             assert '找不到此產品' not in text, f'{filename}: canonical/alias route rendered missing state'
 
-          def visible_dom(filename):
-            text=(Path('qa-product-url')/filename).read_text(encoding='utf-8',errors='replace')
-            text=re.sub(r'<script\b[^>]*>.*?</script>','',text,flags=re.I|re.S)
-            text=re.sub(r'<style\b[^>]*>.*?</style>','',text,flags=re.I|re.S)
-            return text
+          def attrs(tag):
+            return {m.group(1).lower():m.group(3) for m in re.finditer(r'([:\w-]+)\s*=\s*(["\'])(.*?)\2',tag,re.I|re.S)}
 
-          urovo_alias=visible_dom('page-5.html')
-          bartender_alias=visible_dom('page-6.html')
-          assert 'urovo-enterprise-mobile' not in urovo_alias, 'legacy UROVO id remains in rendered document'
-          assert 'legacy-bartender-5382ba34' not in bartender_alias, 'legacy BarTender id remains in rendered document'
+          def collect_json_urls(value,key=''):
+            out=[]
+            if isinstance(value,dict):
+              for k,v in value.items():
+                if str(k).lower() in {'url','item'} and isinstance(v,str): out.append(v)
+                out.extend(collect_json_urls(v,str(k)))
+            elif isinstance(value,list):
+              for item in value: out.extend(collect_json_urls(item,key))
+            return out
+
+          def route_urls(filename):
+            raw=(Path('qa-product-url')/filename).read_text(encoding='utf-8',errors='replace')
+            urls=[]
+            for tag in re.findall(r'<link\b[^>]*>',raw,re.I|re.S):
+              a=attrs(tag)
+              if 'canonical' in (a.get('rel') or '').lower() and a.get('href'): urls.append(a['href'])
+            for tag in re.findall(r'<meta\b[^>]*>',raw,re.I|re.S):
+              a=attrs(tag)
+              if (a.get('property') or '').lower()=='og:url' and a.get('content'): urls.append(a['content'])
+            for tag in re.findall(r'<a\b[^>]*>',raw,re.I|re.S):
+              a=attrs(tag); href=a.get('href') or ''
+              if 'product.html?id=' in href: urls.append(href)
+            for tag,body in re.findall(r'(<script\b[^>]*>)(.*?)</script>',raw,re.I|re.S):
+              a=attrs(tag)
+              if (a.get('type') or '').lower()!='application/ld+json': continue
+              try: urls.extend(collect_json_urls(json.loads(body)))
+              except Exception: pass
+            return urls
+
+          urovo_urls=route_urls('page-5.html')
+          bartender_urls=route_urls('page-6.html')
+          urovo_surface='\n'.join(urovo_urls)
+          bartender_surface='\n'.join(bartender_urls)
+          assert 'urovo-enterprise-mobile' not in urovo_surface, f'legacy UROVO id leaked into route/SEO URLs: {urovo_urls}'
+          assert 'urovo-dt66-ct48c-dt50-dt40-rt40s' in urovo_surface, f'UROVO canonical id missing from route/SEO URLs: {urovo_urls}'
+          assert 'legacy-bartender-5382ba34' not in bartender_surface, f'legacy BarTender id leaked into route/SEO URLs: {bartender_urls}'
+          assert 'software-bartender' in bartender_surface, f'BarTender canonical id missing from route/SEO URLs: {bartender_urls}'
 
           missing=(Path('qa-product-url')/'page-7.html').read_text(encoding='utf-8',errors='replace')
           assert '找不到此產品' in missing, 'invalid product URL did not render honest missing state'
