@@ -1,0 +1,15 @@
+(()=>{
+  'use strict';
+  if(document.body.dataset.page!=='admin'||window.__fbAdminImportGuard||!window.FBStore?.importData)return;
+  window.__fbAdminImportGuard=true;
+  const MAX_BYTES=2*1024*1024,MAX_NODES=50000,MAX_DEPTH=16,BAD_KEYS=new Set(['__proto__','prototype','constructor']);
+  const original=window.FBStore.importData.bind(window.FBStore);
+  function bytes(v){try{return new TextEncoder().encode(String(v)).byteLength}catch{return String(v).length}}
+  function safeUrl(raw){const v=String(raw??'').trim();if(!v)return true;if(v.length>2048||/[\u0000-\u001f\u007f]/.test(v))return false;if(v.startsWith('//'))return false;if(/^\/(?!\/)/.test(v)||/^\.\.?\//.test(v)||v.startsWith('#'))return true;if(/^(?:https?:|mailto:|tel:)/i.test(v))return true;if(/^[a-z][a-z0-9+.-]*:/i.test(v))return false;return !/[\s<>"'`]/.test(v)}
+  function safeId(v){return typeof v!=='string'||(!v?false:/^[A-Za-z0-9._:-]{1,220}$/.test(v))}
+  function scan(root){let nodes=0;const walk=(v,key='',depth=0,path='root')=>{if(++nodes>MAX_NODES)throw new Error('資料內容過大或結構過於複雜');if(depth>MAX_DEPTH)throw new Error('資料巢狀層級過深');if(v==null||typeof v==='number'||typeof v==='boolean')return;if(typeof v==='string'){if(/[<>]/.test(v))throw new Error(`偵測到不允許的 HTML 字元：${path}`);if(/[\u0000]/.test(v))throw new Error(`偵測到不允許的控制字元：${path}`);const k=String(key).toLowerCase();if(k==='id'&&!safeId(v))throw new Error(`ID 格式不安全：${path}`);if(k==='url'||k.endsWith('url')||['href','src','image','youtube'].includes(k)){if(!safeUrl(v))throw new Error(`連結格式不安全：${path}`)}return}if(Array.isArray(v)){if(v.length>5000)throw new Error(`陣列項目過多：${path}`);v.forEach((x,i)=>walk(x,key,depth+1,`${path}[${i}]`));return}if(typeof v!=='object')throw new Error(`不支援的資料型態：${path}`);for(const k of Object.keys(v)){if(BAD_KEYS.has(k))throw new Error(`偵測到不允許的物件鍵：${k}`);walk(v[k],k,depth+1,`${path}.${k}`)}};walk(root)}
+  function schema(d){if(!d||typeof d!=='object'||Array.isArray(d))throw new Error('資料格式不正確');if(!Array.isArray(d.products)||!Array.isArray(d.categories))throw new Error('資料格式不正確：缺少產品或分類資料');if(d.site?.phones!=null){if(!Array.isArray(d.site.phones)||d.site.phones.length>30)throw new Error('聯絡電話資料格式不正確');for(const p of d.site.phones){const value=String(p?.value??'').trim();if(value&&!/^[0-9+()\-\s]{1,40}$/.test(value))throw new Error('聯絡電話格式不安全')}}if(d.site?.email){const email=String(d.site.email).trim();if(email.length>254||!/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(email))throw new Error('E-mail 格式不正確')}const ids=[];(d.categories||[]).forEach(x=>ids.push(['分類',x?.id]));(d.products||[]).forEach(x=>ids.push(['產品',x?.id]));(d.solutions||[]).forEach(x=>ids.push(['方案',x?.id]));for(const [kind,id] of ids)if(id!=null&&!safeId(String(id)))throw new Error(`${kind} ID 格式不安全`)}
+  function validate(raw){if(typeof raw==='string'&&bytes(raw)>MAX_BYTES)throw new Error('匯入檔案過大；上限 2 MB');const parsed=typeof raw==='string'?JSON.parse(raw):raw;schema(parsed);scan(parsed);return parsed}
+  window.FBStore.importData=function(raw){const parsed=validate(raw);return original(parsed)};
+  window.FBImportGuard={validate,safeUrl};
+})();
