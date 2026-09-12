@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'tools/bump_public_release.py'
+      - 'tools/finalize_public_renderers.py'
       - '.github/workflows/public-release-cache.yml'
   workflow_dispatch:
 
@@ -26,18 +27,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Finalize public renderers
+        run: python tools/finalize_public_renderers.py
       - name: Update public release loader versions
         run: python tools/bump_public_release.py
-      - name: Commit changed HTML files
+      - name: Commit public release updates
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add '*.html' '**/*.html'
+          git config user.email '41898282+YKC1117@users.noreply.github.com'
+          find . -maxdepth 1 -type f -name '*.html' -print0 | xargs -0 -r git add --
+          git add -- assets/js/pages.js
           if git diff --cached --quiet; then
-            echo 'Public release cache versions already current.'
+            echo 'Public release files already current.'
           else
-            git commit -m 'Sync public release cache version 2026-09-12 16:54'
+            git commit -m 'Sync public release source and cache 2026-09-12 17:05'
             git pull --rebase origin main
             git push origin main
           fi
