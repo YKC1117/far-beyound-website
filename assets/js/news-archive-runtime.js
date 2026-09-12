@@ -27,7 +27,8 @@
       const out={...(hit||{}),...n};
       out.id=String(n.id||hit?.id||`news-${String(n.date||'').replace(/[^0-9]/g,'')}-${index+1}`);
       out.body=usableBody(n.body).length?usableBody(n.body):usableBody(hit?.body);
-      out.legacyUrl=n.legacyUrl||hit?.legacyUrl||'';
+      out.legacyPath=n.legacyPath||hit?.legacyPath||'';
+      delete out.legacyUrl;
       out.excerpt=n.excerpt||hit?.excerpt||'';
       return out;
     });
@@ -91,7 +92,6 @@
     const article=find(id);
     const body=document.getElementById('articleBody');
     if(!body)return;
-    // Keep the five curated article layouts already authored in news-detail.html.
     if(curated.has(id)&&article){
       const notice=historicalNotice(article);
       if(notice&&!body.querySelector('[data-history-notice]')){notice.dataset.historyNotice='1';body.prepend(notice)}
