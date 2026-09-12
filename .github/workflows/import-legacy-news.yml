@@ -1,0 +1,83 @@
+name: Import legacy official news
+
+on:
+  push:
+    paths:
+      - 'tools/import_legacy_news.py'
+      - '.github/workflows/import-legacy-news.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '20 3 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: legacy-news-import
+  cancel-in-progress: true
+
+jobs:
+  import-news:
+    if: github.actor != 'github-actions[bot]' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install importer dependencies
+        run: pip install --disable-pip-version-check requests beautifulsoup4
+
+      - name: Crawl current official news archive
+        run: python tools/import_legacy_news.py
+
+      - name: Validate imported archive
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path=Path('assets/js/legacy-news.js')
+          raw=path.read_text(encoding='utf-8').strip()
+          prefix='window.FBLegacyNews='
+          if not raw.startswith(prefix) or not raw.endswith(';'):
+              raise SystemExit('Invalid legacy-news.js wrapper')
+          data=json.loads(raw[len(prefix):-1])
+          items=data.get('items') or []
+          if len(items) < 10:
+              raise SystemExit(f'Only {len(items)} imported articles')
+          ids=[str(x.get('id') or '') for x in items]
+          urls=[str(x.get('legacyUrl') or '') for x in items]
+          if any(not x for x in ids) or len(ids) != len(set(ids)):
+              raise SystemExit('Missing or duplicate article id')
+          if any(not x.startswith('https://www.far-beyound.com.tw/news/') for x in urls) or len(urls) != len(set(urls)):
+              raise SystemExit('Missing, duplicate or unexpected legacy URL')
+          for item in items:
+              if not item.get('title') or not isinstance(item.get('body'), list):
+                  raise SystemExit('Invalid article content shape')
+              joined='\n'.join(str(x) for x in item['body']).lower()
+              if '<script' in joined or '<iframe' in joined or 'javascript:' in joined:
+                  raise SystemExit(f'Unsafe article content: {item["id"]}')
+          print(f'LEGACY_NEWS_COUNT={len(items)}')
+          print(f'LEGACY_NEWS_WITH_BODY={sum(bool(x.get("body")) for x in items)}')
+          print('LEGACY_NEWS_VALIDATION=PASS')
+          PY
+
+      - name: Commit imported archive
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- assets/js/legacy-news.js
+          if git diff --cached --quiet; then
+            echo 'Legacy news archive already current.'
+          else
+            git commit -m 'Sync legacy official news archive'
+            git pull --rebase origin main
+            git push origin main
+          fi
