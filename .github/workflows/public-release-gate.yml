@@ -24,6 +24,7 @@ jobs:
           node --check assets/js/news-archive-runtime.js
           node --check assets/js/solution-coverage.js
           node --check assets/js/case-category-runtime.js
+          node --check assets/js/product-route-guard.js
 
       - name: Public source integrity
         run: |
@@ -61,7 +62,7 @@ jobs:
           if not all(str(x.get('legacyPath') or '').startswith('/news/') for x in items):
               raise SystemExit('Legacy news archive contains an invalid migration path')
 
-          expected='assets/js/site-social.js?v=20260912-2008'
+          expected='assets/js/site-social.js?v=20260912-2022'
           required=['index.html','about.html','cases.html','downloads.html','news.html','news-detail.html','product.html','solutions.html']
           bad=[]
           for name in required:
