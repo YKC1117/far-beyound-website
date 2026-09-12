@@ -85,7 +85,7 @@
     const used=new Set();
     items.forEach(p=>{
       if(CURATED_IDS.has(String(p.id||''))){used.add(p.id);return;}
-      const base=publicSlugBase(p);
+      const base=String(p.publicId||'').trim()||publicSlugBase(p);
       let slug=base;
       if(used.has(slug)) slug=`${base}-${CATEGORY_SLUG[p.category]||asciiSlug(p.category)||'product'}`;
       if(used.has(slug)){
@@ -94,9 +94,11 @@
       }
       const root=slug;let n=2;while(used.has(slug))slug=`${root}-${n++}`;
       p.slug=slug;used.add(slug);
-      // Official items expose the readable brand/model slug as their public id.
-      // sourceId retains the imported/curated identifier for migration diagnostics.
-      if(p.legacyUrl){p.sourceId=p.id;p.id=slug;}
+      // Public URLs use only the readable canonical id. Imported and earlier curated ids remain aliases.
+      if(p.legacyUrl){
+        if(!p.sourceId)p.sourceId=p.id;
+        p.id=slug;
+      }
     });
   }
   function categoryIndex(d,id){const n=(d.categories||[]).findIndex(c=>c.id===id);return n<0?999:n}
@@ -117,6 +119,8 @@
       return {
         ...p,
         id: curated.id || p.id,
+        sourceId: p.id,
+        curatedId: curated.id || '',
         name: curated.name || p.name,
         subtitle: curated.subtitle || p.subtitle,
         family: curated.family || p.family,
