@@ -1,0 +1,135 @@
+name: Product URL gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'product.html'
+      - 'products.html'
+      - 'assets/js/catalog-merge.js'
+      - 'assets/js/product-catalog-upgrade.js'
+      - 'assets/js/product-route-guard.js'
+      - 'assets/js/product-meta.js'
+      - 'assets/js/site-social.js'
+      - 'assets/js/legacy-catalog.js'
+      - 'tools/product_public_ids.py'
+      - 'tools/build_redirect_manifest_v2.py'
+      - 'tools/bump_public_release.py'
+      - '.github/workflows/product-url-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  product-urls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Static canonical audit
+        run: |
+          node --check assets/js/catalog-merge.js
+          node --check assets/js/product-catalog-upgrade.js
+          node --check assets/js/product-route-guard.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('product.html').read_text(encoding='utf-8')
+          assert 'assets/js/catalog-merge.js?v=20260912-2038' in html, 'product catalog canonical cache is stale'
+          assert 'assets/js/product-catalog-upgrade.js?v=20260912-2038' in html, 'product catalog upgrade cache is stale'
+          merge=Path('assets/js/catalog-merge.js').read_text(encoding='utf-8')
+          assert 'urovo-dt66-ct48c-dt50-dt40-rt40s' in merge, 'UROVO canonical model id missing'
+          assert "'tsc-da210-da220'" in merge, 'verified TSC DA canonical id missing'
+          assert 'replace(/\\+/g' in merge, 'plus-model normalization missing'
+          print('PRODUCT_URL_SOURCE=PASS')
+          PY
+
+      - name: Build redirect manifest V2
+        run: |
+          python3 tools/build_redirect_manifest_v2.py
+          python3 - <<'PY'
+          import csv
+          rows=list(csv.DictReader(open('migration/generated/redirects.csv',encoding='utf-8-sig')))
+          products=[r for r in rows if r['kind']=='product']
+          assert len(products)==150
+          assert not any('id=legacy-' in r['target'] for r in products)
+          targets={r['target'] for r in products}
+          required={
+            '/product.html?id=zebra-zt411-zt421',
+            '/product.html?id=tsc-da210-da220',
+            '/product.html?id=godex-g500-plus-g530-plus',
+            '/product.html?id=zebra-zt411-zt421-rfid',
+            '/product.html?id=zebra-platen-roller',
+            '/product.html?id=argox-gear',
+          }
+          missing=required-targets
+          assert not missing, f'missing canonical product targets: {sorted(missing)}'
+          bad=['zebra-zebra','tsc-tsc','argox-argox','godex-godex','sato-sato']
+          assert not any(any(x in r['target'] for x in bad) for r in products), 'duplicated brand leaked into product URL'
+          print('PRODUCT_REDIRECT_URLS=PASS')
+          PY
+
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 >/tmp/farbeyound-product-http.log 2>&1 &
+          sleep 2
+
+      - name: Render canonical, alias and missing product routes
+        shell: bash
+        run: |
+          set -e
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          test -n "$CHROME"
+          mkdir -p qa-product-url
+          pages=(
+            "product.html?id=zebra-zt411-zt421"
+            "product.html?id=tsc-da210-da220"
+            "product.html?id=godex-g500-plus-g530-plus"
+            "product.html?id=urovo-dt66-ct48c-dt50-dt40-rt40s"
+            "product.html?id=urovo-enterprise-mobile"
+            "product.html?id=legacy-bartender-5382ba34"
+            "product.html?id=does-not-exist"
+          )
+          i=0
+          for page in "${pages[@]}"; do
+            i=$((i+1))
+            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --virtual-time-budget=8000 --dump-dom "http://127.0.0.1:8080/$page" > "qa-product-url/page-$i.html"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          expected=[
+            ('page-1.html','Zebra ZT411'),
+            ('page-2.html','TSC'),
+            ('page-3.html','GoDEX G500'),
+            ('page-4.html','UROVO 企業行動電腦'),
+            ('page-5.html','UROVO 企業行動電腦'),
+            ('page-6.html','BarTender'),
+          ]
+          for filename,phrase in expected:
+            raw=Path('qa-product-url')/filename
+            text=raw.read_text(encoding='utf-8',errors='replace')
+            assert phrase in text, f'{filename}: expected product content missing: {phrase}'
+            assert '找不到此產品' not in text, f'{filename}: canonical/alias route rendered missing state'
+
+          urovo_alias=(Path('qa-product-url')/'page-5.html').read_text(encoding='utf-8',errors='replace')
+          bartender_alias=(Path('qa-product-url')/'page-6.html').read_text(encoding='utf-8',errors='replace')
+          assert 'urovo-enterprise-mobile' not in re.sub(r'<script\\b[^>]*>.*?</script>','',urovo_alias,flags=re.I|re.S), 'legacy UROVO id remains in rendered document'
+          assert 'legacy-bartender-5382ba34' not in re.sub(r'<script\\b[^>]*>.*?</script>','',bartender_alias,flags=re.I|re.S), 'legacy BarTender id remains in rendered document'
+
+          missing=(Path('qa-product-url')/'page-7.html').read_text(encoding='utf-8',errors='replace')
+          assert '找不到此產品' in missing, 'invalid product URL did not render honest missing state'
+          assert re.search(r'<meta[^>]+name="robots"[^>]+content="noindex,follow"',missing,re.I) or re.search(r'<meta[^>]+content="noindex,follow"[^>]+name="robots"',missing,re.I), 'invalid product URL is not noindex'
+          print('PRODUCT_CANONICAL_RENDER=PASS')
+          print('PRODUCT_ALIAS_NORMALIZATION=PASS')
+          print('PRODUCT_MISSING_ROUTE=PASS')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: product-url-gate
+          path: qa-product-url/
+          retention-days: 3
