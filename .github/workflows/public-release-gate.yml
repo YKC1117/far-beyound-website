@@ -17,7 +17,32 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: JavaScript syntax audit
-        run: node --check assets/js/public-release-polish.js
+        run: |
+          node --check assets/js/public-release-polish.js
+          node --check assets/js/pages.js
+
+      - name: Public source integrity
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          pages = Path('assets/js/pages.js').read_text(encoding='utf-8')
+          if 'demo-news' in pages:
+              raise SystemExit('assets/js/pages.js still contains demo-news')
+          if 'function newsHref(n)' not in pages:
+              raise SystemExit('assets/js/pages.js is missing the real news link resolver')
+
+          expected='assets/js/site-social.js?v=20260912-1705'
+          required=['index.html','about.html','cases.html','downloads.html','news.html','news-detail.html','product.html','solutions.html']
+          bad=[]
+          for name in required:
+              text=Path(name).read_text(encoding='utf-8')
+              if expected not in text:
+                  bad.append(name)
+          if bad:
+              raise SystemExit('Public loader cache version is stale: '+', '.join(bad))
+          print('PUBLIC_SOURCE_INTEGRITY=PASS')
+          PY
 
       - name: Start local preview
         run: |
