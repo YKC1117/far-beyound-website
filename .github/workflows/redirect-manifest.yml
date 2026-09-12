@@ -1,0 +1,46 @@
+name: Redirect manifest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/legacy-catalog.js'
+      - 'assets/js/legacy-downloads.js'
+      - 'migration/manual-redirects.csv'
+      - 'tools/build_redirect_manifest.py'
+      - '.github/workflows/redirect-manifest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  redirects:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build redirect manifest
+        run: python3 tools/build_redirect_manifest.py
+      - name: Validate generated manifest
+        run: |
+          python3 - <<'PY'
+          import csv,json
+          from pathlib import Path
+          p=Path('migration/generated/redirects.csv')
+          rows=list(csv.DictReader(p.open(encoding='utf-8-sig')))
+          assert rows, 'redirect manifest is empty'
+          assert len({r['source'] for r in rows})==len(rows), 'duplicate redirect source'
+          assert all(r['status']=='301' for r in rows), 'non-301 redirect found'
+          assert all(r['source'].startswith('/') and r['target'].startswith('/') for r in rows), 'invalid path'
+          assert not any(r['source']==r['target'] for r in rows), 'redirect loop found'
+          summary=json.loads(Path('migration/generated/summary.json').read_text(encoding='utf-8'))
+          assert summary['counts'].get('product',0)>0, 'missing product redirects'
+          assert summary['counts'].get('download',0)>0, 'missing download redirects'
+          print(summary)
+          PY
+      - name: Upload redirect package
+        uses: actions/upload-artifact@v4
+        with:
+          name: far-beyound-redirect-package
+          path: migration/generated/
+          retention-days: 30
