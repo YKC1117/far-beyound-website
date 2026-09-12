@@ -21,11 +21,14 @@ jobs:
           node --check assets/js/public-release-polish.js
           node --check assets/js/pages.js
           node --check assets/js/data.js
+          node --check assets/js/news-archive-runtime.js
+          node --check assets/js/solution-coverage.js
 
       - name: Public source integrity
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import json
 
           pages = Path('assets/js/pages.js').read_text(encoding='utf-8')
           if 'demo-news' in pages:
@@ -44,7 +47,20 @@ jobs:
           if source_hits:
               raise SystemExit('Customer-facing development copy remains in assets/js/data.js: '+', '.join(source_hits))
 
-          expected='assets/js/site-social.js?v=20260912-1705'
+          legacy=Path('assets/js/legacy-news.js').read_text(encoding='utf-8').strip()
+          prefix='window.FBLegacyNews='
+          if not legacy.startswith(prefix) or not legacy.endswith(';'):
+              raise SystemExit('Invalid legacy news archive wrapper')
+          archive=json.loads(legacy[len(prefix):-1])
+          items=archive.get('items') or []
+          if len(items)!=25:
+              raise SystemExit(f'Expected 25 migrated news articles, found {len(items)}')
+          if 'far-beyound.com.tw' in legacy.lower() or any('legacyUrl' in x for x in items):
+              raise SystemExit('Public news archive still depends on the legacy hostname')
+          if not all(str(x.get('legacyPath') or '').startswith('/news/') for x in items):
+              raise SystemExit('Legacy news archive contains an invalid migration path')
+
+          expected='assets/js/site-social.js?v=20260912-1956'
           required=['index.html','about.html','cases.html','downloads.html','news.html','news-detail.html','product.html','solutions.html']
           bad=[]
           for name in required:
@@ -75,6 +91,7 @@ jobs:
             "downloads.html"
             "news.html"
             "news-detail.html?id=material-price"
+            "news-detail.html?id=legacy-news-3-24"
             "solutions.html"
             "cases.html"
             "about.html"
@@ -113,9 +130,22 @@ jobs:
               for phrase in banned:
                   if phrase in visible:
                       failures.append(f'{path.name}: {phrase}')
+
+          news=Path('qa-public/page-5.html').read_text(encoding='utf-8',errors='replace')
+          history=Path('qa-public/page-7.html').read_text(encoding='utf-8',errors='replace')
+          solutions=Path('qa-public/page-8.html').read_text(encoding='utf-8',errors='replace')
+          if '2025年農曆春節休假公告' not in news:
+              failures.append('news.html: migrated history is not rendered')
+          if '2025年農曆春節休假公告' not in history or '歷史資訊提醒' not in history:
+              failures.append('historical news detail: title or history notice is missing')
+          if 'id="barcode"' not in solutions or '條碼整合系統' not in solutions:
+              failures.append('solutions.html: barcode integration solution is missing')
+
           if failures:
               raise SystemExit('PUBLIC RELEASE GATE FAILED\n'+'\n'.join(failures))
           print('PUBLIC_RELEASE_COPY=PASS')
+          print('LEGACY_NEWS_RENDER=PASS')
+          print('BARCODE_SOLUTION_RENDER=PASS')
           PY
 
       - name: Capture representative public screenshots
@@ -124,6 +154,7 @@ jobs:
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --virtual-time-budget=8000 --screenshot=qa-public/home-desktop.png http://127.0.0.1:8080/index.html
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=qa-public/home-mobile.png http://127.0.0.1:8080/index.html
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --virtual-time-budget=8000 --screenshot=qa-public/product-desktop.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1400 --virtual-time-budget=8000 --screenshot=qa-public/solutions-desktop.png 'http://127.0.0.1:8080/solutions.html#barcode'
 
       - uses: actions/upload-artifact@v4
         if: always()
