@@ -23,6 +23,7 @@ jobs:
           node --check assets/js/data.js
           node --check assets/js/news-archive-runtime.js
           node --check assets/js/solution-coverage.js
+          node --check assets/js/case-category-runtime.js
 
       - name: Public source integrity
         run: |
@@ -60,7 +61,7 @@ jobs:
           if not all(str(x.get('legacyPath') or '').startswith('/news/') for x in items):
               raise SystemExit('Legacy news archive contains an invalid migration path')
 
-          expected='assets/js/site-social.js?v=20260912-2005'
+          expected='assets/js/site-social.js?v=20260912-2008'
           required=['index.html','about.html','cases.html','downloads.html','news.html','news-detail.html','product.html','solutions.html']
           bad=[]
           for name in required:
@@ -94,6 +95,10 @@ jobs:
             "news-detail.html?id=printer-share-error"
             "solutions.html"
             "cases.html"
+            "cases.html?system=sfis"
+            "cases.html?system=wms"
+            "cases.html?system=smt"
+            "cases.html?system=barcode"
             "about.html"
             "locations.html"
             "contact.html"
@@ -134,6 +139,12 @@ jobs:
           news=Path('qa-public/page-5.html').read_text(encoding='utf-8',errors='replace')
           history=Path('qa-public/page-7.html').read_text(encoding='utf-8',errors='replace')
           solutions=Path('qa-public/page-8.html').read_text(encoding='utf-8',errors='replace')
+          all_cases=Path('qa-public/page-9.html').read_text(encoding='utf-8',errors='replace')
+          sfis=Path('qa-public/page-10.html').read_text(encoding='utf-8',errors='replace')
+          wms=Path('qa-public/page-11.html').read_text(encoding='utf-8',errors='replace')
+          smt=Path('qa-public/page-12.html').read_text(encoding='utf-8',errors='replace')
+          barcode=Path('qa-public/page-13.html').read_text(encoding='utf-8',errors='replace')
+
           news_cards=len(re.findall(r'class="news-card"',news))
           if '2025年農曆春節休假公告' not in news or news_cards < 20:
               failures.append(f'news.html: migrated history is not stable after later renderers (cards={news_cards})')
@@ -142,12 +153,30 @@ jobs:
           if 'id="barcode"' not in solutions or '條碼整合系統' not in solutions:
               failures.append('solutions.html: barcode integration solution is missing')
 
+          def card_count(raw): return len(re.findall(r'class="case-page-card"',raw))
+          def systems(raw): return re.findall(r'data-system="([^"]+)"',raw)
+          if card_count(all_cases) < 4 or '全部案例' not in all_cases:
+              failures.append(f'cases.html: all-case view incomplete (cards={card_count(all_cases)})')
+          if card_count(sfis) < 3 or not systems(sfis) or any(x!='sfis' for x in systems(sfis)) or 'SFIS 客戶案例' not in sfis:
+              failures.append(f'cases.html?system=sfis: filter mismatch (cards={card_count(sfis)}, systems={systems(sfis)})')
+          if card_count(wms) < 1 or not systems(wms) or any(x!='wms' for x in systems(wms)) or 'WMS 客戶案例' not in wms:
+              failures.append(f'cases.html?system=wms: filter mismatch (cards={card_count(wms)}, systems={systems(wms)})')
+          for label,raw,key in [('SMT',smt,'smt'),('條碼整合',barcode,'barcode')]:
+              found=systems(raw)
+              if found and any(x!=key for x in found):
+                  failures.append(f'cases.html?system={key}: unrelated case leaked into filtered view: {found}')
+              if not found and '目前未公開此分類案例' not in raw:
+                  failures.append(f'cases.html?system={key}: missing honest empty state')
+              if f'{label} 客戶案例' not in raw:
+                  failures.append(f'cases.html?system={key}: category heading missing')
+
           if failures:
               raise SystemExit('PUBLIC RELEASE GATE FAILED\n'+'\n'.join(failures))
           print('PUBLIC_RELEASE_COPY=PASS')
           print(f'LEGACY_NEWS_RENDER=PASS cards={news_cards}')
           print('HISTORICAL_TECH_NOTICE=PASS')
           print('BARCODE_SOLUTION_RENDER=PASS')
+          print(f'CASE_FILTER_RENDER=PASS all={card_count(all_cases)} sfis={card_count(sfis)} wms={card_count(wms)}')
           PY
 
       - name: Capture representative public screenshots
@@ -157,6 +186,7 @@ jobs:
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=8000 --screenshot=qa-public/home-mobile.png http://127.0.0.1:8080/index.html
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --virtual-time-budget=8000 --screenshot=qa-public/product-desktop.png 'http://127.0.0.1:8080/product.html?id=zebra-zt411-zt421'
           "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1400 --virtual-time-budget=8000 --screenshot=qa-public/solutions-desktop.png 'http://127.0.0.1:8080/solutions.html#barcode'
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1400 --virtual-time-budget=8000 --screenshot=qa-public/cases-sfis-desktop.png 'http://127.0.0.1:8080/cases.html?system=sfis'
 
       - uses: actions/upload-artifact@v4
         if: always()
