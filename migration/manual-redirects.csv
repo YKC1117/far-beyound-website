@@ -1,6 +1,14 @@
 source,target,kind,label
 /system,/solutions.html,system,系統方案總覽
 /system/2,/solutions.html#sfis,system,SFIS 生產管控系統
+/system/2/5,/solutions.html#sfis,system,SFIS 生產管控系統細節
 /system/3,/solutions.html#wms,system,WMS 電子倉庫系統
+/system/3/6,/solutions.html#wms,system,WMS 電子倉庫系統細節
 /system/4,/solutions.html#smt,system,SMT 防錯料系統
+/system/4/7,/solutions.html#smt,system,SMT 防錯料系統細節
 /system/6,/solutions.html#barcode,system,條碼整合系統
+/case,/cases.html,case,客戶案例總覽
+/case/5,/cases.html?system=sfis,case,SFIS 客戶案例
+/case/6,/cases.html?system=wms,case,WMS 客戶案例
+/case/7,/cases.html?system=smt,case,SMT 客戶案例
+/case/11,/cases.html?system=barcode,case,條碼整合客戶案例
