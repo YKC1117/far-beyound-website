@@ -35,13 +35,13 @@ jobs:
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+YKC1117@users.noreply.github.com'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           find . -maxdepth 1 -type f -name '*.html' -print0 | xargs -0 -r git add --
-          git add -- assets/js/pages.js
+          git add -- assets/js/pages.js assets/js/data.js
           if git diff --cached --quiet; then
             echo 'Public release files already current.'
           else
-            git commit -m 'Sync public release source and cache 2026-09-12 17:05'
+            git commit -m 'Sync public release source and copy 2026-09-12 17:12'
             git pull --rebase origin main
             git push origin main
           fi
