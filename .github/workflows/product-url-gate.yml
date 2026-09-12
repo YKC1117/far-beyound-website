@@ -35,14 +35,19 @@ jobs:
           node --check assets/js/product-route-guard.js
           python3 - <<'PY'
           from pathlib import Path
+          import re
           html=Path('product.html').read_text(encoding='utf-8')
-          assert 'assets/js/catalog-merge.js?v=20260912-2038' in html, 'product catalog canonical cache is stale'
-          assert 'assets/js/product-catalog-upgrade.js?v=20260912-2038' in html, 'product catalog upgrade cache is stale'
+          bump=Path('tools/bump_public_release.py').read_text(encoding='utf-8')
+          match=re.search(r'VERSION\s*=\s*["\']([^"\']+)',bump)
+          assert match, 'cannot resolve public release cache version'
+          version=match.group(1)
+          assert f'assets/js/catalog-merge.js?v={version}' in html, 'product catalog canonical cache is stale'
+          assert f'assets/js/product-catalog-upgrade.js?v={version}' in html, 'product catalog upgrade cache is stale'
           merge=Path('assets/js/catalog-merge.js').read_text(encoding='utf-8')
           assert 'urovo-dt66-ct48c-dt50-dt40-rt40s' in merge, 'UROVO canonical model id missing'
           assert "'tsc-da210-da220'" in merge, 'verified TSC DA canonical id missing'
           assert 'replace(/\\+/g' in merge, 'plus-model normalization missing'
-          print('PRODUCT_URL_SOURCE=PASS')
+          print(f'PRODUCT_URL_SOURCE=PASS version={version}')
           PY
 
       - name: Build redirect manifest V2
@@ -114,10 +119,16 @@ jobs:
             assert phrase in text, f'{filename}: expected product content missing: {phrase}'
             assert '找不到此產品' not in text, f'{filename}: canonical/alias route rendered missing state'
 
-          urovo_alias=(Path('qa-product-url')/'page-5.html').read_text(encoding='utf-8',errors='replace')
-          bartender_alias=(Path('qa-product-url')/'page-6.html').read_text(encoding='utf-8',errors='replace')
-          assert 'urovo-enterprise-mobile' not in re.sub(r'<script\\b[^>]*>.*?</script>','',urovo_alias,flags=re.I|re.S), 'legacy UROVO id remains in rendered document'
-          assert 'legacy-bartender-5382ba34' not in re.sub(r'<script\\b[^>]*>.*?</script>','',bartender_alias,flags=re.I|re.S), 'legacy BarTender id remains in rendered document'
+          def visible_dom(filename):
+            text=(Path('qa-product-url')/filename).read_text(encoding='utf-8',errors='replace')
+            text=re.sub(r'<script\b[^>]*>.*?</script>','',text,flags=re.I|re.S)
+            text=re.sub(r'<style\b[^>]*>.*?</style>','',text,flags=re.I|re.S)
+            return text
+
+          urovo_alias=visible_dom('page-5.html')
+          bartender_alias=visible_dom('page-6.html')
+          assert 'urovo-enterprise-mobile' not in urovo_alias, 'legacy UROVO id remains in rendered document'
+          assert 'legacy-bartender-5382ba34' not in bartender_alias, 'legacy BarTender id remains in rendered document'
 
           missing=(Path('qa-product-url')/'page-7.html').read_text(encoding='utf-8',errors='replace')
           assert '找不到此產品' in missing, 'invalid product URL did not render honest missing state'
