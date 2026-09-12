@@ -1,135 +1,156 @@
 # 萬里資訊新版官網｜正式上線架構
 
-目前 GitHub Pages 是展示／驗收環境。前台頁面、資料欄位、路由與資產目錄會沿用到正式站；正式上線時新增後端、MySQL、登入權限與檔案儲存，不重做前台視覺。
+目前 GitHub Pages 是展示／驗收前端；**正式採用時不重新開發另一套後台**。現行 Supabase 雲端資料、Auth、RLS、Edge Functions、2FA、備份、稽核與詢問單架構直接沿用，再把前端部署到公司正式環境並切換網域。
 
-## 1. 正式環境建議
+完整 7 天切站程序請以 `MIGRATION.md` 為主。
 
-- Web Server：Nginx 或 Apache
-- PHP：8.2+
-- Database：MySQL 8 / MariaDB 10.6+
-- SSL：Let's Encrypt
-- 檔案儲存：主機磁碟或 S3 相容物件儲存
-- 網域：far-beyound.com.tw
-- Repository：正式採用後改 private
+## 1. 現行核心架構
 
-一般 Linux 虛擬主機只要支援 PHP 8.2、MySQL、HTTPS 與排程備份即可部署；不綁 GitHub Pages。
+- Frontend：目前為靜態 HTML / CSS / JavaScript，可部署到 Nginx、Apache、CDN、物件儲存靜態網站或其他正式主機。
+- Cloud data：Supabase `site_state`。
+- Admin Auth：Supabase Auth。
+- Authorization：Owner／Admin／Editor／Viewer + 細項 permissions。
+- MFA：TOTP / AAL2。
+- Server actions：Supabase Edge Functions。
+- Inquiry：Supabase DB 留存 + Email 通知狀態。
+- Backup / Audit：Supabase DB + secure Edge Functions / RPC。
+- CI：GitHub Actions，包含前台、手機、互動、舊站獨立性與 Admin Quality Gate。
 
-## 2. 目錄策略
+因此正式上線不要求先改成 PHP／MySQL。若公司未來因既有 IT 規範必須改 MySQL，可以在正式穩定上線後另開第二階段，不應放進 7 天切站的 critical path。
 
-```text
-/public                 對外網站根目錄
-  index.html / *.html   前台頁面（可逐步轉 PHP template）
-  assets/
-    css/
-    js/
-    images/
-  uploads/              小型公開圖片與 PDF（若採本機儲存）
-/api                    正式後端 API
-/admin                  正式登入後台
-/database/schema.sql    MySQL Schema
-/storage                非公開暫存、log、備份
-```
+## 2. 正式前端環境最低需求
 
-大型驅動、BarTender 安裝檔等不進 Git Repository。正式下載項目只在資料庫保存檔案 URL、版本、日期與容量；檔案本體放主機下載區或物件儲存。
+- 支援 HTTPS。
+- 可部署目前靜態檔案與 `assets/`。
+- 可設定 301 redirect。
+- 可設定 HTTP Security Headers。
+- 可查看 access / error log。
+- 可設定 `www` 與裸網域 canonical 行為。
 
-## 3. 資料表
+Nginx 或 Apache 都可；不要求 PHP 才能上線。
 
-`database/schema.sql` 已預先包含：
+## 3. 正式網域
 
-- site_settings
-- admins
-- brands
-- categories（支援多層分類）
-- products
-- product_images
-- product_highlights
-- product_specs
-- product_files
-- downloads
-- solutions / solution_points
-- news
-- customer_cases
-- inquiries
-- redirects
-- audit_logs
+主要網域：`far-beyound.com.tw`
 
-這些欄位對應現在 GitHub Pages Demo 的產品、下載、系統方案、消息、案例、聯絡表單與管理需求。
+切站時必須明確選一個 canonical host（建議沿用既有主要搜尋結果實際使用的 host），另一個 host 永久 301 到 canonical host。
 
-## 4. 正式後台最低需求
+必須同時確認：
 
-### 產品管理
-- 新增／修改／刪除／上下架
-- 品牌與多層分類
-- 型號、系列、產品類型、狀態
-- 產品介紹、特色、規格表
-- 主圖與多圖上傳／排序
-- 型錄、手冊、快速指南
-- 首頁精選與排序
+- HTTPS 憑證。
+- HTTP → HTTPS 301。
+- www ↔ non-www 單一 canonical。
+- canonical / hreflang / OG URL 與正式 host 一致。
+- GitHub Pages 永遠維持 noindex。
 
-### 下載中心
-- 品牌、分類、名稱、版本、更新日期、容量
-- 上傳檔案或填外部下載 URL
-- 上下架與排序
+## 4. 後台正式模式
 
-### 內容管理
-- 系統方案
-- 客戶案例
-- 最新消息
-- 公司基本資料／服務據點
+正式採用後第一優先：
 
-### 詢問單
-- 接收網站聯絡表單
-- 新件／處理中／完成狀態
-- E-mail 通知
-- 後台查詢與匯出
+1. 建立公司指定第一位 Owner。
+2. Owner 完成 TOTP 2FA。
+3. 建立必要 Admin／Editor／Viewer。
+4. 完整跑一次 Owner E2E。
+5. 退出所有 shared-password 過渡發布流程。
+6. 邀請／登入完成網址固定回正式網域。
 
-## 5. 從 GitHub Pages 搬到正式主機
+正式模式下，高風險操作必須保留 server-side 權限檢查，不能只靠前端隱藏按鈕。
 
-1. 公司確認新版內容與功能。
-2. 租用正式主機並建立 MySQL。
-3. 匯入 `database/schema.sql`。
-4. 將目前前台與 `assets/` 部署到正式主機。
-5. 建立 API 與登入後台，把目前 FBStore 資料欄位接到 MySQL。
-6. 上傳產品圖片與正式下載檔；大型檔案放獨立下載空間。
-7. 整理舊站所有 URL，建立 `redirects` 301 對照。
-8. 在測試子網域完成 PC／手機／平板驗收。
-9. 備份舊站與 DNS 設定。
-10. 將 far-beyound.com.tw 指向新主機，安裝 SSL。
-11. 解除正式站 robots 封鎖，送出 sitemap，確認 Search Console。
-12. 觀察 404、表單、下載、SEO 與伺服器 log。
+## 5. 客戶詢問
 
-## 6. 目前 GitHub Pages 與正式站差異
+正式站必須維持「先留資料、再寄信」原則：
 
-GitHub Pages 不能執行 PHP / MySQL，所以目前管理後台以瀏覽器 localStorage + JSON 匯入／匯出示範資料維護流程。正式版會將同一組資料概念改接 API / MySQL；前台版型與使用流程保留。
+1. 表單送到 Edge Function。
+2. 驗證 Origin、資料格式、honeypot、rate limit。
+3. 先寫 inquiries 資料表。
+4. 再寄公司信箱。
+5. 寄信成功／失敗狀態回寫 DB。
 
-GitHub Pages 測試站目前使用 `robots.txt: Disallow: /`，避免尚未核准的新版被搜尋引擎收錄。正式切站時才移除此限制。
+採用後建議把展示期 Email relay 換成公司可管理的 SMTP／Email API；但即使寄信服務暫時異常，詢問仍不能遺失。
 
-## 7. 備份
+## 6. 正式資產與下載
 
-建議正式環境：
-- MySQL：每日自動備份，保留至少 14～30 天
-- uploads：每日增量備份
-- 程式：Git private repository
-- 每次大量資料修改或上版前：手動建立可還原快照
+- 網站執行期不得依賴舊站主機。
+- 公司自行擁有的重要圖片、PDF、型錄、驅動與文件應搬到公司控制的正式儲存位置。
+- 原廠 Zebra／TSC／Argox／GoDEX 等官方下載可保留外部來源；長期重要檔案仍建議鏡像。
+- 大型安裝檔不強迫放 Git Repository。
 
-## 8. 安全
+`Legacy site independence` CI 必須持續通過。
 
-- 管理後台密碼只存 `password_hash`
-- 全站 HTTPS
-- 表單加 CSRF、Rate Limit、Honeypot / CAPTCHA（視垃圾訊息量）
-- 上傳檔限制副檔名、MIME、大小並重新命名
-- 後台操作寫入 audit_logs
-- production `.env` 不提交到 Git
+## 7. 舊網址與 SEO 延續
 
-## 9. 舊網站完全斷開原則（硬性要求）
+Repository 已具自動轉址產生器：
 
-舊網站 `www.far-beyound.com.tw` 在移轉期間只允許作為「資料來源」，不得成為新版網站的執行期依賴。
+- `tools/build_redirect_manifest.py`
+- `migration/manual-redirects.csv`
+- `.github/workflows/redirect-manifest.yml`
 
-- 可以從舊網站擷取文字、產品資料、圖片、型錄、手冊與下載資訊。
-- 圖片、PDF、公司自行提供的文件與其他必須長期保留的資產，擷取後必須存到新版主機、公司控制的物件儲存或其他可長期管理的空間。
-- 新版前台不得以 `img/src`、`script/src`、`link/href`、CSS `url()`、JavaScript `fetch()` 或下載按鈕直接依賴舊網站主機。
-- 第三方原廠官方來源（例如 Zebra、TSC、Argox、GoDEX 等）可作為外部來源，但它們與舊網站主機必須完全分離；重要文件若需保證長期可用，正式上線前仍應鏡像到公司控制的儲存空間。
-- 舊網址可以暫時保留為匯入比對用的 metadata／識別欄位，但不能拿來載入資源或導覽。
-- 切站驗收必須以「舊網站主機完全離線」為假設，首頁、產品圖片、產品文件、下載中心、聯絡方式、系統方案、案例與新聞都要正常。
+它會由舊產品 `legacyUrl` 與下載 `sourcePage` 自動建立 301 package，輸出 CSV／JSON／Nginx／Apache 格式。
 
-Repository 內的 `tools/audit_legacy_independence.py` 與 GitHub Actions `Legacy site independence` 會自動檢查公開網站是否又出現舊主機的執行期依賴；檢查失敗時不得視為可上線版本。
+硬性原則：
+
+- 有對應新版內容的舊網址應 301 到最接近的新內容。
+- 不可把全部舊產品一律導首頁。
+- 不可用 JavaScript redirect 取代 server-side 301。
+- 上線後持續看 404 log 與 Search Console 補漏網 URL。
+
+## 8. SEO 上線開關
+
+GitHub Pages 測試站維持 noindex。
+
+正式網域上線時：
+
+- 確認正式頁面 robots=index,follow。
+- `robots.txt` 不再全站 Disallow。
+- 產生／提交正式 sitemap。
+- canonical 指向正式 host。
+- Search Console 驗證正式網域。
+- 保留 Product、Breadcrumb、NewsArticle、Organization、WebSite structured data。
+
+## 9. 安全最低標準
+
+正式版至少維持：
+
+- HTTPS only。
+- RLS。
+- Service Role Key 不進前端 Repository。
+- Owner / permissions server-side authorization。
+- TOTP / AAL2。
+- Session 最長時間與撤銷檢查。
+- Rate limit。
+- XSS escape + URL validation + Import Guard。
+- CSP / Security Headers。
+- 備份 checksum 與受控還原。
+- Audit log。
+- Repository 正式採用後改 private。
+
+## 10. 備份與回退
+
+切站前至少保存：
+
+- 舊站完整檔案。
+- 舊站資料庫（若有）。
+- 舊 DNS 記錄。
+- 新版 Supabase 備份。
+- 當次上線 Commit SHA。
+- 301 redirect package。
+
+若切站後發生 major blocker，可以將 DNS 暫時切回舊站；因此正式切站前不得先刪除舊環境。
+
+## 11. 舊網站完全斷開原則
+
+舊網站在移轉期間只能是資料來源，不能是新版執行期依賴。
+
+切站驗收必須假設舊主機完全離線，以下仍全部正常：
+
+- 首頁。
+- 產品與圖片。
+- 產品文件。
+- 下載中心。
+- 系統方案。
+- 案例與消息。
+- 服務據點。
+- 聯絡表單。
+- 後台管理。
+
+只有符合這個條件，才能真正稱為「取代舊網站」，而不是在舊網站外面包一層新版畫面。
