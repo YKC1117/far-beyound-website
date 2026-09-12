@@ -1,0 +1,60 @@
+name: Public source clean gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  public-source-clean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject customer-facing development residue
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          checks={
+            'assets/js/app.js':[
+              '新版網站測試環境',
+              'Demo 網站',
+              'GitHub Pages 測試',
+            ],
+            'assets/js/pages.js':[
+              '測試版',
+              '正式檔案空間尚未接入',
+              '新聞內頁將於完整資料搬移階段接入',
+              '正式版可由後台上傳',
+              '可透過管理介面新增產品資料',
+            ],
+            'assets/js/data.js':[
+              '正式版將連接公司檔案空間',
+              '正式版可由後台上傳',
+            ],
+            'assets/js/home-guide-final.js':[
+              'urovo-enterprise-mobile',
+              'legacy-bartender-5382ba34',
+              'legacy-codesoft-71391e24',
+            ],
+          }
+          failures=[]
+          for filename,phrases in checks.items():
+            text=Path(filename).read_text(encoding='utf-8')
+            for phrase in phrases:
+              if phrase in text:
+                failures.append(f'{filename}: {phrase}')
+          if failures:
+            raise SystemExit('PUBLIC SOURCE CLEAN GATE FAILED\n'+'\n'.join(failures))
+          app=Path('assets/js/app.js').read_text(encoding='utf-8')
+          if '<span>萬里資訊股份有限公司</span>' not in app:
+            raise SystemExit('assets/js/app.js: formal company footer marker missing')
+          print('PUBLIC_SOURCE_CLEAN=PASS')
+          print('BASE_FOOTER_FORMAL=PASS')
+          print('HOME_CANONICAL_LINK_SOURCE=PASS')
+          PY
