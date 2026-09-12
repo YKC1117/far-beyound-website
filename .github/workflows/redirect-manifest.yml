@@ -38,7 +38,7 @@ jobs:
           assert not any('far-beyound.com.tw' in r['source'].lower() or 'far-beyound.com.tw' in r['target'].lower() for r in rows), 'manifest must store paths, not host dependencies'
           summary=json.loads(Path('migration/generated/summary.json').read_text(encoding='utf-8'))
           assert summary['counts'].get('product',0)==150, 'product redirect coverage changed unexpectedly'
-          assert summary['counts'].get('product-category',0)==9, 'missing product root/category/software redirects'
+          assert summary['counts'].get('product-category',0)==10, 'missing product root/category/legacy ASP redirects'
           assert summary['counts'].get('download',0)>0, 'missing download redirects'
           assert summary['counts'].get('news',0)==summary.get('news_imported'), 'legacy news coverage is incomplete'
           assert summary.get('news_covered')==summary.get('news_imported'), 'legacy news coverage mismatch'
@@ -69,6 +69,7 @@ jobs:
               '/product/20':'/products.html?category=printing',
               '/product/65':'/products.html?category=parts',
               '/product/automation/bzj.asp':'/products.html?category=software',
+              '/product/label.asp':'/products.html?category=printing',
           }
           actual_product_categories={r['source']:r['target'] for r in rows if r['kind']=='product-category'}
           assert actual_product_categories==expected_product_categories, f'product category redirect mismatch: {actual_product_categories}'
