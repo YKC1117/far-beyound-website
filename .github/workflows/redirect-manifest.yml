@@ -41,9 +41,10 @@ jobs:
           assert summary['counts'].get('news',0)==summary.get('news_imported'), 'legacy news coverage is incomplete'
           assert summary.get('news_covered')==summary.get('news_imported'), 'legacy news coverage mismatch'
           assert summary['counts'].get('news-category',0)==4, 'missing news root/category redirects'
-          assert summary['counts'].get('system',0)==5, 'missing system solution redirects'
+          assert summary['counts'].get('system',0)==8, 'missing system solution redirects'
+          assert summary['counts'].get('case',0)==5, 'missing case redirects'
           sources={r['source'] for r in rows}
-          for required in ['/news','/news/1','/news/2','/news/3','/system','/system/2','/system/3','/system/4','/system/6']:
+          for required in ['/news','/news/1','/news/2','/news/3','/system','/system/2','/system/2/5','/system/3','/system/3/6','/system/4','/system/4/7','/system/6','/case','/case/5','/case/6','/case/7','/case/11']:
               assert required in sources, f'missing required redirect: {required}'
           news_rows=[r for r in rows if r['kind']=='news']
           assert news_rows and all(re.fullmatch(r'/news/\d+/\d+',r['source']) for r in news_rows), 'invalid news article source path'
@@ -51,12 +52,24 @@ jobs:
           expected_system={
               '/system':'/solutions.html',
               '/system/2':'/solutions.html#sfis',
+              '/system/2/5':'/solutions.html#sfis',
               '/system/3':'/solutions.html#wms',
+              '/system/3/6':'/solutions.html#wms',
               '/system/4':'/solutions.html#smt',
+              '/system/4/7':'/solutions.html#smt',
               '/system/6':'/solutions.html#barcode',
           }
-          actual={r['source']:r['target'] for r in rows if r['kind']=='system'}
-          assert actual==expected_system, f'system redirect mismatch: {actual}'
+          actual_system={r['source']:r['target'] for r in rows if r['kind']=='system'}
+          assert actual_system==expected_system, f'system redirect mismatch: {actual_system}'
+          expected_case={
+              '/case':'/cases.html',
+              '/case/5':'/cases.html?system=sfis',
+              '/case/6':'/cases.html?system=wms',
+              '/case/7':'/cases.html?system=smt',
+              '/case/11':'/cases.html?system=barcode',
+          }
+          actual_case={r['source']:r['target'] for r in rows if r['kind']=='case'}
+          assert actual_case==expected_case, f'case redirect mismatch: {actual_case}'
           print(summary)
           print('REDIRECT_COVERAGE=PASS')
           PY
