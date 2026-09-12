@@ -8,12 +8,27 @@
   function productCard(p){return `<a class="product-card" href="product.html?id=${enc(p.id)}"><div class="product-card-visual">${deviceVisual(p.device,p.brand,p.family)}</div><div class="product-card-body"><div class="product-meta"><span>${e(p.brand)}</span><span>${e(p.type)}</span></div><h3>${e(p.name)}</h3><p>${e(p.subtitle)}</p><div class="card-link">查看產品 ${icon('arrow')}</div></div></a>`}
   function solutionCard(s){return `<a class="solution-card" href="solutions.html#${enc(s.id)}"><span class="solution-icon">${icon(s.icon)}</span><small>${e(s.en)}</small><h3>${e(s.name)}</h3><p>${e(s.desc)}</p><span class="card-link">了解方案 ${icon('arrow')}</span></a>`}
 
+  function newsHref(n){
+    const direct=String(n?.id||'').trim();
+    if(direct)return `news-detail.html?id=${enc(direct)}`;
+    const title=String(n?.title||'').toLowerCase();
+    const map=[
+      [/2026.*萬里資訊.*員工旅遊|2026.*員工旅遊/,'travel-2026'],
+      [/原物料價格調整/,'material-price'],
+      [/0x0000011b.*0x00000709|共用印表機.*0x0000011b/,'printer-share-error'],
+      [/zt411.*zt421|zt421.*zt411/,'zt411-news'],
+      [/zt610.*zt620|zt620.*zt610/,'zt610-news']
+    ];
+    const hit=map.find(([re])=>re.test(title));
+    return hit?`news-detail.html?id=${enc(hit[1])}`:`contact.html?item=${enc(n?.title||'消息內容')}`;
+  }
+
   function home(){
     const d=FBStore.getData();
     $('#homeCategories').innerHTML=d.categories.map(catCard).join('');
     $('#homeProducts').innerHTML=d.products.filter(p=>p.featured).slice(0,6).map(productCard).join('');
     $('#homeSolutions').innerHTML=d.solutions.map(solutionCard).join('');
-    $('#homeNews').innerHTML=d.news.slice(0,4).map((n,i)=>`<a class="news-row" href="news.html"><div class="news-date"><b>${e(String(n.date||'').slice(8))}</b><span>${e(String(n.date||'').slice(0,7).replace('-',' / '))}</span></div><div class="news-copy"><div><span class="tag">${e(n.type)}</span>${i===0?'<span class="tag tag-new">NEW</span>':''}</div><h3>${e(n.title)}</h3><p>${e(n.excerpt)}</p></div>${icon('arrow')}</a>`).join('');
+    $('#homeNews').innerHTML=d.news.slice(0,4).map((n,i)=>`<a class="news-row" href="${newsHref(n)}"><div class="news-date"><b>${e(String(n.date||'').slice(8))}</b><span>${e(String(n.date||'').slice(0,7).replace('-',' / '))}</span></div><div class="news-copy"><div><span class="tag">${e(n.type)}</span>${i===0?'<span class="tag tag-new">NEW</span>':''}</div><h3>${e(n.title)}</h3><p>${e(n.excerpt)}</p></div>${icon('arrow')}</a>`).join('');
     $('#caseStrip').innerHTML=d.cases.map(c=>`<a href="cases.html" class="case-pill"><span>${e(c.name)}</span><b>${e(c.system)}</b></a>`).join('');
   }
 
@@ -66,7 +81,7 @@
   function news(){
     const d=FBStore.getData(); const types=['全部',...new Set(d.news.map(n=>n.type))]; let active='全部';
     $('#newsFilters').innerHTML=types.map(t=>`<button class="filter-chip ${t===active?'active':''}" data-type="${e(t)}">${e(t)}</button>`).join('');
-    function draw(){const list=d.news.filter(n=>active==='全部'||n.type===active);$('#newsList').innerHTML=list.map((n,i)=>`<article class="news-card"><div class="news-card-date"><b>${e(String(n.date||'').slice(8))}</b><span>${e(String(n.date||'').slice(0,7).replace('-',' / '))}</span></div><div><div><span class="tag">${e(n.type)}</span>${i===0&&active==='全部'?'<span class="tag tag-new">NEW</span>':''}</div><h2>${e(n.title)}</h2><p>${e(n.excerpt)}</p><button class="text-link demo-news">閱讀內容 ${icon('arrow')}</button></div></article>`).join(''); $$('.demo-news').forEach(b=>b.onclick=()=>toast('新聞內頁將於完整資料搬移階段接入'))}
+    function draw(){const list=d.news.filter(n=>active==='全部'||n.type===active);$('#newsList').innerHTML=list.map((n,i)=>`<article class="news-card"><div class="news-card-date"><b>${e(String(n.date||'').slice(8))}</b><span>${e(String(n.date||'').slice(0,7).replace('-',' / '))}</span></div><div><div><span class="tag">${e(n.type)}</span>${i===0&&active==='全部'?'<span class="tag tag-new">NEW</span>':''}</div><h2>${e(n.title)}</h2><p>${e(n.excerpt)}</p><a class="text-link" href="${newsHref(n)}">閱讀內容 ${icon('arrow')}</a></div></article>`).join('')}
     $$('#newsFilters button').forEach(b=>b.onclick=()=>{active=b.dataset.type;$$('#newsFilters button').forEach(x=>x.classList.toggle('active',x===b));draw()});draw();
   }
 
