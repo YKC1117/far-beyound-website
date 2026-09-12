@@ -11,6 +11,7 @@ on:
       - 'assets/js/product-route-guard.js'
       - 'assets/js/product-meta.js'
       - 'assets/js/site-social.js'
+      - 'assets/js/home-guide-final.js'
       - 'assets/js/legacy-catalog.js'
       - 'tools/product_public_ids.py'
       - 'tools/build_redirect_manifest_v2.py'
@@ -33,6 +34,7 @@ jobs:
           node --check assets/js/catalog-merge.js
           node --check assets/js/product-catalog-upgrade.js
           node --check assets/js/product-route-guard.js
+          node --check assets/js/home-guide-final.js
           python3 - <<'PY'
           from pathlib import Path
           import re
@@ -47,7 +49,13 @@ jobs:
           assert 'urovo-dt66-ct48c-dt50-dt40-rt40s' in merge, 'UROVO canonical model id missing'
           assert "'tsc-da210-da220'" in merge, 'verified TSC DA canonical id missing'
           assert 'replace(/\\+/g' in merge, 'plus-model normalization missing'
+          guide=Path('assets/js/home-guide-final.js').read_text(encoding='utf-8')
+          assert "'BarTender':'product.html?id=software-bartender'" in guide, 'homepage BarTender link is not canonical'
+          assert "'CodeSoft':'product.html?id=software-codesoft'" in guide, 'homepage CodeSoft link is not canonical'
+          assert "'UROVO':'product.html?id=urovo-dt66-ct48c-dt50-dt40-rt40s'" in guide, 'homepage UROVO link is not brand+model canonical'
+          assert "'UROVO':'product.html?id=urovo-enterprise-mobile'" not in guide, 'legacy UROVO id leaked back into homepage guide'
           print(f'PRODUCT_URL_SOURCE=PASS version={version}')
+          print('HOME_PRODUCT_LINKS=PASS')
           PY
 
       - name: Build redirect manifest V2
