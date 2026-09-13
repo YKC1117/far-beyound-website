@@ -34,6 +34,18 @@
   async function refreshSession(s=readRaw(),touch=false){if(!s?.refresh_token)return null;if(idleExpired(s)){clearLocal('idle_timeout');return null}const expiresAt=Number(s.expires_at)||0;if(s.access_token&&expiresAt*1000-now()>120000){if(touch){s.last_activity_at=now();write(s)}return s}const r=await fetch(`${URL}/auth/v1/token?grant_type=refresh_token`,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:s.refresh_token})});const b=await r.json().catch(()=>({}));if(!r.ok||!b.access_token){clearLocal('session_expired');return null}const next={...s,...b,idle_minutes:Number(s.idle_minutes)||60,last_activity_at:touch?now():(Number(s.last_activity_at)||now())};if(!next.expires_at&&next.expires_in)next.expires_at=Math.floor(now()/1000)+Number(next.expires_in);write(next);return next}
 
   async function login(email,password){const r=await fetch(LOGIN,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});const b=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(b.error||'login_failed');e.retry_after_seconds=Number(b.retry_after_seconds)||0;throw e}const s=b.session;if(!s?.access_token)throw new Error('login_failed');const saved={...s,last_activity_at:now()};write(saved);sessionStorage.removeItem(INVITE);const aal=assurance(saved);if(aal!=='aal2'){const p={ok:false,user:b.user||{},permissions:b.permissions||{},aal,mfa_required:true};notify({state:'mfa_required',profile:p});return p}const p=await profile(saved.access_token);notify({state:'login',profile:p});return p}
+  async function claimFirstOwner(email,password,displayName){
+    email=String(email||'').trim().toLowerCase();password=String(password||'');displayName=String(displayName||'').trim();
+    if(!email||!password||!displayName)throw new Error('invalid');
+    const issues=passwordIssues(password);if(issues.length){const e=new Error('password_policy');e.issues=issues;throw e}
+    const r=await fetch(`${URL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const b=await r.json().catch(()=>({}));
+    if(!r.ok||!b.access_token){const e=new Error('credentials_invalid');e.detail=b;throw e}
+    const rpc=await fetch(`${URL}/rest/v1/rpc/bootstrap_first_owner_current_user`,{method:'POST',headers:{apikey:KEY,Authorization:`Bearer ${b.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({p_display_name:displayName}),cache:'no-store'});
+    const rb=await rpc.json().catch(()=>({}));
+    if(!rpc.ok){const msg=String(rb.message||rb.error||'');const e=new Error(msg.includes('owner_exists')?'owner_exists':msg.includes('authentication_required')?'authentication_required':'owner_claim_failed');e.detail=rb;throw e}
+    return login(email,password);
+  }
   async function profile(token){const r=await fetch(`${URL}/functions/v1/admin-session`,{headers:{apikey:KEY,Authorization:`Bearer ${token}`},cache:'no-store'}),b=await r.json().catch(()=>({}));if(!r.ok)throw new Error(b.error||'session_failed');return {...b,aal:assurance({access_token:token}),mfa_required:true}}
   async function current(){let s=session();if(!s?.access_token)return null;try{s=await refreshSession(s,true)||s;return await profile(s.access_token)}catch(e){if(e.message==='mfa_required')return{ok:false,mfa_required:true,aal:assurance(s)};if(['inactive','unauthorized'].includes(e.message))clearLocal('session_expired');return null}}
 
@@ -46,5 +58,5 @@
   async function unenrollFactor(factorId){let s=session();if(!s?.access_token)throw new Error('no_session');s=await refreshSession(s,true)||s;return authFetch(`factors/${encodeURIComponent(factorId)}`,{method:'DELETE',token:s.access_token})}
   async function logout(reason='logout'){const s=readRaw();if(s?.access_token){await event(s.access_token,reason==='idle_timeout'?'idle_timeout':'logout');await fetch(`${URL}/auth/v1/logout`,{method:'POST',headers:{apikey:KEY,Authorization:`Bearer ${s.access_token}`}}).catch(()=>{})}clearLocal(reason)}
   setInterval(()=>{const s=readRaw();if(!s?.access_token)return;if(idleExpired(s)){logout('idle_timeout').catch(()=>clearLocal('idle_timeout'));return}refreshSession(s,false).catch(()=>{})},240000);
-  window.FBAdminAuth={login,current,logout,setPassword,session,refresh:()=>refreshSession(readRaw(),true),invitePending:()=>!!sessionStorage.getItem(INVITE),passwordPolicy:passwordIssues,passwordMin:PASSWORD_MIN,passwordMax:PASSWORD_MAX,assurance,factors,enrollTotp,challengeFactor,verifyFactor,unenrollFactor};
+  window.FBAdminAuth={login,claimFirstOwner,current,logout,setPassword,session,refresh:()=>refreshSession(readRaw(),true),invitePending:()=>!!sessionStorage.getItem(INVITE),passwordPolicy:passwordIssues,passwordMin:PASSWORD_MIN,passwordMax:PASSWORD_MAX,assurance,factors,enrollTotp,challengeFactor,verifyFactor,unenrollFactor};
 })();
