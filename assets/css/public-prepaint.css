@@ -7,10 +7,10 @@ html body[data-page]:not([data-page="admin"]).fb-public-ready{visibility:visible
   body[data-page="home"] .v2-home-hero{padding-bottom:92px}
   body[data-page="home"] .v2-hero-products{margin-bottom:8px}
 
-  /* Final responsive contact bar: direct CSS fallback so the design does not depend on async JS order/cache. */
+  /* Final mobile contact bar: three compact colored actions, no oversized white capsule. */
   html body[data-page]:not([data-page="admin"]) .quick-contact{display:none!important}
-  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar{position:fixed!important;left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;z-index:9999!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:4px!important;padding:5px!important;background:rgba(255,255,255,.98)!important;border:1px solid #d8e3e9!important;border-radius:18px!important;box-shadow:0 12px 34px rgba(17,43,66,.14)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a,html body[data-page]:not([data-page="admin"]) .mobile-contact-bar button{min-height:58px!important;border:0!important;border-radius:13px!important;background:#1688e8!important;color:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;text-decoration:none!important;font:inherit!important;font-size:13px!important;font-weight:800!important;box-shadow:none!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar{position:fixed!important;left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;z-index:9999!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:3px!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a,html body[data-page]:not([data-page="admin"]) .mobile-contact-bar button{min-height:60px!important;border:0!important;border-radius:13px!important;background:#1688e8!important;color:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;text-decoration:none!important;font:inherit!important;font-size:13px!important;font-weight:800!important;box-shadow:0 8px 22px rgba(17,43,66,.14)!important}
   html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(2){background:#08b95b!important}
   html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(3){background:#ff7418!important}
   html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a svg{width:25px!important;height:25px!important;fill:none!important;stroke:#fff!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
@@ -20,7 +20,7 @@ html body[data-page]:not([data-page="admin"]).fb-public-ready{visibility:visible
   html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(2)::before{content:""!important;width:27px!important;height:27px!important;display:block!important;background:url("assets/images/icons/line-official-mark.svg") center/contain no-repeat!important}
   html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(3) svg{display:none!important}
   html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(3)::before{content:""!important;width:25px!important;height:25px!important;display:block!important;background:url("assets/images/icons/inquiry-contact-mark.svg") center/contain no-repeat!important;filter:brightness(0) invert(1)!important}
-  html body[data-page]:not([data-page="admin"]){padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+  html body[data-page]:not([data-page="admin"]){padding-bottom:calc(82px + env(safe-area-inset-bottom))!important}
 }
 
 /* Desktop final contact rail: compact, clear, and visually subordinate to page content. */
