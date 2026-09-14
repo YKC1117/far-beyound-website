@@ -5,13 +5,12 @@
   const STABLE={
     zebraWindows:'https://www.zebra.com/us/en/support-downloads/drivers-operating-systems-firmware.html',
     zebraLegacy:'https://www.zebra.com/us/en/support-downloads/drivers-operating-systems-firmware.html',
-    zebraSeagull:'https://admin.seagullscientific.com/resources/printer-drivers',
+    zebraSeagull:'https://admin.seagullscientific.com/resources/printer-drivers/zebra',
     zebraDesigner:'https://www.zebra.com/us/en/software/printer-software/zebradesigner.html',
-    seagull:'https://admin.seagullscientific.com/resources/printer-drivers',
-    godex:'https://www.godexintl.com/support/download',
-    toshiba:'https://www.toshibatec.com/support/',
-    sato:'https://www.sato-global.com/support/',
-    honeywell:'https://sps.honeywell.com/us/en/support/technical-support'
+    godexSeagull:'https://admin.seagullscientific.com/resources/printer-drivers/godex',
+    toshibaSeagull:'https://admin.seagullscientific.com/resources/printer-drivers/toshiba-tec',
+    satoSeagull:'https://admin.seagullscientific.com/resources/printer-drivers/sato',
+    honeywellSeagull:'https://admin.seagullscientific.com/resources/printer-drivers/honeywell'
   };
   const normalize=(v='')=>String(v).toLowerCase().replace(/[’'\"“”()（）\[\]{}／/\\|｜:：,，.。\-–—_\s]+/g,'');
   const sameBrand=(a,b)=>{
@@ -48,10 +47,12 @@
     const u=String(x.url||'');
     const low=u.toLowerCase();
     if(x.brand==='Zebra'&&/payloads\.zebra\.com/.test(low))x.url=/zddriver-v10/i.test(low)?STABLE.zebraWindows:STABLE.zebraLegacy;
-    else if(x.brand==='Zebra'&&/cloudfront\.net\/drivers\/2024/.test(low))x.url=STABLE.zebraSeagull;
+    else if(x.brand==='Zebra'&&/cloudfront\.net\/drivers\/2024/i.test(low))x.url=STABLE.zebraSeagull;
     else if(x.brand==='Zebra'&&/zebra-designer-3-downloads/.test(low))x.url=STABLE.zebraDesigner;
-    else if((x.brand==='GoDEX')&&/cloudfront\.net\/drivers\/12\/12\.6/i.test(low))x.url=STABLE.seagull;
-    else if((x.brand==='TOSHIBA'||x.brand==='SATO'||x.brand==='Honeywell')&&/cloudfront\.net\/drivers\/2024/i.test(low))x.url=STABLE.seagull;
+    else if(x.brand==='GoDEX'&&/cloudfront\.net\/drivers\/12\/12\.6/i.test(low))x.url=STABLE.godexSeagull;
+    else if(x.brand==='TOSHIBA'&&/cloudfront\.net\/drivers\/2024/i.test(low))x.url=STABLE.toshibaSeagull;
+    else if(x.brand==='SATO'&&/cloudfront\.net\/drivers\/2024/i.test(low))x.url=STABLE.satoSeagull;
+    else if(x.brand==='Honeywell'&&/cloudfront\.net\/drivers\/2024/i.test(low))x.url=STABLE.honeywellSeagull;
     return x;
   }
   function bestLink(item,links){
