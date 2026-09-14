@@ -70,15 +70,15 @@
   function watchPublicCopy(){
     if(document.body.dataset.page==='admin'||window.__fbCopyObserver)return;
     window.__fbCopyObserver=true;
-    const ob=new MutationObserver(()=>queueMicrotask(()=>{sanitizePublicText();polishFooter();attachBackTop()}));
+    const ob=new MutationObserver(()=>queueMicrotask(()=>{sanitizePublicText();polishFooter()}));
     ob.observe(document.body,{childList:true,subtree:true,characterData:true});
   }
 
   function attachBackTop(){
     if(document.body.dataset.page==='admin')return;
-    document.querySelectorAll('.back-top').forEach(el=>el.remove());
     const rail=document.querySelector('.quick-contact');
     if(!rail||rail.querySelector('[data-back-top]'))return;
+    const old=rail.querySelector('.back-top');if(old)old.remove();
     const item=document.createElement('div');item.className='quick-contact-item';item.dataset.backTop='1';
     item.innerHTML='<button type="button" class="quick-contact-btn" aria-label="回到頁首" title="回到頁首"><span class="quick-back-arrow" aria-hidden="true">↑</span><span>TOP</span></button>';
     item.querySelector('button').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
@@ -92,6 +92,6 @@
   }
 
   function run(){styles();cleanCopy();watchPublicCopy();attachBackTop();contactNote()}
-  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,100);setTimeout(run,700);setTimeout(run,1800)});
-  if(document.readyState!=='loading'){setTimeout(run,0);setTimeout(run,700);setTimeout(run,1800)}
+  document.addEventListener('DOMContentLoaded',run,{once:true});
+  if(document.readyState!=='loading')run();
 })();
