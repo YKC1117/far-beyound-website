@@ -1,0 +1,5 @@
+/* 萬里資訊｜Public first-paint stability layer */
+html{background:#f7fafb}
+body[data-page]:not([data-page="admin"]){min-height:100vh}
+body[data-page]:not([data-page="admin"]){overflow-x:clip}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:0.01ms!important;animation-duration:0.01ms!important;animation-iteration-count:1!important}}
