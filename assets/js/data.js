@@ -1,10 +1,7 @@
 (function () {
   const KEY = 'farbeyoundSiteDataV1';
 
-  // Keep the public shell hidden for one short settling window. Shared header/footer,
-  // data-driven navigation and page modules all initialize immediately after DOM ready;
-  // revealing after the first layout cycle prevents the browser from showing an
-  // intermediate navigation state.
+  // Keep the public shell hidden for one short settling window. Shared header/footer, data-driven navigation and page modules all initialize immediately after DOM ready; revealing after the first layout cycle prevents the browser from showing an intermediate navigation state.
   const prepaint = document.createElement('style');
   prepaint.id = 'fbPublicPrepaint';
   prepaint.textContent = 'body{visibility:hidden!important}body.fb-public-ready{visibility:visible!important}';
@@ -41,5 +38,5 @@
     const raw = localStorage.getItem(KEY);
     if(raw){ const saved=JSON.parse(raw); if(saved&&typeof saved==='object') data={...data,...saved}; }
   } catch(e){}
-  window.FBStore={getData:()=>data,setData(next){data={...data,...next};try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}window.dispatchEvent(new CustomEvent('farbeyound:datachange',{detail:data}));}};
+  window.FBStore={getData:()=>data,setData(next){data={...data,...next};try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}window.dispatchEvent(new CustomEvent('farbeyound:datachange',{detail:data}));}};window.FBStore.saveData=window.FBStore.setData.bind(window.FBStore);
 })();
