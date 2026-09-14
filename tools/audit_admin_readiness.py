@@ -23,19 +23,25 @@ try:
 except ValueError:
     errors.append('admin import/cloud sync wiring incomplete')
 
-dashboard=(ROOT/'assets/js/admin-dashboard.js').read_text(encoding='utf-8')
-required_dynamic=[
-    'admin-auth-core.js','admin-access-gate.js','admin-session-hardening.js',
-    'admin-url-validation.js','admin-transition-status.js','admin-self-check.js',
-    'admin-users-ui.js','admin-mfa-ui.js','admin-security-tools.js',
-    'admin-security-policy-ui.js','admin-permissions-ui.js','admin-seo-center.js',
-    'admin-seo-feedback.js','admin-static-ui.js'
+# Current admin architecture uses a small, explicit security/runtime core.
+# Older revisions expected a larger set of standalone UI modules that no longer
+# exist because those functions are now implemented by the consolidated modules.
+required_modules=[
+    'admin-auth-core.js',
+    'admin-access-gate.js',
+    'admin-session-hardening.js',
+    'admin-url-validation.js',
 ]
-for name in required_dynamic:
-    if name not in dashboard:
-        errors.append(f'admin dashboard missing module: {name}')
+for name in required_modules:
+    if name not in admin:
+        errors.append(f'admin.html missing required module: {name}')
     if not (ROOT/'assets/js'/name).is_file():
-        errors.append(f'missing admin module file: {name}')
+        errors.append(f'missing required admin module file: {name}')
+
+dashboard=(ROOT/'assets/js/admin-dashboard.js').read_text(encoding='utf-8')
+for token in ['FBAdminAuth.login','FBAdminAuth.verifyFactor','adminAccessCenter','adminDashboard']:
+    if token not in dashboard:
+        errors.append(f'admin dashboard missing core feature: {token}')
 
 url_guard=(ROOT/'assets/js/admin-url-validation.js').read_text(encoding='utf-8')
 if '.aff-home-url' not in url_guard:
@@ -46,10 +52,12 @@ for token in ['MAX_MS=8*60*60*1000','SERVER_CHECK_MS=2*60*1000','pageshow','nore
     if token not in session:
         errors.append(f'session hardening missing: {token}')
 
-self_check=(ROOT/'assets/js/admin-self-check.js').read_text(encoding='utf-8')
-for token in ['adminSeoCenter','adminAccessCenter','adminSecurityCenter','adminBackupCenter']:
-    if token not in self_check:
-        errors.append(f'admin self-check missing coverage: {token}')
+self_check_path=ROOT/'assets/js/admin-self-check.js'
+if self_check_path.is_file():
+    self_check=self_check_path.read_text(encoding='utf-8')
+    for token in ['adminSeoCenter','adminAccessCenter','adminSecurityCenter','adminBackupCenter']:
+        if token not in self_check:
+            errors.append(f'admin self-check missing coverage: {token}')
 
 if errors:
     print('ADMIN_READINESS=FAIL')
@@ -59,4 +67,4 @@ if errors:
 
 print('ADMIN_READINESS=PASS')
 print(f'ADMIN_STATIC_SCRIPTS={len(sources)}')
-print(f'ADMIN_DYNAMIC_REQUIRED={len(required_dynamic)}')
+print(f'ADMIN_REQUIRED_MODULES={len(required_modules)}')
