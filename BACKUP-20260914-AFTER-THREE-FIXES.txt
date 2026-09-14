@@ -1,0 +1,1 @@
+Three verified fixes applied from baseline e23fe538: data.js saveData compatibility, nav-menu.js script attribute compatibility, pages.js caseStrip null guard. Completion marker only.
