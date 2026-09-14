@@ -1,0 +1,122 @@
+/* 萬里資訊｜Homepage premium visual system
+   Final presentation layer: restrained corporate / industrial aesthetic. */
+:root{
+  --fb-ink:#17344a;
+  --fb-muted:#687d8c;
+  --fb-line:#dfe8ed;
+  --fb-soft:#f5f8fa;
+  --fb-accent:#087d96;
+}
+
+/* Hero: stronger first impression, cleaner hierarchy */
+.v2-home-hero{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 78% 24%,rgba(22,142,166,.10),transparent 30%),
+    linear-gradient(135deg,#f7fafb 0%,#eef4f7 55%,#f9fbfc 100%)!important;
+  border-bottom:1px solid #e1e9ed;
+}
+.v2-home-hero::before{
+  content:"";
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,255,255,.46),transparent 42%);
+}
+.v2-home-hero .hero-inner{position:relative;z-index:1;min-height:610px}
+.v2-home-hero .hero-copy{max-width:620px}
+.v2-home-hero .hero-copy h1{letter-spacing:-.035em;line-height:1.16}
+.v2-home-hero .hero-copy h1 em{font-style:normal;color:#087d96}
+.v2-home-hero .hero-copy>p{max-width:570px;color:#5d7281;line-height:1.9}
+.v2-home-hero .hero-actions{gap:12px}
+.v2-home-hero .hero-actions .btn{min-width:150px;border-radius:10px;font-weight:800}
+.v2-home-hero .hero-trust{margin-top:30px;display:flex;flex-wrap:wrap;gap:8px}
+.v2-home-hero .hero-trust a{
+  border:1px solid rgba(184,202,211,.78)!important;
+  background:rgba(255,255,255,.68)!important;
+  border-radius:999px!important;
+  padding:8px 13px!important;
+  color:#3b6174!important;
+  font-size:12px!important;
+  font-weight:700!important;
+}
+.v2-home-hero .hero-trust a:hover{background:#fff!important;border-color:#9ec4cf!important;color:#087d96!important}
+.v2-hero-products{filter:drop-shadow(0 24px 36px rgba(22,52,70,.10))}
+.v2-stage-main{border-radius:26px!important;border:1px solid rgba(207,220,227,.9)!important;background:rgba(255,255,255,.82)!important;box-shadow:0 22px 52px rgba(24,58,80,.12)!important;overflow:hidden}
+.v2-stage-main img{transition:transform .45s ease}
+.v2-stage-main:hover img{transform:scale(1.025)}
+.v2-stage-caption{background:linear-gradient(180deg,rgba(20,45,62,.02),rgba(20,45,62,.07))!important}
+.v2-stage-side a{border:1px solid rgba(207,220,227,.9)!important;background:rgba(255,255,255,.86)!important;border-radius:18px!important;box-shadow:0 12px 28px rgba(24,58,80,.08)!important}
+
+/* Credibility strip */
+.v5-credibility{background:#fff!important;border-bottom:1px solid var(--fb-line)!important}
+.v5-cred-grid{gap:0!important}
+.v5-cred-item{padding:25px 28px!important;border-right:1px solid var(--fb-line)!important}
+.v5-cred-item:last-child{border-right:0!important}
+.v5-cred-key{color:var(--fb-ink)!important;letter-spacing:-.025em}
+.v5-cred-copy b{color:#294b60!important}
+.v5-cred-copy span{color:#7a8b96!important}
+
+/* Brand section: less like a list, more like a corporate brand wall */
+.brand-portfolio{background:#f7f9fa!important;border-bottom:1px solid var(--fb-line)!important}
+.brand-portfolio-head{align-items:end!important}
+.brand-portfolio-title small{letter-spacing:.16em!important;color:#7c919d!important;font-weight:800!important}
+.brand-portfolio-title h2{color:var(--fb-ink)!important;letter-spacing:-.025em}
+.brand-portfolio-head>p{color:#71838e!important}
+.brand-family{background:#fff!important;border:1px solid var(--fb-line)!important;border-radius:18px!important;box-shadow:0 10px 28px rgba(21,53,72,.045)!important}
+.brand-family+.brand-family{margin-top:12px!important}
+.brand-family-label{color:#294b60!important;font-weight:800!important}
+.brand-family-label small{color:#98a7af!important;letter-spacing:.1em!important}
+.brand-wordmarks{gap:8px!important}
+.brand-wordmark{min-height:52px!important;border:1px solid #e1e9ed!important;border-radius:12px!important;background:#fbfcfd!important;box-shadow:none!important;transition:all .18s ease!important}
+.brand-wordmark:hover{background:#fff!important;border-color:#b8d2da!important;box-shadow:0 7px 18px rgba(22,57,77,.07)!important;transform:translateY(-2px)!important}
+
+/* Service / product areas */
+.v2-service-strip{background:#17384e!important}
+.v2-service-item{border-right:1px solid rgba(255,255,255,.12)!important}
+.v2-service-item:hover{background:rgba(255,255,255,.045)!important}
+.v2-service-no{color:#7dc0cc!important}
+.v2-service-item b{color:#fff!important}
+.v2-service-item small{color:rgba(255,255,255,.62)!important}
+.section{position:relative}
+.section-head h2{letter-spacing:-.025em!important;color:var(--fb-ink)}
+.section-head>p{color:#71838f;line-height:1.8}
+.category-card,.product-card,.solution-card{border:1px solid var(--fb-line)!important;box-shadow:0 8px 24px rgba(21,53,72,.045)!important;border-radius:18px!important;background:#fff!important;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease!important}
+.category-card:hover,.product-card:hover,.solution-card:hover{transform:translateY(-4px)!important;border-color:#c3d7df!important;box-shadow:0 18px 36px rgba(21,53,72,.10)!important}
+.product-card-visual{background:#f7f9fa!important}
+.card-link,.v5-case-link{color:#087d96!important;font-weight:800!important}
+
+/* Case section */
+.v5-case-section{background:#f5f8fa!important}
+.v5-case-card{border:1px solid #dce6eb!important;background:#fff!important;border-radius:18px!important;box-shadow:0 8px 22px rgba(21,53,72,.045)!important;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease!important}
+.v5-case-card:hover{transform:translateY(-4px)!important;border-color:#bdd3dc!important;box-shadow:0 18px 34px rgba(21,53,72,.10)!important}
+.v5-case-no{color:#94a7b2!important}
+.v5-case-card small{color:#718793!important;letter-spacing:.12em!important}
+.v5-case-card h3{color:#24465a!important}
+.v5-case-card p{color:#71818c!important}
+
+/* CTA: premium, restrained */
+.cta-band{margin-top:0!important;padding:58px max(24px,calc((100vw - 1200px)/2))!important;background:linear-gradient(110deg,#17384e,#20566b)!important;position:relative;overflow:hidden}
+.cta-band::after{content:"";position:absolute;width:420px;height:420px;right:-140px;top:-220px;border-radius:50%;border:1px solid rgba(255,255,255,.10);box-shadow:0 0 0 55px rgba(255,255,255,.025),0 0 0 110px rgba(255,255,255,.02);pointer-events:none}
+.cta-band>div{position:relative;z-index:1}
+.cta-band h2{color:#fff!important;letter-spacing:-.025em}
+.cta-band p{color:rgba(255,255,255,.72)!important}
+.cta-band .btn{position:relative;z-index:2;border-radius:10px!important;background:#fff!important;color:#17384e!important;font-weight:800!important;box-shadow:0 8px 22px rgba(0,0,0,.12)!important}
+.cta-band .btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.18)!important}
+
+@media(max-width:980px){
+  .v2-home-hero .hero-inner{min-height:auto}
+  .v2-home-hero .hero-copy h1{font-size:clamp(34px,9vw,48px)}
+  .v2-home-hero .hero-copy>p{line-height:1.75}
+  .v2-home-hero .hero-trust{gap:6px;margin-top:22px}
+  .v2-home-hero .hero-trust a{padding:7px 10px!important;font-size:11px!important}
+  .v2-stage-main{border-radius:20px!important}
+  .v2-stage-side a{border-radius:14px!important}
+  .v5-cred-grid{display:grid!important;grid-template-columns:1fr 1fr!important}
+  .v5-cred-item{padding:18px 15px!important;border-bottom:1px solid var(--fb-line)!important}
+  .v5-cred-item:nth-child(2){border-right:0!important}
+  .v5-cred-item:nth-child(3){border-bottom:0!important}
+  .v5-cred-item:nth-child(4){border-right:0!important;border-bottom:0!important}
+  .brand-family{border-radius:15px!important}
+  .brand-wordmark{min-height:46px!important}
+  .cta-band{padding:42px 22px!important}
+}
