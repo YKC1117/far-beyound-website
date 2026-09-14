@@ -1,0 +1,1 @@
+(function(){if(window.FBStore&&!window.FBStore.saveData&&window.FBStore.setData){window.FBStore.saveData=window.FBStore.setData.bind(window.FBStore);}})();
