@@ -1,0 +1,4 @@
+Backup marker for main before frontend data/render fixes.
+Base commit: 1725473e7677953a2dd53d6da9484e89139340f6
+Date: 2026-09-14 Asia/Taipei
+Do not delete. This marker identifies the recovery point immediately before the frontend data/render repair batch.
