@@ -1,15 +1,24 @@
 (()=>{
-if(document.body.dataset.page!=='admin'||window.__fbAdminDashboard)return;window.__fbAdminDashboard=true;
-const loaded=new Set();
-function load(src,key){if(loaded.has(key)||document.querySelector('script[data-'+key+']'))return;loaded.add(key);const s=document.createElement('script');s.src=src;s.setAttribute('data-'+key,'1');document.body.appendChild(s)}
-function once(){
- if(document.querySelector('.admin-dashboard-root'))return;
- const main=document.querySelector('main')||document.body;
- const root=document.createElement('section');root.className='admin-dashboard-root';root.innerHTML='<div class="admin-dashboard-card"><strong>萬里資訊｜管理後台</strong><span>系統功能已載入</span></div>';
- main.insertBefore(root,main.firstChild);
- const status=document.querySelector('.admin-status');if(status)status.textContent='正式管理介面';
- const stamp=document.querySelector('.admin-version-note');if(stamp)stamp.textContent='後台介面更新：2026/09/14 09:55';
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',once,{once:true});else once();
-setTimeout(()=>{load('assets/js/admin-security.js?v=20260914-0955','admin-security');load('assets/js/admin-ui.js?v=20260914-0955','admin-ui')},300);
+  if(document.body.dataset.page!=='admin'||window.__fbAdminDashboard)return;
+  window.__fbAdminDashboard=true;
+  const build=()=>{
+    if(document.getElementById('adminDashboard'))return;
+    const main=document.querySelector('.admin-main');
+    const anchor=document.querySelector('.admin-usage-note');
+    if(!main||!anchor)return;
+    const s=document.createElement('section');
+    s.id='adminDashboard';
+    s.className='admin-dashboard';
+    s.innerHTML='<div class="admin-dashboard-head"><div><span class="eyebrow">ADMIN OVERVIEW</span><h2>管理總覽</h2><p>日常內容、前台模組、客戶成效與系統安全分區管理。</p></div><span class="admin-status-pill">手機／電腦同步</span></div><div class="admin-dashboard-grid"><a href="#homeHeroAdmin"><b>首頁管理</b><span>首屏、輪播與首頁內容</span></a><a href="#products"><b>產品管理</b><span>產品資料、上下架、精選</span></a><a href="#adminFrontFeatureManager"><b>前台功能／版面</b><span>首頁排序、選單、快捷工具、頁尾</span></a><a href="#adminBrandManager"><b>品牌管理</b><span>品牌分類、品牌入口與排序</span></a><a href="#adminLocationManager"><b>服務據點</b><span>名稱、電話、地址與顯示</span></a><a href="#adminInquiries"><b>網站詢問</b><span>客戶表單與聯絡紀錄</span></a><a href="#adminAnalytics"><b>流量分析</b><span>站內需求與來源</span></a><a href="#adminSecurityCenter" class="system"><b>系統安全</b><span>權限、2FA、資安、備份與還原</span></a></div>';
+    anchor.after(s);
+  };
+  const style=()=>{
+    if(document.getElementById('adminDashboardStyle'))return;
+    const st=document.createElement('style');
+    st.id='adminDashboardStyle';
+    st.textContent='.admin-dashboard{margin:0 0 18px;padding:18px;border:1px solid #dfe9ee;border-radius:16px;background:#fff}.admin-dashboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}.admin-dashboard-head h2{margin:3px 0 4px;font-size:21px}.admin-dashboard-head p{margin:0;color:#6a7e89;font-size:12px}.admin-dashboard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.admin-dashboard-grid a{display:block;padding:13px 14px;border:1px solid #e0e9ed;border-radius:12px;background:#f9fbfc;text-decoration:none;color:#244658}.admin-dashboard-grid a b{display:block;font-size:13px}.admin-dashboard-grid a span{display:block;margin-top:4px;color:#70838e;font-size:10px;line-height:1.4}.admin-dashboard-grid a.system{background:#fff7f7;border-color:#efcece}.admin-dashboard-grid a.system b{color:#a52b2b}@media(max-width:1100px){.admin-dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:780px){.admin-dashboard{padding:14px}.admin-dashboard-head{display:block}.admin-dashboard-grid{grid-template-columns:1fr 1fr}}';
+    document.head.appendChild(st);
+  };
+  const run=()=>{style();build()};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
