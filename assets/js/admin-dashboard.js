@@ -1,6 +1,8 @@
 (()=>{
   if(document.body.dataset.page!=='admin'||window.__fbAdminDashboard)return;
   window.__fbAdminDashboard=true;
+  const ADMIN_STAMP='後台介面更新：2026/09/14 10:18';
+  const setStamp=()=>{const v=document.querySelector('.admin-version-note');if(v)v.textContent=ADMIN_STAMP};
   const build=()=>{
     if(document.getElementById('adminDashboard'))return;
     const main=document.querySelector('.admin-main');
@@ -19,6 +21,6 @@
     st.textContent='.admin-dashboard{margin:0 0 18px;padding:18px;border:1px solid #dfe9ee;border-radius:16px;background:#fff}.admin-dashboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}.admin-dashboard-head h2{margin:3px 0 4px;font-size:21px}.admin-dashboard-head p{margin:0;color:#6a7e89;font-size:12px}.admin-dashboard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.admin-dashboard-grid a{display:block;padding:13px 14px;border:1px solid #e0e9ed;border-radius:12px;background:#f9fbfc;text-decoration:none;color:#244658}.admin-dashboard-grid a b{display:block;font-size:13px}.admin-dashboard-grid a span{display:block;margin-top:4px;color:#70838e;font-size:10px;line-height:1.4}.admin-dashboard-grid a.system{background:#fff7f7;border-color:#efcece}.admin-dashboard-grid a.system b{color:#a52b2b}@media(max-width:1100px){.admin-dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:780px){.admin-dashboard{padding:14px}.admin-dashboard-head{display:block}.admin-dashboard-grid{grid-template-columns:1fr 1fr}}';
     document.head.appendChild(st);
   };
-  const run=()=>{style();build()};
+  const run=()=>{style();build();setStamp()};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
