@@ -1,6 +1,7 @@
 /* Public quick-contact authority layer.
- * The public site has legacy feature-control code that rebuilds the contact rail.
- * Keep the original final-fixes contact UI authoritative after every rebuild.
+ * Keep the original compact rail, but give the mobile actions three clear colors.
+ * Legacy front-feature control used to rebuild a second mobile rail repeatedly;
+ * lock that controller after its first render so the public contact bar has one owner.
  */
 (()=>{
   'use strict';
@@ -18,10 +19,8 @@
   function tel(v){return String(v||'').replace(/[^0-9+]/g,'')}
 
   function installStyle(){
-    let s=document.getElementById('fbQuickContactAuthorityStyle');
-    if(s)return;
-    s=document.createElement('style');
-    s.id='fbQuickContactAuthorityStyle';
+    if(document.getElementById('fbQuickContactAuthorityStyle'))return;
+    const s=document.createElement('style');s.id='fbQuickContactAuthorityStyle';
     s.textContent=`
       @media(min-width:981px){
         .quick-contact{position:fixed!important;right:0!important;top:52%!important;z-index:88!important;transform:translateY(-50%)!important;display:grid!important;gap:1px!important;width:auto!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;filter:drop-shadow(0 10px 24px rgba(20,44,66,.16))!important}
@@ -31,18 +30,21 @@
         .quick-contact .quick-contact-item:last-child .quick-contact-btn{border-radius:0 0 0 8px!important}
         .quick-contact .quick-contact-btn:hover,.quick-contact .quick-contact-item.is-open>.quick-contact-btn{background:#17324d!important;color:#fff!important;border-color:#17324d!important}
         .quick-contact .quick-contact-btn svg{width:21px!important;height:21px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important}
-        .quick-contact .quick-contact-btn b{font-size:10px!important;line-height:1.1!important;font-weight:700!important;letter-spacing:.03em!important}
-        .quick-contact .quick-contact-btn small{font-size:10px!important;line-height:1.1!important;font-weight:700!important;letter-spacing:.03em!important}
+        .quick-contact .quick-contact-btn b,.quick-contact .quick-contact-btn small,.quick-contact .quick-contact-btn span{font-size:10px!important;line-height:1.1!important;font-weight:700!important;letter-spacing:.03em!important}
         .quick-contact .quick-phone-panel{right:67px!important;top:0!important}
         .fb-mobile-quick{display:none!important}
       }
       @media(max-width:980px){
         .quick-contact{display:none!important}
         .fb-mobile-quick{display:none!important}
-        .mobile-contact-bar{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:90!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0!important;background:rgba(255,255,255,.98)!important;border-top:1px solid #dce4e9!important;border-left:0!important;border-right:0!important;border-bottom:0!important;border-radius:0!important;box-shadow:0 -8px 26px rgba(18,46,70,.10)!important;padding:0 0 env(safe-area-inset-bottom)!important;overflow:visible!important}
-        .mobile-contact-bar a,.mobile-contact-bar button{min-height:58px!important;height:58px!important;margin:0!important;padding:0!important;border:0!important;border-right:1px solid #e4e9ed!important;border-radius:0!important;background:transparent!important;color:#17324d!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;font:inherit!important;font-size:11px!important;font-weight:700!important;box-shadow:none!important;transform:none!important}
+        .mobile-contact-bar{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:90!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:0 -8px 26px rgba(18,46,70,.10)!important;padding:0 0 env(safe-area-inset-bottom)!important;overflow:visible!important}
+        .mobile-contact-bar a,.mobile-contact-bar button{min-height:58px!important;height:58px!important;margin:0!important;padding:0!important;border:0!important;border-right:1px solid rgba(255,255,255,.25)!important;border-radius:0!important;color:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;font:inherit!important;font-size:11px!important;font-weight:700!important;box-shadow:none!important;transform:none!important;text-decoration:none!important}
         .mobile-contact-bar a:last-child{border-right:0!important}
-        .mobile-contact-bar svg{width:19px!important;height:19px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+        .mobile-contact-bar button{background:#17324d!important}
+        .mobile-contact-bar a:nth-child(2){background:#00a83b!important}
+        .mobile-contact-bar a:nth-child(3){background:#e47a2f!important}
+        .mobile-contact-bar svg{width:19px!important;height:19px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;flex:none!important}
+        .mobile-contact-bar .line-detail{stroke-width:1.25!important}
         body:not([data-page="admin"]){padding-bottom:calc(58px + env(safe-area-inset-bottom))!important}
       }
     `;
@@ -62,7 +64,11 @@
     }
     let panel=document.querySelector('.mobile-contact-phone');
     if(!panel){panel=document.createElement('div');panel.className='mobile-contact-phone';document.body.appendChild(panel)}
-    panel.innerHTML=phones().map(p=>'<a href="tel:'+tel(p.value)+'"><span>'+(p.label||'')+'辦公室</span><b>'+String(p.value||'')+'</b></a>').join('');
+    const signature=phones().map(p=>`${p.label||''}|${p.value||''}`).join(';');
+    if(panel.dataset.authorityPhones!==signature){
+      panel.innerHTML=phones().map(p=>'<a href="tel:'+tel(p.value)+'"><span>'+(p.label||'')+'辦公室</span><b>'+String(p.value||'')+'</b></a>').join('');
+      panel.dataset.authorityPhones=signature;
+    }
     const btn=bar.querySelector('[data-mobile-phone]');
     if(btn&&!btn.dataset.authorityBound){
       btn.dataset.authorityBound='1';
@@ -77,29 +83,30 @@
     const contents=[PHONE_SVG+'<span>電話</span>',LINE_SVG+'<span>LINE</span>',MAIL_SVG+'<span>詢問</span>'];
     buttons.forEach((btn,i)=>{
       if(i<contents.length&&btn.dataset.authorityMarkup!==String(i)){btn.innerHTML=contents[i];btn.dataset.authorityMarkup=String(i)}
-      btn.style.setProperty('background','rgba(255,255,255,.97)','important');
-      btn.style.setProperty('color','#17324d','important');
-      btn.style.setProperty('width','58px','important');
-      btn.style.setProperty('min-width','58px','important');
-      btn.style.setProperty('height','64px','important');
-      btn.style.setProperty('min-height','64px','important');
-      btn.style.setProperty('border-radius','0','important');
-      btn.style.setProperty('display','flex','important');
-      btn.style.setProperty('flex-direction','column','important');
-      btn.style.setProperty('align-items','center','important');
-      btn.style.setProperty('justify-content','center','important');
-      btn.style.setProperty('gap','5px','important');
-      btn.style.setProperty('box-shadow','none','important');
     });
-    const items=rail.querySelectorAll('.quick-contact-item');
-    items[0]?.querySelector('.quick-contact-btn')?.style.setProperty('border-radius','8px 0 0 0','important');
-    items[items.length-1]?.querySelector('.quick-contact-btn')?.style.setProperty('border-radius','0 0 0 8px','important');
   }
 
-  function apply(){installStyle();buildMobile();normalizeDesktop()}
-  const observer=new MutationObserver(()=>{clearTimeout(window.__fbQuickAuthorityTimer);window.__fbQuickAuthorityTimer=setTimeout(apply,30)});
-  function boot(){apply();[180,650,1100,1600,2400].forEach(t=>setTimeout(apply,t));observer.observe(document.body,{childList:true,subtree:true})}
+  function lockFrontFeatureController(){
+    const api=window.FBFrontFeatures;
+    if(!api||typeof api.apply!=='function'||api.__contactAuthorityLocked)return false;
+    return true;
+  }
+
+  function patchFrontFeatureController(){
+    const api=window.FBFrontFeatures;
+    if(!api||typeof api.apply!=='function'||api.__contactAuthorityLocked)return !!api?.__contactAuthorityLocked;
+    const original=api.apply;
+    let first=true;
+    api.apply=function(){if(!first)return;first=false;return original.apply(this,arguments)};
+    api.__contactAuthorityLocked=true;
+    return true;
+  }
+
+  function apply(){installStyle();buildMobile();normalizeDesktop();patchFrontFeatureController()}
+  function boot(){apply();[180,650,1100].forEach(t=>setTimeout(apply,t));}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-  window.addEventListener('load',()=>setTimeout(apply,200),{once:true});
-  window.addEventListener('farbeyound:datachange',()=>setTimeout(apply,100));
+  const poll=setInterval(()=>{if(patchFrontFeatureController())clearInterval(poll)},25);
+  setTimeout(()=>clearInterval(poll),4000);
+  window.addEventListener('load',()=>setTimeout(apply,120),{once:true});
+  window.addEventListener('farbeyound:datachange',()=>setTimeout(apply,80));
 })();
