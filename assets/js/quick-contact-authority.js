@@ -73,7 +73,14 @@
   function normalizeDesktop(){
     const rail=document.querySelector('.quick-contact');
     if(!rail)return;
-    rail.querySelectorAll('.quick-contact-btn').forEach(btn=>{
+    const buttons=[...rail.querySelectorAll('.quick-contact-btn')];
+    const contents=[
+      PHONE_SVG+'<span>電話</span>',
+      LINE_SVG+'<span>LINE</span>',
+      MAIL_SVG+'<span>詢問</span>'
+    ];
+    buttons.forEach((btn,i)=>{
+      if(i<contents.length)btn.innerHTML=contents[i];
       btn.style.setProperty('background','rgba(255,255,255,.97)','important');
       btn.style.setProperty('color','#17324d','important');
       btn.style.setProperty('width','58px','important');
