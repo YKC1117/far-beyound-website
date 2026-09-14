@@ -1,7 +1,10 @@
 (function () {
   const KEY = 'farbeyoundSiteDataV1';
 
-  // Keep the public shell hidden for one short settling window. Shared header/footer, data-driven navigation and page modules all initialize immediately after DOM ready; revealing after the first layout cycle prevents the browser from showing an intermediate navigation state.
+  // Keep the public shell hidden for one short settling window. Shared header/footer,
+  // data-driven navigation and page modules all initialize immediately after DOM ready;
+  // revealing after the first layout cycle prevents the browser from showing an
+  // intermediate navigation state.
   const prepaint = document.createElement('style');
   prepaint.id = 'fbPublicPrepaint';
   prepaint.textContent = 'body{visibility:hidden!important}body.fb-public-ready{visibility:visible!important}';
