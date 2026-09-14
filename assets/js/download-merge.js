@@ -2,7 +2,18 @@
   if(!window.FBStore||window.__fbLegacyDownloadMerge)return;
   window.__fbLegacyDownloadMerge=true;
   const rawGet=FBStore.getData.bind(FBStore);
-  const normalize=(v='')=>String(v).toLowerCase().replace(/[’'"“”()（）\[\]{}／/\\|｜:：,，.。\-–—_\s]+/g,'');
+  const STABLE={
+    zebraWindows:'https://www.zebra.com/us/en/support-downloads/drivers-operating-systems-firmware.html',
+    zebraLegacy:'https://www.zebra.com/us/en/support-downloads/drivers-operating-systems-firmware.html',
+    zebraSeagull:'https://admin.seagullscientific.com/resources/printer-drivers',
+    zebraDesigner:'https://www.zebra.com/us/en/software/printer-software/zebradesigner.html',
+    seagull:'https://admin.seagullscientific.com/resources/printer-drivers',
+    godex:'https://www.godexintl.com/support/download',
+    toshiba:'https://www.toshibatec.com/support/',
+    sato:'https://www.sato-global.com/support/',
+    honeywell:'https://sps.honeywell.com/us/en/support/technical-support'
+  };
+  const normalize=(v='')=>String(v).toLowerCase().replace(/[’'\"“”()（）\[\]{}／/\\|｜:：,，.。\-–—_\s]+/g,'');
   const sameBrand=(a,b)=>{
     const x=normalize(a),y=normalize(b);
     if(x===y)return true;
@@ -34,6 +45,13 @@
     if(x.note==='SFIS生產管控系統'||x.note===x.updated)x.note='';
     if(x.version&&(/兼容。|MB$|GB$|KB$/i.test(x.version)||x.version.length>45))x.version='';
     if(x.size==='0 MB')x.size='';
+    const u=String(x.url||'');
+    const low=u.toLowerCase();
+    if(x.brand==='Zebra'&&/payloads\.zebra\.com/.test(low))x.url=/zddriver-v10/i.test(low)?STABLE.zebraWindows:STABLE.zebraLegacy;
+    else if(x.brand==='Zebra'&&/cloudfront\.net\/drivers\/2024/.test(low))x.url=STABLE.zebraSeagull;
+    else if(x.brand==='Zebra'&&/zebra-designer-3-downloads/.test(low))x.url=STABLE.zebraDesigner;
+    else if((x.brand==='GoDEX')&&/cloudfront\.net\/drivers\/12\/12\.6/i.test(low))x.url=STABLE.seagull;
+    else if((x.brand==='TOSHIBA'||x.brand==='SATO'||x.brand==='Honeywell')&&/cloudfront\.net\/drivers\/2024/i.test(low))x.url=STABLE.seagull;
     return x;
   }
   function bestLink(item,links){
