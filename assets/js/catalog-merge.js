@@ -6,7 +6,7 @@
   const COMMON = ['工業型條碼列印機','商業型條碼列印機','桌上型條碼列印機','攜帶型標籤條碼列印機','標籤條碼列印機','條碼列印機','條碼掃描器','工業型','商業型','桌上型','攜帶型','通用型','超耐用型','固定式'];
   const CATEGORY_SLUG={printers:'printer',scanners:'scanner',rfid:'rfid',mobile:'mobile',labels:'labels',printing:'printing',software:'software',parts:'parts'};
   const FASTECH_FALLBACK={labels:'label',printing:'label-printing',software:'label-software',parts:'printer-parts',rfid:'rfid',mobile:'mobile',printers:'printer',scanners:'scanner'};
-  const CURATED_IDS=new Set(['software-bartender','software-codesoft','urovo-dt66-ct48c-dt50-dt40-rt40s']);
+  const CURATED_IDS=new Set(['software-bartender','software-codesoft','urovo-dt66-ct48c-dt50-rt40s']);
   const VERIFIED_PATH_IDS={
     '/product/1/22/33/181':'tsc-da210-da220',
     '/product/1/22/93/180':'tsc-alpha-3r-alpha-30r-alpha-30l-alpha-30lhc'
@@ -119,7 +119,11 @@
     const custom=existing.filter(x=>/^product-\d+$/.test(String(x.id||''))||CURATED_IDS.has(String(x.id||'')));
     d.products=[...official,...custom];
     d.products.sort((a,b)=>{const ca=categoryIndex(d,a.category),cb=categoryIndex(d,b.category);if(ca!==cb)return ca-cb;const ba=Number.isFinite(a.brandOrder)?a.brandOrder:brandIndex(a.category,a.brand),bb=Number.isFinite(b.brandOrder)?b.brandOrder:brandIndex(b.category,b.brand);if(ba!==bb)return ba-bb;const oa=Number.isFinite(a.legacyOrder)?a.legacyOrder:9999,ob=Number.isFinite(b.legacyOrder)?b.legacyOrder:9999;return oa-ob;});
-    assignPublicSlugs(d.products);return d;
+    assignPublicSlugs(d.products);
+    // The public site is a self-contained company-controlled copy. Keep legacy URLs
+    // only for internal admin migration/matching; never expose them to visitors.
+    if(document.body?.dataset?.page!=='admin') d.products.forEach(p=>delete p.legacyUrl);
+    return d;
   };
   window.FBOfficialOrder={brandOrder:()=>window.FBLegacyCatalog?.brandOrder||{printers:['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell'],scanners:['Fastech','Zebra','Honeywell','NUMA','Datalogic'],rfid:['Zebra'],mobile:['Zebra'],labels:['標籤貼紙','耐溫貼紙','碳帶'],printing:['代印服務'],software:['標籤軟體'],parts:['Zebra','Argox','TSC','GoDEX','SATO','外掛紙捲架']},agency:()=>window.FBLegacyCatalog?.agencyOrder||['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell','Fastech','NUMA','Datalogic'],downloads:()=>window.FBLegacyCatalog?.downloadOrder||['Zebra','Argox','TSC','GoDEX','TOSHIBA','SATO','Honeywell','遠端連線','Microsoft']};
 })();
