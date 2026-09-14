@@ -6,4 +6,39 @@ html body[data-page]:not([data-page="admin"]).fb-public-ready{visibility:visible
 @media(max-width:980px){
   body[data-page="home"] .v2-home-hero{padding-bottom:92px}
   body[data-page="home"] .v2-hero-products{margin-bottom:8px}
+
+  /* Final responsive contact bar: direct CSS fallback so the design does not depend on async JS order/cache. */
+  html body[data-page]:not([data-page="admin"]) .quick-contact{display:none!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar{position:fixed!important;left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;z-index:9999!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:4px!important;padding:5px!important;background:rgba(255,255,255,.98)!important;border:1px solid #d8e3e9!important;border-radius:18px!important;box-shadow:0 12px 34px rgba(17,43,66,.14)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a,html body[data-page]:not([data-page="admin"]) .mobile-contact-bar button{min-height:58px!important;border:0!important;border-radius:13px!important;background:#1688e8!important;color:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;text-decoration:none!important;font:inherit!important;font-size:13px!important;font-weight:800!important;box-shadow:none!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(2){background:#08b95b!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(3){background:#ff7418!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a svg{width:25px!important;height:25px!important;fill:none!important;stroke:#fff!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(1) svg{display:none!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(1)::before{content:""!important;width:25px!important;height:25px!important;display:block!important;background:url("assets/images/icons/phone-contact-mark.svg") center/contain no-repeat!important;filter:brightness(0) invert(1)!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(2) svg{display:none!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(2)::before{content:""!important;width:27px!important;height:27px!important;display:block!important;background:url("assets/images/icons/line-official-mark.svg") center/contain no-repeat!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(3) svg{display:none!important}
+  html body[data-page]:not([data-page="admin"]) .mobile-contact-bar a:nth-child(3)::before{content:""!important;width:25px!important;height:25px!important;display:block!important;background:url("assets/images/icons/inquiry-contact-mark.svg") center/contain no-repeat!important;filter:brightness(0) invert(1)!important}
+  html body[data-page]:not([data-page="admin"]){padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+}
+
+/* Desktop final contact rail: compact, clear, and visually subordinate to page content. */
+@media(min-width:981px){
+  html body[data-page]:not([data-page="admin"]) .quick-contact{position:fixed!important;right:18px!important;top:50%!important;transform:translateY(-50%)!important;z-index:9999!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;padding:0!important;width:auto!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item{margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-btn{position:relative!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;width:70px!important;min-width:70px!important;height:70px!important;min-height:70px!important;margin:0!important;padding:7px 5px!important;border:0!important;border-radius:15px!important;background:#1688e8!important;color:#fff!important;box-shadow:0 8px 22px rgba(17,43,66,.13)!important;overflow:hidden!important;gap:5px!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(2) .quick-contact-btn{background:#08b95b!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(3) .quick-contact-btn{background:#ff7418!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-btn svg,html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-btn .icon{width:27px!important;height:27px!important;flex:0 0 27px!important;color:#fff!important;fill:none!important;stroke:#fff!important;stroke-width:2!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(1) .quick-contact-btn svg{display:none!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(1) .quick-contact-btn::before{content:""!important;width:27px!important;height:27px!important;display:block!important;background:url("assets/images/icons/phone-contact-mark.svg") center/contain no-repeat!important;filter:brightness(0) invert(1)!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(2) .quick-contact-btn svg{display:none!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(2) .quick-contact-btn::before{content:""!important;width:29px!important;height:29px!important;display:block!important;background:url("assets/images/icons/line-official-mark.svg") center/contain no-repeat!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(3) .quick-contact-btn svg{display:none!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item:nth-child(3) .quick-contact-btn::before{content:""!important;width:27px!important;height:27px!important;display:block!important;background:url("assets/images/icons/inquiry-contact-mark.svg") center/contain no-repeat!important;filter:brightness(0) invert(1)!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-btn span{display:block!important;line-height:1!important;font-size:13px!important;font-weight:800!important;color:#fff!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item[data-back-top]{margin-top:4px!important;width:44px!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item[data-back-top] .quick-contact-btn{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:4px!important;border-radius:999px!important;border:1px solid #e0e8ed!important;background:#f7fafc!important;color:#647886!important;box-shadow:0 6px 16px rgba(17,43,66,.08)!important}
+  html body[data-page]:not([data-page="admin"]) .quick-contact .quick-contact-item[data-back-top] .quick-contact-btn span{font-size:6px!important;color:#647886!important}
 }
