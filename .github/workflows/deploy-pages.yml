@@ -30,6 +30,9 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Configure clean Pages artifact
+        run: echo "Preparing clean deployment artifact for this commit"
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
