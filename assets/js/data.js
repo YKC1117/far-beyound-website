@@ -1,16 +1,17 @@
 (function () {
   const KEY = 'farbeyoundSiteDataV1';
 
-  // Prevent the browser from painting the public shell before its shared header/footer
-  // and page data have been initialized. A short fallback prevents a blank page if a
-  // non-critical script fails during startup.
+  // Keep the public shell hidden for one short settling window. Shared header/footer,
+  // data-driven navigation and page modules all initialize immediately after DOM ready;
+  // revealing after the first layout cycle prevents the browser from showing an
+  // intermediate navigation state.
   const prepaint = document.createElement('style');
   prepaint.id = 'fbPublicPrepaint';
   prepaint.textContent = 'body{visibility:hidden!important}body.fb-public-ready{visibility:visible!important}';
   document.head.appendChild(prepaint);
   function reveal(){ document.body?.classList.add('fb-public-ready'); }
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(reveal,0),{once:true});
-  window.addEventListener('load',reveal,{once:true});
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(reveal,180),{once:true});
+  window.addEventListener('load',()=>setTimeout(reveal,60),{once:true});
   setTimeout(reveal,2500);
 
   const defaultData = {
@@ -29,15 +30,16 @@
       {id:'label-materials',category:'labels',brand:'耗材',family:'標籤耗材',type:'標籤',name:'各式標籤貼紙',subtitle:'標籤材質與客製規格',featured:false,status:'客製',device:'label',intro:'提供銅版紙、熱感紙、特多龍、珠光紙、耐高溫標籤與多種客製標籤材質。',highlights:['多種紙材與合成材質','可依尺寸與使用環境客製','搭配不同碳帶與列印方式'],specs:[['常見材質','銅版紙、熱感紙、特多龍、珠光紙'],['服務','客製尺寸 / 材質 / 印刷']],files:[]}
     ],
     solutions:[{id:'sfis',name:'SFIS 生產管控系統',en:'Shop Floor Information System',icon:'factory',desc:'整合生管、製造、品管等現場數據，協助製程防錯、資源追蹤與即時分析。',points:['製程防錯與追溯','生產資訊即時整合','提升作業效率與品質']},{id:'wms',name:'WMS 電子倉庫系統',en:'Warehouse Management System',icon:'warehouse',desc:'涵蓋入庫、出庫、移動、盤點與配料等倉儲流程，提高空間與物料管理效率。',points:['入出庫與盤點管理','先進先出與庫位控管','降低庫存與人工錯誤']},{id:'smt',name:'SMT 防錯料系統',en:'SMT Material Verification',icon:'chip',desc:'針對 SMT 上料流程進行物料核對與記錄，降低混料、錯料風險並保留追溯資訊。',points:['上料防呆驗證','生產資訊留存','強化品質追溯']}],
-    downloads:[{brand:'TSC',category:'驅動程式',name:'TSC Seagull Driver 12.4 (BarTender)',version:'12.4.0',updated:'2026-06-03',size:'46.99 MB',note:'Windows 驅動程式，適用 BarTender 標籤軟體。'},{brand:'TSC',category:'驅動程式',name:'TSC Linux Driver',version:'64-bit 1.2.13',updated:'2024-06-05',size:'919.85 KB',note:'Linux 64-bit 驅動程式。'},{brand:'TSC',category:'驅動程式',name:'TSC macOS Driver',version:'1.29',updated:'2024-06-26',size:'5 MB',note:'macOS 標籤印表機驅動。'},{brand:'TSC',category:'標籤編輯軟體',name:'TSC BarTender UltraLite',version:'11.5.1',updated:'2025-12-02',size:'1.36 GB',note:'標籤設計與列印軟體。'},{brand:'TSC',category:'工具程式',name:'TSC Console PC',version:'3.5.0.5',updated:'2026-08-12',size:'25.27 MB',note:'TSC 印表機管理與設定工具。'},{brand:'TSC',category:'工具程式',name:'Diagnostic Tool',version:'1.63',updated:'2018-04-10',size:'746 KB',note:'印表機設定與診斷工具。'},{brand:'Zebra',category:'驅動程式',name:'Zebra Printer Driver',version:'依原廠最新版',updated:'—',size:'外部下載',note:'請由下載中心取得最新版；如需協助，歡迎聯絡萬里資訊。'},{brand:'Argox',category:'驅動程式',name:'Argox Printer Driver',version:'依原廠最新版',updated:'—',size:'外部下載',note:'請由下載中心取得最新版；如需協助，歡迎聯絡萬里資訊。'},{brand:'GoDEX',category:'驅動程式',name:'GoDEX Printer Driver',version:'依原廠最新版',updated:'—',size:'外部下載',note:'請由下載中心取得最新版；如需協助，歡迎聯絡萬里資訊。'},{brand:'TOSHIBA',category:'驅動程式',name:'TOSHIBA Printer Driver',version:'依原廠最新版',updated:'—',size:'外部下載',note:'請由下載中心取得最新版；如需協助，歡迎聯絡萬里資訊。'},{brand:'SATO',category:'驅動程式',name:'SATO Printer Driver',version:'依原廠最新版',updated:'—',size:'外部下載',note:'請由下載中心取得最新版；如需協助，歡迎聯絡萬里資訊。'},{brand:'Honeywell',category:'驅動程式',name:'Honeywell / Datamax / Intermec Driver',version:'依原廠最新版',updated:'—',size:'外部下載',note:'請由下載中心取得最新版；如需協助，歡迎聯絡萬里資訊。'},{brand:'遠端連線',category:'工具程式',name:'遠端連線工具',version:'TeamViewer / AnyDesk',updated:'—',size:'外部下載',note:'提供遠端技術支援使用。'},{brand:'Microsoft',category:'系統元件',name:'Microsoft .NET Framework',version:'依需求',updated:'—',size:'外部下載',note:'Windows 系統元件下載。'}],
-    news:[{date:'2026-04-27',type:'公司公告',title:'2026 年度萬里資訊員工旅遊公告',excerpt:'年度行程期間之服務與出貨安排公告。'},{date:'2026-03-24',type:'產品消息',title:'原物料價格調整公告',excerpt:'因應原物料與供應成本變化之產品價格調整資訊。'},{date:'2021-12-21',type:'系統消息',title:'共用印表機 0x0000011b／0x00000709 錯誤處理',excerpt:'Windows 共用印表機常見錯誤之排除說明。'},{date:'2021-11-09',type:'產品消息',title:'Zebra ZT411 / ZT421：多功能及穩定性佳',excerpt:'ZT400 系列產品特色與應用介紹。'},{date:'2021-11-05',type:'產品消息',title:'Zebra ZT610 / ZT620：堅固耐用及卓越性能',excerpt:'ZT600 系列工業型條碼列印機介紹。'}],
-    cases:[{name:'松富電子',system:'SFIS 生產現場管控系統'},{name:'鈺瑋',system:'SFIS 現場監控管理系統'},{name:'深圳高科新農技術有限公司',system:'SFIS 生產現場管控系統'},{name:'食品產業客戶',system:'冷凍食品出貨系統'}]
+    downloads:[{brand:'TSC',category:'驅動程式',name:'TSC Seagull Driver 12.4 (BarTender)',version:'12.4.0',updated:'2026-06-03',size:'46.99 MB',note:'Windows 驅動程式，適用 BarTender 標籤軟體。'},{brand:'TSC',category:'驅動程式',name:'TSC Linux Driver',version:'64-bit 1.2.13',updated:'2024-06-05',size:'919.85 KB',note:'Linux 64-bit 驅動程式。'},{brand:'TSC',category:'驅動程式',name:'TSC macOS Driver',version:'1.29',updated:'2024-06-26',size:'3.36 MB',note:'macOS 驅動程式。'}],
+    cases:[{name:'松富電子',system:'SFIS 生產現場管控系統',published:true},{name:'鈺瑋',system:'SFIS 現場監控管理系統',published:true},{name:'深圳高科新農技術有限公司',system:'SFIS 生產現場管控系統',published:true},{name:'食品產業客戶',system:'冷凍食品出貨系統',published:true}],
+    news:[{title:'2026 年度萬里資訊員工旅遊公告',date:'2026-06-03',type:'公司公告',slug:'travel-2026',published:true},{title:'原物料價格調整公告',date:'2026-06-03',type:'公告',slug:'material-price',published:true},{title:'共用印表機 0x0000011b／0x00000709 錯誤處理',date:'2026-06-03',type:'技術文章',slug:'printer-share-error',published:true},{title:'Zebra ZT411 / ZT421：多功能及穩定性佳',date:'2026-06-03',type:'產品資訊',slug:'zt411-news',published:true},{title:'Zebra ZT610 / ZT620：堅固耐用及卓越性能',date:'2026-06-03',type:'產品資訊',slug:'zt610-news',published:true}],
+    settings:{siteTitle:'萬里資訊',siteSubtitle:'條碼設備、自動識別與系統整合',showNews:true,showCases:true}
   };
-  function clone(v){return JSON.parse(JSON.stringify(v));}
-  function getData(){try{const raw=localStorage.getItem(KEY);if(raw)return JSON.parse(raw);}catch(e){}return clone(defaultData);}
-  function saveData(data){localStorage.setItem(KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('farbeyound:datachange'));}
-  function resetData(){localStorage.removeItem(KEY);window.dispatchEvent(new CustomEvent('farbeyound:datachange'));}
-  function exportData(){return JSON.stringify(getData(),null,2);}
-  function importData(raw){const parsed=typeof raw==='string'?JSON.parse(raw):raw;if(!parsed||!Array.isArray(parsed.products)||!Array.isArray(parsed.categories))throw new Error('資料格式不正確');saveData(parsed);return parsed;}
-  window.FBStore={KEY,defaultData:clone(defaultData),getData,saveData,resetData,exportData,importData};
+  const clone = value => JSON.parse(JSON.stringify(value));
+  let data = clone(defaultData);
+  try {
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const saved=JSON.parse(raw); if(saved&&typeof saved==='object') data={...data,...saved}; }
+  } catch(e){}
+  window.FBStore={getData:()=>data,setData(next){data={...data,...next};try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}window.dispatchEvent(new CustomEvent('farbeyound:datachange',{detail:data}));}};
 })();
