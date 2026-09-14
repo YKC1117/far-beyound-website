@@ -1,6 +1,6 @@
 (function(){
   const slugMap={'2026 年度萬里資訊員工旅遊公告':'travel-2026','原物料價格調整公告':'material-price','共用印表機 0x0000011b／0x00000709 錯誤處理':'printer-share-error','Zebra ZT411 / ZT421：多功能及穩定性佳':'zt411-news','Zebra ZT610 / ZT620：堅固耐用及卓越性能':'zt610-news'};
-  const esc=v=>String(v??'').replace(/[&<>\'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const esc=v=>String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const uniq=a=>[...new Set((a||[]).filter(Boolean))];
   const caret=()=>'<span class="nav-drop-caret" aria-hidden="true">⌄</span>';
   const item=(href,title,sub='')=>`<a class="subnav-link" href="${href}"><span><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span><span class="subnav-arrow">→</span></a>`;
