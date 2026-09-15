@@ -6,9 +6,11 @@
   const $=(s,p=document)=>p.querySelector(s);
 
   const UPDATE_INFO={
-    updatedAt:'2026/09/15 16:55',
+    updatedAt:'2026/09/15 17:13',
     label:'後台更新',
     entries:[
+      {time:'2026/09/15 17:13',type:'載入修正',text:'修正單一工作區與 SEO／Ads／AI 分頁模組只有檔案存在、入口卻未真正載入的問題。admin-workspace-tools.js 現在會依正式 build 載入 admin-master-detail.js 與 admin-performance-ux.js。'},
+      {time:'2026/09/15 17:13',type:'介面版本',text:'後台 UI schema 升級為 workspace-v4，首次進入新版時只重設介面偏好，不碰產品、網站內容與正式資料。'},
       {time:'2026/09/15 16:55',type:'介面簡化',text:'左側導覽改成「常用／網站內容／系統管理」三大分類；右側維持單一工作區。SEO／Ads／AI 成效中心改為分頁，一次只顯示一類資料。'},
       {time:'2026/09/15 16:55',type:'更新時間',text:'修正後台更新時間跳動：畫面時間改由 admin-build.json 單一來源寫入；Dashboard 與更新紀錄不再重複覆寫時間。'},
       {time:'2026/09/15 16:46',type:'版本／快取',text:'建立後台統一 build 版本與自動快取檢查：後台入口、主要管理 JS／CSS 與動態 helper 改用同一版號；偵測新部署時自動用新 build 重新載入。'},
