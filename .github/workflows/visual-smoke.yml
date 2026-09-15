@@ -21,11 +21,11 @@ jobs:
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           test -n "$CHROME"
           mkdir -p qa qa/brands
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom http://127.0.0.1:8080/products.html > qa/products.html
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/products.html?category=printers' > qa/printers.html
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom 'http://127.0.0.1:8080/products.html?category=scanners' > qa/scanners.html
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/downloads.html > qa/downloads.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4200 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom http://127.0.0.1:8080/index.html > qa/home.html
           i=0
           while IFS='|' read -r category brand; do
             i=$((i+1))
@@ -56,7 +56,7 @@ jobs:
           cards=allp.select('#productGrid .product-card')
           count_text=allp.select_one('#productCount').get_text(' ',strip=True) if allp.select_one('#productCount') else ''
           card_count=len(cards)
-          assert card_count>=150, f'Catalog unexpectedly small: {card_count}'
+          assert card_count>=151, f'Catalog unexpectedly small: {card_count}'
           assert count_text.startswith(str(card_count)), f'Product count mismatch: {count_text!r} / {card_count}'
 
           tokens=[]; missing_links=[]; legacy=[]; missing_images=[]; invalid_images=[]; bad_alts=[]
@@ -79,6 +79,7 @@ jobs:
               if not (img.get('alt') or '').strip(): bad_alts.append(token or str(i))
           assert not missing_links, f'Missing product links: {missing_links[:10]}'
           assert len(tokens)==card_count and len(set(tokens))==card_count, 'Product public slugs are not unique'
+          assert 'urovo-dt66-ct48c-dt50-dt40-rt40s' in tokens, 'Curated UROVO product missing'
           assert not legacy, f'Legacy public ids exposed: {legacy[:10]}'
           assert not missing_images, f'Product cards missing images: {missing_images[:10]}'
           assert not invalid_images, f'Product image files missing/invalid: {invalid_images[:10]}'
@@ -115,12 +116,24 @@ jobs:
           assert '先選擇下載類型' in downloads.get_text(' ',strip=True), 'Two-step download guidance missing'
           assert home.select_one('.header-inner .brand-reg'), 'Registered mark missing in header'
 
+          rail=home.select_one('.quick-contact')
+          mobile=home.select_one('.mobile-contact-bar')
+          assert rail, 'Desktop contact rail missing on homepage'
+          assert mobile, 'Mobile contact bar missing on homepage DOM'
+          desktop_actions=rail.select('.quick-contact-item')
+          mobile_actions=mobile.select('.mobile-contact-item')
+          assert [x.get('data-action') for x in desktop_actions]==['phone','line','inquiry'], 'Desktop contact actions are not canonical'
+          assert [x.get('data-action') for x in mobile_actions]==['phone','line','inquiry'], 'Mobile contact actions are not canonical'
+          assert rail.select_one('[data-back-top]') is None, 'Deprecated TOP action returned'
+
           print(f'CATALOG_CARD_COUNT={card_count}')
           print(f'LOCAL_PRODUCT_IMAGES={card_count}')
           print(f'UNIQUE_PRODUCT_URL_TOKENS={len(set(tokens))}')
           print('CLICKABLE_BRAND_LOGOS=12')
           print('NONEMPTY_BRAND_DESTINATIONS=12')
           print(f'DOWNLOAD_TYPE_BUTTONS={len(type_buttons)}')
+          print('DESKTOP_CONTACT_ACTIONS=3')
+          print('MOBILE_CONTACT_ACTIONS=3')
           PY
       - name: Capture desktop pages
         run: |
@@ -128,13 +141,13 @@ jobs:
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           for spec in 'home|index.html' 'products|products.html' 'downloads|downloads.html' 'contact|contact.html'; do
             name=${spec%%|*}; path=${spec#*|}
-            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=3200 --screenshot="screenshots/$name.png" "http://127.0.0.1:8080/$path"
+            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=4200 --screenshot="screenshots/$name.png" "http://127.0.0.1:8080/$path"
           done
       - name: Capture mobile pages
         run: |
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=3200 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=3200 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=4200 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=4200 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
       - uses: actions/upload-artifact@v4
         with:
           name: website-screenshots
