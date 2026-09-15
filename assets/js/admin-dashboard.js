@@ -2,12 +2,17 @@
   if(document.body.dataset.page!=='admin'||window.__fbAdminDashboard)return;
   window.__fbAdminDashboard=true;
 
-  const ADMIN_STAMP='後台更新：2026/09/15 16:05';
   const setStamp=()=>{
     const v=document.querySelector('.admin-version-note');
     if(!v)return;
-    v.textContent=ADMIN_STAMP;
-    v.title='此時間代表後台最近一次功能、資料、分析或介面更新。';
+    const info=window.FBAdminUpdateInfo;
+    if(info?.updatedAt){
+      v.textContent=`${info.label||'後台更新'}：${info.updatedAt}`;
+      v.title='此時間代表後台最近一次功能、資料、分析、介面或系統設定更新。';
+    }else{
+      v.textContent='後台更新：讀取中…';
+      v.title='後台更新時間由更新紀錄模組統一提供。';
+    }
   };
 
   // 主管常用功能放前面，技術性功能留在各管理區內。
@@ -102,11 +107,12 @@
     style();
     build();
     improveJumpNav();
-    setStamp();
-    // 補上操作狀態與工作區快速控制，避免後台功能變多後難以操作。
+    // 更新紀錄先載入，時間顯示統一由它提供。
+    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1613','fbAdminUpdateLogLoader');
     loadAdminHelper('assets/js/admin-friendly.js?v=20260915-1540','fbAdminFriendlyLoader');
     loadAdminHelper('assets/js/admin-workspace-tools.js?v=20260915-1540','fbAdminWorkspaceToolsLoader');
-    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1605','fbAdminUpdateLogLoader');
+    setTimeout(setStamp,80);
+    setTimeout(setStamp,500);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
