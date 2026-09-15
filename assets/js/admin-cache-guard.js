@@ -15,6 +15,10 @@
     catch(_){return ''}
   };
 
+  // 入口 HTML 已帶正式 build 時，先提供給後續動態載入器使用；manifest 回來後再以正式資料校正。
+  const entryBuild=staticBuild();
+  if(entryBuild)window.FB_ADMIN_BUILD=entryBuild;
+
   function renderVersion(manifest){
     const note=document.querySelector('.admin-version-note');
     const updatedAt=String(manifest?.updatedAt||'').trim();
@@ -23,6 +27,16 @@
     if(note.textContent!==text)note.textContent=text;
     note.title='此時間取自後台正式版本檔，代表最近一次已記錄的後台更新。';
     note.dataset.versionReady='1';
+  }
+
+  function resetUiPreferences(){
+    [
+      'farbeyoundAdminWorkspaceV1','farbeyoundAdminWorkspaceV2',
+      'farbeyoundAdminFoldV4','farbeyoundPerformanceFoldV1',
+      'farbeyoundPerformanceTabV2','farbeyoundPerformanceTabV3',
+      'farbeyoundAdminNavGroupV1','farbeyoundAdminNavGroupV2',
+      'farbeyoundAdminHomeTabV1','farbeyoundAdminContentTabV1'
+    ].forEach(key=>localStorage.removeItem(key));
   }
 
   function applyManifest(manifest){
@@ -43,11 +57,7 @@
     const oldUi=localStorage.getItem(UI_KEY)||'';
     if(uiSchema&&oldUi!==uiSchema){
       // 只重設後台介面偏好，不碰產品、內容或正式網站資料。
-      localStorage.removeItem('farbeyoundAdminWorkspaceV1');
-      localStorage.removeItem('farbeyoundAdminFoldV4');
-      localStorage.removeItem('farbeyoundPerformanceFoldV1');
-      localStorage.removeItem('farbeyoundPerformanceTabV2');
-      localStorage.removeItem('farbeyoundAdminNavGroupV1');
+      resetUiPreferences();
       localStorage.setItem(UI_KEY,uiSchema);
     }
 
