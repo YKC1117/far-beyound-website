@@ -9,9 +9,10 @@
   async function refresh(){const days=Number(document.getElementById('analyticsPeriod')?.value||30),body=document.getElementById('analyticsSourceRows'),note=document.getElementById('analyticsSourceNote');if(!body)return;try{const rows=(await load(days)).map(x=>({...x,views:Number(x.views)||0,previous_views:Number(x.previous_views)||0}));body.innerHTML=rows.length?rows.map(x=>`<tr><td><b>${esc(label(x.traffic_source))}</b></td><td>${x.views}</td><td>${x.previous_views}</td><td>${pct(x.views,x.previous_views)}</td></tr>`).join(''):'<tr><td colspan="4">目前還沒有可辨識的來源資料。</td></tr>';const ai=rows.find(x=>x.traffic_source==='ai')?.views||0;note.innerHTML=`<b>AI SEO：</b>本期可辨識 AI 助理導流 <b>${ai}</b> 次。這只代表轉介流量，不等於 AI 提及／引用次數；Google 來源也不等於 Search Console 的曝光、CTR 或排名。`}catch(e){body.innerHTML='<tr><td colspan="4">流量來源資料受個人帳號權限保護，登入並具備「流量分析」權限後才能讀取。</td></tr>'}}
   const boot=()=>{if(document.getElementById('adminAnalytics'))ensure();else setTimeout(boot,120)};document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
 
-  // SEO / AI SEO 延伸面板採獨立模組載入，避免影響既有分析與前台。
+  // SEO／Google Ads／AI SEO 延伸面板採獨立模組載入，避免影響既有分析與前台。
   function loadModule(src,id){if(document.getElementById(id))return;const s=document.createElement('script');s.id=id;s.src=src;s.defer=true;document.head.appendChild(s)}
   loadModule('assets/js/admin-seo-center.js?v=20260915-1452','fbAdminSeoCenterLoader');
+  loadModule('assets/js/admin-search-channel-center.js?v=20260915-1536','fbAdminSearchChannelCenterLoader');
   loadModule('assets/js/admin-search-ai-insights.js?v=20260915-1508','fbAdminSearchAiInsightsLoader');
   loadModule('assets/js/admin-search-ai-enhance.js?v=20260915-1508','fbAdminSearchAiEnhanceLoader');
   loadModule('assets/js/admin-seo-ownership.js?v=20260915-1528','fbAdminSeoOwnershipLoader');
