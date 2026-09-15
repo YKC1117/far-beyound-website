@@ -82,12 +82,21 @@ jobs:
           assert contact.select_one('.contact-form'), 'Contact form missing'
           assert len(contact.select('#serviceLocations .location-mini'))==2, 'Service location cards missing'
           assert not contact.select_one('.back-top'), 'Legacy standalone back-top returned'
-          assert contact.select_one('.quick-contact [data-back-top]'), 'Integrated TOP control missing'
+
+          rail=contact.select_one('.quick-contact')
+          assert rail is not None, 'Desktop quick-contact rail missing'
+          items=rail.select('.quick-contact-item')
+          assert len(items)==3, f'Expected exactly three desktop contact actions, got {len(items)}'
+          labels=[x.get_text(' ',strip=True) for x in items]
+          assert any('電話' in x for x in labels), labels
+          assert any('LINE' in x.upper() for x in labels), labels
+          assert any('詢問' in x for x in labels), labels
+          assert not rail.select_one('[data-back-top]'), 'Deprecated TOP action returned to desktop contact rail'
 
           print('V4_FILES_WIRED=OK')
           print('V4_CONTACT_DIRECTIONS=2')
           print('V4_ACTIVE_NAV_CONTACT=COMPANY')
           print('V4_ACTIVE_NAV_SOLUTIONS=SOLUTIONS')
           print('V4_ACTIVE_NAV_DOWNLOADS=DOWNLOADS')
-          print('V4_INTEGRATED_TOP=OK')
+          print('V4_CONTACT_ACTIONS=3')
           PY
