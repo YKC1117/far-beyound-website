@@ -6,9 +6,14 @@
   const MANIFEST='assets/data/admin-build.json';
   const BUILD_KEY='farbeyoundAdminBuild';
   const UI_KEY='farbeyoundAdminUiSchema';
+  const SELF_SRC=document.currentScript?.src||'';
 
   const normalize=value=>String(value||'').replace(/[^0-9A-Za-z._-]/g,'');
   const currentBuild=()=>normalize(new URL(location.href).searchParams.get('build'));
+  const staticBuild=()=>{
+    try{return normalize(new URL(SELF_SRC,location.href).searchParams.get('v'))}
+    catch(_){return ''}
+  };
 
   function renderVersion(manifest){
     const note=document.querySelector('.admin-version-note');
@@ -42,20 +47,23 @@
       localStorage.removeItem('farbeyoundAdminFoldV4');
       localStorage.removeItem('farbeyoundPerformanceFoldV1');
       localStorage.removeItem('farbeyoundPerformanceTabV2');
+      localStorage.removeItem('farbeyoundAdminNavGroupV1');
       localStorage.setItem(UI_KEY,uiSchema);
     }
 
     const urlBuild=currentBuild();
+    const htmlBuild=staticBuild();
     const savedBuild=localStorage.getItem(BUILD_KEY)||'';
     localStorage.setItem(BUILD_KEY,build);
 
-    if(urlBuild===build)return;
+    // 入口 HTML 本身已是目前 build 時，不再為了補網址參數重載一次，避免畫面閃動。
+    if(urlBuild===build||htmlBuild===build)return;
 
-    // 發現部署版本不同時，改用帶 build 參數的新入口重新載入，避免 HTML / JS / CSS 混用舊快取。
+    // 只有偵測到入口 HTML / 資源版本確實落後時才重新載入。
     const next=new URL(location.href);
     next.searchParams.set('build',build);
     next.searchParams.set('_refresh',Date.now().toString(36));
-    if(savedBuild!==build||urlBuild!==build)location.replace(next.toString());
+    if(savedBuild!==build||htmlBuild!==build)location.replace(next.toString());
   }
 
   function check(){
@@ -70,7 +78,6 @@
   }
 
   check();
-  // 開著後台工作時也會定期發現新部署，不必靠人工 Ctrl+F5。
   setInterval(check,60000);
   window.addEventListener('focus',check);
 })();
