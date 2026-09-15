@@ -23,9 +23,9 @@ try:
 except ValueError:
     errors.append('admin import/cloud sync wiring incomplete')
 
-# The security/runtime layer is allowed to load supporting admin modules
-# dynamically, but the bootstrap itself must be present in admin.html's
-# statically loaded scripts.
+# The security/runtime layer may keep future personal-account modules available,
+# but the current production transition intentionally uses the shared publish
+# password flow and must not require Owner / personal login / 2FA to enter admin.
 required_modules=[
     'admin-auth-core.js',
     'admin-access-gate.js',
@@ -48,9 +48,27 @@ for token in ['admin-url-validation.js','admin-self-check.js','admin-seo-center.
         errors.append(f'admin system loader missing: {token}')
 
 dashboard=(ROOT/'assets/js/admin-dashboard.js').read_text(encoding='utf-8')
-for token in ['FBAdminAuth.login','FBAdminAuth.verifyFactor','adminAccessCenter','adminDashboard']:
-    if token not in dashboard:
-        errors.append(f'admin dashboard missing core feature: {token}')
+if 'adminDashboard' not in dashboard:
+    errors.append('admin dashboard missing core feature: adminDashboard')
+
+access_gate=(ROOT/'assets/js/admin-access-gate.js').read_text(encoding='utf-8')
+for token in ['Transitional mode','admin-login-locked','classList.remove']:
+    if token not in access_gate:
+        errors.append(f'shared-password transition gate missing: {token}')
+
+password_path=ROOT/'assets/js/admin-password.js'
+if not password_path.is_file():
+    errors.append('missing shared-password admin module: admin-password.js')
+else:
+    password=password_path.read_text(encoding='utf-8')
+    for token in ['共用發布密碼','functions/v1/admin-password','current_password','new_password']:
+        if token not in password:
+            errors.append(f'shared-password admin module missing: {token}')
+
+cloud_sync=(ROOT/'assets/js/cloud-sync.js').read_text(encoding='utf-8')
+for token in ['askSharedPassword','authForPublish',"headers['x-admin-pass']=auth.pass",'allowReload:false']:
+    if token not in cloud_sync:
+        errors.append(f'cloud shared-password publish flow missing: {token}')
 
 url_guard=(ROOT/'assets/js/admin-url-validation.js').read_text(encoding='utf-8')
 if '.aff-home-url' not in url_guard:
@@ -77,4 +95,5 @@ if errors:
 print('ADMIN_READINESS=PASS')
 print(f'ADMIN_STATIC_SCRIPTS={len(sources)}')
 print('ADMIN_DYNAMIC_MODULE_BOOTSTRAP=PASS')
+print('ADMIN_SHARED_PASSWORD_TRANSITION=PASS')
 print(f'ADMIN_REQUIRED_MODULES={len(required_modules)}')
