@@ -4,19 +4,6 @@
 
   const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1646').replace(/[^0-9A-Za-z._-]/g,'');
 
-  const setStamp=()=>{
-    const v=document.querySelector('.admin-version-note');
-    if(!v)return;
-    const info=window.FBAdminUpdateInfo;
-    if(info?.updatedAt){
-      v.textContent=`${info.label||'後台更新'}：${info.updatedAt}`;
-      v.title='此時間代表後台最近一次功能、資料、分析、介面或系統設定更新。';
-    }else{
-      v.textContent='後台更新：讀取中…';
-      v.title='後台更新時間由更新紀錄模組統一提供。';
-    }
-  };
-
   const build=()=>{
     if(document.getElementById('adminDashboard'))return;
     const main=document.querySelector('.admin-main'),anchor=document.querySelector('.admin-usage-note');
@@ -29,13 +16,13 @@
         <div>
           <span class="eyebrow">ADMIN OVERVIEW</span>
           <h2>管理總覽</h2>
-          <p>常用成效、客戶詢問與產品管理優先；低頻設定預設收合，需要時再展開。</p>
+          <p>常用功能優先；其他內容從左側分類進入，右側一次只顯示一個工作區。</p>
         </div>
         <span class="admin-status-pill">手機／電腦同步</span>
       </div>
       <div class="admin-dashboard-feature">
         <a href="#adminAnalytics" class="seo-ai-card">
-          <div><span class="eyebrow">SEARCH PERFORMANCE</span><b>Google SEO＋Google Ads＋AI SEO 成效中心</b><small>常用入口：看週／月／季／半年／年成效、AI 品牌導流、熱門產品、資料來源與後續 Search Console／Google Ads 官方資料串接。</small></div>
+          <div><span class="eyebrow">SEARCH PERFORMANCE</span><b>Google SEO＋Google Ads＋AI SEO 成效中心</b><small>成效總覽、AI／搜尋摘要、流量來源、SEO 架構、SEO 設定分開查看，不再全部堆在同一頁。</small></div>
           <strong>查看成效 →</strong>
         </a>
       </div>
@@ -109,8 +96,6 @@
     loadAdminHelper('assets/js/admin-current-task.js','fbAdminCurrentTaskLoader');
     loadAdminHelper('assets/js/admin-friendly.js','fbAdminFriendlyLoader');
     loadAdminHelper('assets/js/admin-workspace-tools.js','fbAdminWorkspaceToolsLoader');
-    setTimeout(setStamp,80);
-    setTimeout(setStamp,500);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
