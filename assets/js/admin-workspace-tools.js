@@ -4,8 +4,17 @@
   window.__fbAdminWorkspaceTools=true;
 
   const $=(s,p=document)=>p.querySelector(s);
-  const $$=(s,p=document)=>[...p.querySelectorAll(s)];
   const KEEP_OPEN=new Set(['adminAnalytics']);
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1713').replace(/[^0-9A-Za-z._-]/g,'');
+
+  function loadHelper(src,id){
+    if(document.getElementById(id))return;
+    const s=document.createElement('script');
+    s.id=id;
+    s.src=`${src.split('?')[0]}?v=${encodeURIComponent(BUILD)}`;
+    s.defer=true;
+    document.head.appendChild(s);
+  }
 
   function buttonState(btn,open){
     btn.setAttribute('aria-expanded',open?'true':'false');
@@ -82,16 +91,14 @@
     box.innerHTML=`
       <div>
         <b>後台工作區</b>
-        <span>常用功能優先，其他區塊需要時再展開。</span>
+        <span>左側選功能，右側只顯示目前工作區。</span>
       </div>
       <div class="admin-workspace-actions">
         <button type="button" class="btn btn-secondary btn-sm" id="adminCompactView">只看常用</button>
-        <button type="button" class="btn btn-secondary btn-sm" id="adminExpandAll">全部展開</button>
         <button type="button" class="btn btn-secondary btn-sm" id="adminResetView">重設版面</button>
       </div>`;
     top.insertAdjacentElement('afterend',box);
     $('#adminCompactView').addEventListener('click',compactView);
-    $('#adminExpandAll').addEventListener('click',expandAll);
     $('#adminResetView').addEventListener('click',resetView);
     return true;
   }
@@ -108,6 +115,13 @@
     document.head.appendChild(s);
   }
 
-  function boot(){style();if(!build())setTimeout(boot,120)}
+  function boot(){
+    style();
+    if(!build())setTimeout(boot,120);
+    // 真正載入單一工作區與成效中心分頁；避免只有檔案存在但入口未執行。
+    loadHelper('assets/js/admin-master-detail.js','fbAdminMasterDetailLoader');
+    loadHelper('assets/js/admin-performance-ux.js','fbAdminPerformanceUxLoader');
+  }
+
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
 })();
