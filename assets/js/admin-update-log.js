@@ -6,9 +6,13 @@
   const $=(s,p=document)=>p.querySelector(s);
 
   const UPDATE_INFO={
-    updatedAt:'2026/09/15 17:13',
+    updatedAt:'2026/09/15 19:45',
     label:'後台更新',
     entries:[
+      {time:'2026/09/15 19:45',type:'介面強化',text:'首頁相關功能整合成「首頁管理」單一工作區，內部分為首屏／輪播、首頁區塊／開關、快捷功能／版面；網站內容整合為品牌、據點、文字／SEO、內頁／分類、消息／案例／公司資料分頁。'},
+      {time:'2026/09/15 19:45',type:'成效中心',text:'SEO／Ads／AI 成效中心重新整理為總覽、Google SEO、Google Ads、AI SEO、流量來源、技術設定六個分頁，一次只顯示目前主題。'},
+      {time:'2026/09/15 19:45',type:'更新時間',text:'找到 admin-session-hardening.js 仍會每 60 秒把更新時間改回 09:48 的舊邏輯，已移除所有時間覆寫；現在只由 admin-build.json 控制。'},
+      {time:'2026/09/15 19:45',type:'版本／快取',text:'入口 admin.html、主要後台資源與動態系統模組統一升級為 build 20260915-1945 / workspace-v5；新版首次載入會清除舊介面偏好，但不碰產品與網站資料。'},
       {time:'2026/09/15 17:13',type:'載入修正',text:'修正單一工作區與 SEO／Ads／AI 分頁模組只有檔案存在、入口卻未真正載入的問題。admin-workspace-tools.js 現在會依正式 build 載入 admin-master-detail.js 與 admin-performance-ux.js。'},
       {time:'2026/09/15 17:13',type:'介面版本',text:'後台 UI schema 升級為 workspace-v4，首次進入新版時只重設介面偏好，不碰產品、網站內容與正式資料。'},
       {time:'2026/09/15 16:55',type:'介面簡化',text:'左側導覽改成「常用／網站內容／系統管理」三大分類；右側維持單一工作區。SEO／Ads／AI 成效中心改為分頁，一次只顯示一類資料。'},
