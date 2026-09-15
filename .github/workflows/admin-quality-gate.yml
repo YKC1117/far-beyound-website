@@ -50,12 +50,15 @@ jobs:
           required=[
               'adminDashboard','adminSelfCheck','adminSeoCenter','adminSecurityCenter',
               'adminBackupCenter','adminTransitionSecurityNote','adminFrontFeatureManager',
-              'adminBrandManager','adminLocationManager','adminPassword','adminPasswordForm'
+              'adminBrandManager','adminLocationManager','adminPassword','adminPasswordForm',
+              'inquiryExportCsv','adminProductExportCsv'
           ]
           missing=[x for x in required if not soup.find(id=x)]
           ids=[x.get('id') for x in soup.find_all(id=True)]
           dup=sorted({x for x in ids if ids.count(x)>1})
           form=soup.find(id='adminPasswordForm')
+          inquiry_export=soup.find(id='inquiryExportCsv')
+          product_export=soup.find(id='adminProductExportCsv')
           text=soup.get_text(' ',strip=True)
           report={
               'required':required,
@@ -65,6 +68,8 @@ jobs:
               'password_form_hidden':bool(form and form.has_attr('hidden')),
               'shared_password_copy':'共用發布密碼' in text,
               'transition_copy':'尚未正式啟用 Owner／個人帳號／2FA' in text,
+              'inquiry_csv_export_exists':inquiry_export is not None,
+              'product_csv_export_exists':product_export is not None,
               'rendered_id_count':len(ids),
           }
           Path('qa-admin/admin-diagnostics.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -76,9 +81,12 @@ jobs:
           assert not form.has_attr('hidden'), 'Shared-password management form must stay available in transition mode'
           assert report['shared_password_copy'], 'Shared-password transition copy missing'
           assert report['transition_copy'], 'Transition-mode explanation missing'
+          assert inquiry_export is not None, 'Inquiry CSV export tool did not load'
+          assert product_export is not None, 'Product CSV export tool did not load'
 
           print('ADMIN_DYNAMIC_MODULES=PASS')
           print('ADMIN_SHARED_PASSWORD_UI=PASS')
+          print('ADMIN_CSV_EXPORT_TOOLS=PASS')
           PY
 
       - name: Capture and verify mobile admin
@@ -99,7 +107,10 @@ jobs:
           html=Path('qa-admin/admin-mobile-rendered.html').read_text(encoding='utf-8')
           soup=BeautifulSoup(html,'html.parser')
           body=soup.body
-          required_mobile=['amcMobileBar','amcMobileMenu','amcMobileTitle','amcMobileBackdrop','adminMobileNav']
+          required_mobile=[
+              'amcMobileBar','amcMobileMenu','amcMobileTitle','amcMobileBackdrop','adminMobileNav',
+              'inquiryExportCsv','adminProductExportCsv'
+          ]
           missing=[x for x in required_mobile if not soup.find(id=x)]
           classes=set(body.get('class',[])) if body else set()
           report={
@@ -107,12 +118,15 @@ jobs:
               'missing_mobile':missing,
               'mobile_mode_class':'admin-mobile-cms' in classes,
               'menu_expanded':(soup.find(id='amcMobileMenu') or {}).get('aria-expanded'),
+              'inquiry_csv_export_exists':soup.find(id='inquiryExportCsv') is not None,
+              'product_csv_export_exists':soup.find(id='adminProductExportCsv') is not None,
           }
           Path('qa-admin/admin-mobile-diagnostics.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
           print(json.dumps(report,ensure_ascii=False,indent=2))
-          assert not missing, f'Missing mobile admin chrome: {missing}'
+          assert not missing, f'Missing mobile admin chrome/tools: {missing}'
           assert report['mobile_mode_class'], 'Mobile admin mode class was not activated at 390px'
           print('ADMIN_MOBILE_CHROME=PASS')
+          print('ADMIN_MOBILE_CSV_EXPORT_TOOLS=PASS')
           PY
           fi
           cp /tmp/farbeyound-admin-http.log qa-admin/http.log 2>/dev/null || true
