@@ -5,6 +5,7 @@
 
   const $=(s,p=document)=>p.querySelector(s);
   const $$=(s,p=document)=>[...p.querySelectorAll(s)];
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1646').replace(/[^0-9A-Za-z._-]/g,'');
 
   const ORDER=[
     'adminAnalytics','adminInquiries','products','homeHeroAdmin','adminFrontFeatureManager',
@@ -219,17 +220,17 @@
     if(document.getElementById(id))return;
     const s=document.createElement('script');
     s.id=id;
-    s.src=src;
+    s.src=`${src.split('?')[0]}?v=${encodeURIComponent(BUILD)}`;
     s.defer=true;
     document.head.appendChild(s);
   }
 
   function helpers(){
-    loadModule('assets/js/admin-friendly.js?v=20260915-1552','fbAdminFriendlyLoader');
-    loadModule('assets/js/admin-performance-ux.js?v=20260915-1552','fbAdminPerformanceUxLoader');
-    loadModule('assets/js/admin-quick-find.js?v=20260915-1552','fbAdminQuickFindLoader');
-    loadModule('assets/js/admin-nav-state.js?v=20260915-1622','fbAdminNavStateLoader');
-    loadModule('assets/js/admin-master-detail.js?v=20260915-1631','fbAdminMasterDetailLoader');
+    loadModule('assets/js/admin-friendly.js','fbAdminFriendlyLoader');
+    loadModule('assets/js/admin-performance-ux.js','fbAdminPerformanceUxLoader');
+    loadModule('assets/js/admin-quick-find.js','fbAdminQuickFindLoader');
+    loadModule('assets/js/admin-nav-state.js','fbAdminNavStateLoader');
+    loadModule('assets/js/admin-master-detail.js','fbAdminMasterDetailLoader');
   }
 
   function init(){
