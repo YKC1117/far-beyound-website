@@ -15,6 +15,9 @@
     {key:'perplexity',label:'Perplexity',domains:['perplexity.ai']},
     {key:'claude',label:'Claude',domains:['claude.ai']},
     {key:'grok',label:'Grok',domains:['grok.com','x.ai']},
+    {key:'deepseek',label:'DeepSeek',domains:['deepseek.com']},
+    {key:'meta',label:'Meta AI',domains:['meta.ai']},
+    {key:'poe',label:'Poe',domains:['poe.com']},
     {key:'you',label:'You.com',domains:['you.com']}
   ];
 
@@ -119,7 +122,7 @@
       <div id="saiBrief" class="sai-brief"><h4>本期重點摘要</h4><ul><li>正在等待真實統計資料。</li></ul></div>
       <div class="sai-warning"><b>Google 關鍵字：</b>目前尚未連接公司 Google Search Console，因此不顯示虛構的曝光、CTR、平均排名或關鍵字名次。正式串接後，這裡才會呈現 Google 官方搜尋資料。</div>
       <div class="sai-block"><h4>AI 品牌導流</h4><div class="sai-table-wrap"><table class="sai-table"><thead><tr><th>AI 平台</th><th>本期導流</th><th>前期</th><th>變化</th><th>資料來源</th><th>資料狀態</th></tr></thead><tbody id="saiAiRows"><tr><td colspan="6">尚未讀取資料。</td></tr></tbody></table></div></div>
-      <div class="sai-note"><b>資料統計來源：</b><br>①「有效瀏覽／產品熱門度」來自網站產品頁自己的匿名瀏覽事件統計，並以 30 分鐘同產品冷卻避免短時間重複計數。<br>②「Google／Bing／AI／社群導流」依瀏覽器提供的 Referrer 網域分類，資料送至目前網站分析後端彙總。<br>③「ChatGPT、Gemini、Copilot、Perplexity、Claude、Grok 等 AI 品牌」由分析後端依 Referrer 網域分組後再辨識品牌；無法辨識時會列為「AI（來源未細分）」。<br>④「Google 關鍵字曝光、點擊、CTR、平均排名」必須以公司 Google Search Console 為準，目前尚未串接。<br>⑤「AI 提及／引用萬里資訊」與「AI 導流」是不同指標；目前只統計可辨識的導流，不把未量測的 AI 回答提及次數當成真實數據。</div>
+      <div class="sai-note"><b>資料統計來源：</b><br>①「有效瀏覽／產品熱門度」來自網站產品頁自己的匿名瀏覽事件統計，並以 30 分鐘同產品冷卻避免短時間重複計數。<br>②「Google／Bing／AI／社群導流」依瀏覽器提供的 Referrer 網域分類，資料送至目前網站分析後端彙總。<br>③「ChatGPT、Gemini、Copilot、Perplexity、Claude、Grok、DeepSeek、Meta AI、Poe、You.com 等 AI 品牌」由分析後端依 Referrer 網域分組後再辨識品牌；無法辨識時會列為「AI（來源未細分）」。<br>④「Google 關鍵字曝光、點擊、CTR、平均排名」必須以公司 Google Search Console 為準，目前尚未串接。<br>⑤「AI 提及／引用萬里資訊」與「AI 導流」是不同指標；目前只統計可辨識的導流，不把未量測的 AI 回答提及次數當成真實數據。</div>
     `;
     const status=$('#analyticsStatus');
     status?.after(panel);
