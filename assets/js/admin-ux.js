@@ -6,27 +6,11 @@
   const $=(s,p=document)=>p.querySelector(s);
   const $$=(s,p=document)=>[...p.querySelectorAll(s)];
 
-  // 常用功能優先：成效／SEO → 詢問 → 產品 → 首頁，其餘依使用頻率往下排。
   const ORDER=[
-    'adminAnalytics',
-    'adminInquiries',
-    'products',
-    'homeHeroAdmin',
-    'adminFrontFeatureManager',
-    'siteControlAdmin',
-    'adminBrandManager',
-    'adminLocationManager',
-    'contentControlAdmin',
-    'siteStructureAdmin',
-    'adminExtended',
-    'resourceAdmin',
-    'adminStats',
-    'adminPassword',
-    'adminAccessCenter',
-    'adminSecurityCenter',
-    'adminBackupCenter',
-    'adminHistory',
-    'adminMaintenance'
+    'adminAnalytics','adminInquiries','products','homeHeroAdmin','adminFrontFeatureManager',
+    'siteControlAdmin','adminBrandManager','adminLocationManager','contentControlAdmin',
+    'siteStructureAdmin','adminExtended','resourceAdmin','adminStats','adminPassword',
+    'adminAccessCenter','adminSecurityCenter','adminBackupCenter','adminHistory','adminMaintenance'
   ];
 
   const META={
@@ -44,7 +28,6 @@
     resourceAdmin:{step:'12',tag:'資源',hint:'下載中心與系統方案'}
   };
 
-  // 新版介面預設只常駐最常查看的 SEO／成效區；其他需要時再展開。
   const DEFAULT_FOLDED=new Set([
     'adminInquiries','products','homeHeroAdmin','adminFrontFeatureManager','siteControlAdmin',
     'adminBrandManager','adminLocationManager','contentControlAdmin','siteStructureAdmin',
@@ -54,21 +37,9 @@
   const KEY='farbeyoundAdminFoldV4';
   let dirty=false;
 
-  function read(){
-    try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}
-    catch(e){return {}}
-  }
-
-  function save(id,v){
-    const s=read();
-    s[id]=!!v;
-    localStorage.setItem(KEY,JSON.stringify(s));
-  }
-
-  function folded(id){
-    const s=read();
-    return Object.prototype.hasOwnProperty.call(s,id)?!!s[id]:DEFAULT_FOLDED.has(id);
-  }
+  function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}}}
+  function save(id,v){const s=read();s[id]=!!v;localStorage.setItem(KEY,JSON.stringify(s))}
+  function folded(id){const s=read();return Object.prototype.hasOwnProperty.call(s,id)?!!s[id]:DEFAULT_FOLDED.has(id)}
 
   function adminHomeLink(){
     const logo=$('.admin-side > a.brand');
@@ -88,7 +59,6 @@
   function reorder(){
     const main=$('.admin-main');
     if(!main)return;
-    // 管理總覽固定最前面，常用實際工作區緊接在後。
     let anchor=$('#adminDashboard')||$('.admin-usage-note')||$('.admin-section-jump')||$('.admin-top');
     ORDER.forEach(id=>{
       const el=document.getElementById(id);
@@ -129,11 +99,7 @@
     if(!head)return;
     panel.dataset.foldReady='1';
     let box=head.querySelector(':scope > .admin-head-actions');
-    if(!box){
-      box=document.createElement('div');
-      box.className='admin-head-actions';
-      head.appendChild(box);
-    }
+    if(!box){box=document.createElement('div');box.className='admin-head-actions';head.appendChild(box)}
     const btn=document.createElement('button');
     btn.type='button';
     btn.className='admin-fold-btn';
@@ -164,10 +130,7 @@
   }
 
   function compact(){
-    [
-      'adminAnalytics','adminInquiries','products','homeHeroAdmin','adminFrontFeatureManager',
-      'siteControlAdmin','adminBrandManager','adminLocationManager','contentControlAdmin','siteStructureAdmin'
-    ].forEach(collapsiblePanel);
+    ['adminAnalytics','adminInquiries','products','homeHeroAdmin','adminFrontFeatureManager','siteControlAdmin','adminBrandManager','adminLocationManager','contentControlAdmin','siteStructureAdmin'].forEach(collapsiblePanel);
     collapsibleGroup('adminExtended','消息／案例／公司資料','低頻維護項目，更新公告、案例或公司資料時再展開。');
     collapsibleGroup('resourceAdmin','下載／系統方案','低頻維護項目，需要新增下載資源或系統方案時再展開。');
   }
@@ -181,10 +144,7 @@
     if(host.classList.contains('is-group-folded')){
       host.classList.remove('is-group-folded');
       const b=host.querySelector(':scope > .admin-group-fold .admin-fold-btn');
-      if(b){
-        b.innerHTML='收合 <span>−</span>';
-        b.setAttribute('aria-expanded','true');
-      }
+      if(b){b.innerHTML='收合 <span>−</span>';b.setAttribute('aria-expanded','true')}
       save(id,false);
     }
   }
@@ -193,13 +153,11 @@
     const nav=$('.admin-nav');
     const label=$('.admin-nav-label',nav||document);
     if(!nav||!label||$('#adminQuickNavSection',nav))return;
-
     const quick=document.createElement('div');
     quick.id='adminQuickNavSection';
     quick.className='admin-nav-section';
     quick.textContent='常用查看';
     label.insertAdjacentElement('afterend',quick);
-
     let anchor=quick;
     ['#adminAnalytics','#adminInquiries','#products','#homeHeroAdmin'].forEach(href=>{
       const link=nav.querySelector(`a[href="${href}"]`);
@@ -215,10 +173,7 @@
     links.forEach(a=>{
       if(a.dataset.uxReady)return;
       a.dataset.uxReady='1';
-      a.addEventListener('click',()=>{
-        const id=(a.getAttribute('href')||'').slice(1);
-        if(id)expandTarget(id);
-      });
+      a.addEventListener('click',()=>{const id=(a.getAttribute('href')||'').slice(1);if(id)expandTarget(id)});
     });
   }
 
@@ -232,45 +187,18 @@
       if(body)body.prepend(n);
     }
     const importLabel=$('label.btn input#importInput')?.closest('label');
-    if(importLabel&&!importLabel.dataset.warnReady){
-      importLabel.dataset.warnReady='1';
-      importLabel.title='匯入會改變目前管理資料，請先保留現況備份。';
-    }
+    if(importLabel&&!importLabel.dataset.warnReady){importLabel.dataset.warnReady='1';importLabel.title='匯入會改變目前管理資料，請先保留現況備份。'}
   }
 
   function dirtyState(){
     if(window.__fbDirtyReady)return;
     window.__fbDirtyReady=true;
     const pill=$('#adminSaveState');
-    const mark=()=>{
-      dirty=true;
-      if(pill){
-        pill.textContent='有未儲存變更';
-        pill.classList.add('dirty');
-      }
-    };
-    document.addEventListener('input',e=>{
-      if(e.target.closest('.admin-main')&&e.target.matches('input,textarea,select'))mark();
-    },true);
-    document.addEventListener('change',e=>{
-      if(e.target.closest('.admin-main')&&e.target.matches('input,textarea,select'))mark();
-    },true);
-    document.addEventListener('submit',e=>{
-      if(e.target.closest('.admin-main')){
-        dirty=false;
-        setTimeout(()=>{
-          if(pill){
-            pill.textContent='目前無未儲存變更';
-            pill.classList.remove('dirty');
-          }
-        },80);
-      }
-    },true);
-    window.addEventListener('beforeunload',e=>{
-      if(!dirty)return;
-      e.preventDefault();
-      e.returnValue='';
-    });
+    const mark=()=>{dirty=true;if(pill){pill.textContent='有未儲存變更';pill.classList.add('dirty')}};
+    document.addEventListener('input',e=>{if(e.target.closest('.admin-main')&&e.target.matches('input,textarea,select'))mark()},true);
+    document.addEventListener('change',e=>{if(e.target.closest('.admin-main')&&e.target.matches('input,textarea,select'))mark()},true);
+    document.addEventListener('submit',e=>{if(e.target.closest('.admin-main')){dirty=false;setTimeout(()=>{if(pill){pill.textContent='目前無未儲存變更';pill.classList.remove('dirty')}},80)}},true);
+    window.addEventListener('beforeunload',e=>{if(!dirty)return;e.preventDefault();e.returnValue=''});
   }
 
   function safeReset(){
@@ -280,14 +208,26 @@
     btn.onclick=()=>{
       if(!confirm('這會清除這台瀏覽器目前所有後台修改。建議先匯出備份。\n\n確定繼續？'))return;
       const typed=prompt('請輸入「恢復」確認：','');
-      if(typed!=='恢復'){
-        if(typed!==null)alert('文字不符，已取消。');
-        return;
-      }
+      if(typed!=='恢復'){if(typed!==null)alert('文字不符，已取消。');return}
       window.FBStore?.resetData?.();
       dirty=false;
       location.reload();
     };
+  }
+
+  function loadModule(src,id){
+    if(document.getElementById(id))return;
+    const s=document.createElement('script');
+    s.id=id;
+    s.src=src;
+    s.defer=true;
+    document.head.appendChild(s);
+  }
+
+  function helpers(){
+    loadModule('assets/js/admin-friendly.js?v=20260915-1552','fbAdminFriendlyLoader');
+    loadModule('assets/js/admin-performance-ux.js?v=20260915-1552','fbAdminPerformanceUxLoader');
+    loadModule('assets/js/admin-quick-find.js?v=20260915-1552','fbAdminQuickFindLoader');
   }
 
   function init(){
@@ -301,6 +241,7 @@
     dangerous();
     dirtyState();
     safeReset();
+    helpers();
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
