@@ -5,7 +5,7 @@
 
   const $=(s,p=document)=>p.querySelector(s);
   const $$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1646').replace(/[^0-9A-Za-z._-]/g,'');
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1655').replace(/[^0-9A-Za-z._-]/g,'');
 
   const ORDER=[
     'adminAnalytics','adminInquiries','products','homeHeroAdmin','adminFrontFeatureManager',
