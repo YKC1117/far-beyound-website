@@ -108,7 +108,8 @@
     build();
     improveJumpNav();
     // 更新紀錄先載入，時間顯示統一由它提供。
-    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1613','fbAdminUpdateLogLoader');
+    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1618','fbAdminUpdateLogLoader');
+    loadAdminHelper('assets/js/admin-backup-status.js?v=20260915-1618','fbAdminBackupStatusLoader');
     loadAdminHelper('assets/js/admin-friendly.js?v=20260915-1540','fbAdminFriendlyLoader');
     loadAdminHelper('assets/js/admin-workspace-tools.js?v=20260915-1540','fbAdminWorkspaceToolsLoader');
     setTimeout(setStamp,80);
