@@ -22,13 +22,14 @@
   function sanitizeSensitive(){clearPasswords();const rows=document.getElementById('inquiryRows');if(rows)rows.innerHTML='<tr><td colspan="6">尚未讀取資料。</td></tr>';const status=document.getElementById('inquiryStatus');if(status)status.textContent='尚未讀取。客戶聯絡資料屬敏感資訊。';const count=document.getElementById('inquiryVisibleCount');if(count)count.textContent='尚未讀取';const users=document.getElementById('adminUsersResult');if(users)users.replaceChildren();['#adminLoginActivity .admin-tool-result','#adminSecureAudit .admin-tool-result','#adminSecureBackups .admin-tool-result'].forEach(sel=>{const el=document.querySelector(sel);if(el){el.replaceChildren();el.hidden=true}})}
   function stamp(){const v=document.querySelector('.admin-version-note');if(v)v.textContent=STAMP}
   function note(){const h=document.querySelector('#adminSecurityCenter .admin-system-body');if(!h||document.getElementById('adminAbsoluteSessionNote'))return;const d=document.createElement('div');d.id='adminAbsoluteSessionNote';d.className='admin-setting-note';d.innerHTML='<b>工作階段保護：</b>後台登入最長連續 8 小時；另外每 2 分鐘向伺服器確認 Session 是否仍有效。即使持續操作，達上限或 Session 被撤銷後都必須重新登入＋兩步驟驗證。閒置逾時規則仍另外生效。';h.prepend(d)}
+  function loadSystemCenters(){if(window.__fbAdminSystemCenters)return;const s=document.createElement('script');s.src='assets/js/admin-system-centers.js?v=20260915-system';s.dataset.adminSystemBootstrap='1';document.body.appendChild(s)}
   window.addEventListener('farbeyound:adminauth',e=>{const state=String(e?.detail?.state||'');if(['login','mfa_required','mfa_verified','mfa_setup','invite'].includes(state)){setStart(state==='login'||state==='invite');lastServerCheck=0}if(['logout','idle_timeout','session_expired','session_revoked'].includes(state)){clearStart();sanitizeSensitive()}setTimeout(()=>{check();validateServer(true);stamp()},80)});
   window.addEventListener('farbeyound:datachange',()=>setTimeout(stamp,180));
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){check();validateServer(true);stamp()}});
   window.addEventListener('pageshow',e=>{if(e.persisted){location.reload();return}check();validateServer(true);stamp()});
   window.addEventListener('pagehide',clearPasswords);
   const mo=new MutationObserver(m=>{for(const x of m)for(const n of x.addedNodes)if(n.nodeType===1)secureLinks(n)});mo.observe(document.documentElement,{childList:true,subtree:true});
-  secureLinks();stamp();
+  secureLinks();stamp();loadSystemCenters();
   [250,900,1800,3200,5000].forEach(t=>setTimeout(()=>{check();note();secureLinks();stamp();validateServer()},t));
   setInterval(()=>{check();validateServer();stamp()},60000);
 })();
