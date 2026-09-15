@@ -2,6 +2,8 @@
   if(document.body.dataset.page!=='admin'||window.__fbAdminDashboard)return;
   window.__fbAdminDashboard=true;
 
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1646').replace(/[^0-9A-Za-z._-]/g,'');
+
   const setStamp=()=>{
     const v=document.querySelector('.admin-version-note');
     if(!v)return;
@@ -70,7 +72,7 @@
     if(document.getElementById(id))return;
     const s=document.createElement('script');
     s.id=id;
-    s.src=src;
+    s.src=`${src.split('?')[0]}?v=${encodeURIComponent(BUILD)}`;
     s.defer=true;
     document.head.appendChild(s);
   };
@@ -102,11 +104,11 @@
     style();
     build();
     improveJumpNav();
-    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1640','fbAdminUpdateLogLoader');
-    loadAdminHelper('assets/js/admin-backup-status.js?v=20260915-1620','fbAdminBackupStatusLoader');
-    loadAdminHelper('assets/js/admin-current-task.js?v=20260915-1622','fbAdminCurrentTaskLoader');
-    loadAdminHelper('assets/js/admin-friendly.js?v=20260915-1540','fbAdminFriendlyLoader');
-    loadAdminHelper('assets/js/admin-workspace-tools.js?v=20260915-1540','fbAdminWorkspaceToolsLoader');
+    loadAdminHelper('assets/js/admin-update-log.js','fbAdminUpdateLogLoader');
+    loadAdminHelper('assets/js/admin-backup-status.js','fbAdminBackupStatusLoader');
+    loadAdminHelper('assets/js/admin-current-task.js','fbAdminCurrentTaskLoader');
+    loadAdminHelper('assets/js/admin-friendly.js','fbAdminFriendlyLoader');
+    loadAdminHelper('assets/js/admin-workspace-tools.js','fbAdminWorkspaceToolsLoader');
     setTimeout(setStamp,80);
     setTimeout(setStamp,500);
   };
