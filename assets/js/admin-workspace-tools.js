@@ -5,7 +5,7 @@
 
   const $=(s,p=document)=>p.querySelector(s);
   const KEEP_OPEN=new Set(['adminAnalytics']);
-  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1713').replace(/[^0-9A-Za-z._-]/g,'');
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-2354').replace(/[^0-9A-Za-z._-]/g,'');
 
   function loadHelper(src,id){
     if(document.getElementById(id))return;
@@ -118,9 +118,10 @@
   function boot(){
     style();
     if(!build())setTimeout(boot,120);
-    // 真正載入單一工作區與成效中心分頁；避免只有檔案存在但入口未執行。
+    // 真正載入單一工作區、成效中心分頁與營運匯出工具；避免檔案存在但入口未執行。
     loadHelper('assets/js/admin-master-detail.js','fbAdminMasterDetailLoader');
     loadHelper('assets/js/admin-performance-ux.js','fbAdminPerformanceUxLoader');
+    loadHelper('assets/js/admin-cms-ops.js','fbAdminCmsOpsLoader');
   }
 
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
