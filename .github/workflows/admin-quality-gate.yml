@@ -51,7 +51,7 @@ jobs:
               'adminDashboard','adminSelfCheck','adminSeoCenter','adminSecurityCenter',
               'adminBackupCenter','adminTransitionSecurityNote','adminFrontFeatureManager',
               'adminBrandManager','adminLocationManager','adminPassword','adminPasswordForm',
-              'inquiryExportCsv','adminProductExportCsv'
+              'inquiryExportCsv','adminProductExportCsv','adminProductExportSelectedCsv'
           ]
           missing=[x for x in required if not soup.find(id=x)]
           ids=[x.get('id') for x in soup.find_all(id=True)]
@@ -59,6 +59,7 @@ jobs:
           form=soup.find(id='adminPasswordForm')
           inquiry_export=soup.find(id='inquiryExportCsv')
           product_export=soup.find(id='adminProductExportCsv')
+          selected_export=soup.find(id='adminProductExportSelectedCsv')
           text=soup.get_text(' ',strip=True)
           report={
               'required':required,
@@ -70,6 +71,8 @@ jobs:
               'transition_copy':'尚未正式啟用 Owner／個人帳號／2FA' in text,
               'inquiry_csv_export_exists':inquiry_export is not None,
               'product_csv_export_exists':product_export is not None,
+              'selected_product_csv_export_exists':selected_export is not None,
+              'selected_product_csv_export_initially_disabled':bool(selected_export and selected_export.has_attr('disabled')),
               'rendered_id_count':len(ids),
           }
           Path('qa-admin/admin-diagnostics.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -83,10 +86,13 @@ jobs:
           assert report['transition_copy'], 'Transition-mode explanation missing'
           assert inquiry_export is not None, 'Inquiry CSV export tool did not load'
           assert product_export is not None, 'Product CSV export tool did not load'
+          assert selected_export is not None, 'Selected-product CSV export tool did not load'
+          assert selected_export.has_attr('disabled'), 'Selected-product CSV export must be disabled before a product is selected'
 
           print('ADMIN_DYNAMIC_MODULES=PASS')
           print('ADMIN_SHARED_PASSWORD_UI=PASS')
           print('ADMIN_CSV_EXPORT_TOOLS=PASS')
+          print('ADMIN_SELECTED_PRODUCT_EXPORT=PASS')
           PY
 
       - name: Capture and verify mobile admin
@@ -109,7 +115,7 @@ jobs:
           body=soup.body
           required_mobile=[
               'amcMobileBar','amcMobileMenu','amcMobileTitle','amcMobileBackdrop','adminMobileNav',
-              'inquiryExportCsv','adminProductExportCsv'
+              'inquiryExportCsv','adminProductExportCsv','adminProductExportSelectedCsv'
           ]
           missing=[x for x in required_mobile if not soup.find(id=x)]
           classes=set(body.get('class',[])) if body else set()
@@ -120,6 +126,7 @@ jobs:
               'menu_expanded':(soup.find(id='amcMobileMenu') or {}).get('aria-expanded'),
               'inquiry_csv_export_exists':soup.find(id='inquiryExportCsv') is not None,
               'product_csv_export_exists':soup.find(id='adminProductExportCsv') is not None,
+              'selected_product_csv_export_exists':soup.find(id='adminProductExportSelectedCsv') is not None,
           }
           Path('qa-admin/admin-mobile-diagnostics.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
           print(json.dumps(report,ensure_ascii=False,indent=2))
