@@ -16,4 +16,5 @@
   loadModule('assets/js/admin-search-ai-insights.js?v=20260915-1508','fbAdminSearchAiInsightsLoader');
   loadModule('assets/js/admin-search-ai-enhance.js?v=20260915-1508','fbAdminSearchAiEnhanceLoader');
   loadModule('assets/js/admin-seo-ownership.js?v=20260915-1528','fbAdminSeoOwnershipLoader');
+  loadModule('assets/js/admin-performance-ux.js?v=20260915-1552','fbAdminPerformanceUxLoader');
 })();
