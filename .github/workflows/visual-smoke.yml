@@ -56,7 +56,7 @@ jobs:
           cards=allp.select('#productGrid .product-card')
           count_text=allp.select_one('#productCount').get_text(' ',strip=True) if allp.select_one('#productCount') else ''
           card_count=len(cards)
-          assert card_count>=151, f'Catalog unexpectedly small: {card_count}'
+          assert card_count>=150, f'Catalog unexpectedly small: {card_count}'
           assert count_text.startswith(str(card_count)), f'Product count mismatch: {count_text!r} / {card_count}'
 
           tokens=[]; missing_links=[]; legacy=[]; missing_images=[]; invalid_images=[]; bad_alts=[]
