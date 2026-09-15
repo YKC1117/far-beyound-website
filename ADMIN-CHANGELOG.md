@@ -12,6 +12,9 @@
 
 ## 2026/09/15
 
+### 16:46｜版本／快取
+建立後台統一 build 版本與自動快取檢查。新增 `assets/data/admin-build.json` 與 `assets/js/admin-cache-guard.js`；後台入口、主要管理 JS／CSS 與動態載入 helper 改用同一版號。後台開啟時會以 `no-store` 讀取最新 build，發現版本不同就自動用新 build 參數重新載入，不再依賴人工 `Ctrl + F5`。介面版型升級時只清除後台 UI 偏好，不碰產品、網站內容或正式資料。
+
 ### 16:40｜載入修正
 確認「左側選單＋右側單一工作區」程式本身已存在，但 `admin.html` 仍載入舊的 `admin-ux.js` 與 `admin-dashboard.js` 快取版本，造成瀏覽器可能持續看到舊後台。已更新 `admin.html` 的 cache-bust 版本、同步更新 dashboard 的更新紀錄載入版本，並把後台 Logo 原始連結直接修正為 `admin.html`，強制載入最新管理介面。
 
@@ -58,3 +61,4 @@ SEO／Google Ads／AI SEO 成效中心加入主管模式、全部展開與收合
 - 後台更新紀錄備份：`backup/admin-20260915-1605-update-log`
 - 後台近期施工備份：`backup/admin-20260915-1622`
 - 單一工作區版型備份：`backup/admin-20260915-1631-master-detail`
+- 快取修正版備份：`backup/admin-20260915-1640-cachefix`
