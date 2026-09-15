@@ -1,0 +1,29 @@
+name: Source backup package
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/source-backup.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create full website package
+        run: |
+          zip -r far-beyound-website-full-backup-20260915.zip . -x '.git/*'
+
+      - name: Upload backup package
+        uses: actions/upload-artifact@v4
+        with:
+          name: far-beyound-website-full-backup-20260915
+          path: far-beyound-website-full-backup-20260915.zip
+          retention-days: 30
