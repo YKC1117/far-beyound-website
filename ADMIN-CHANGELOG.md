@@ -12,6 +12,12 @@
 
 ## 2026/09/15
 
+### 17:13｜實際載入鏈修正
+確認 `admin-master-detail.js` 與 `admin-performance-ux.js` 雖已存在，但入口載入鏈沒有真正執行兩個模組，導致「更新紀錄看起來已完成、實際畫面仍舊」的落差。已改由 `admin-workspace-tools.js` 依正式 build 動態載入兩個模組，確保左側單一工作區與 SEO／Ads／AI 分頁實際生效。
+
+### 17:13｜介面版本升級
+`admin-build.json` 升級為 `workspace-v4` / `20260915-1713`。新版首次載入只會重設後台介面偏好，不碰產品、網站內容與正式資料；舊入口會由快取守門機制偵測並重新載入新版 build。
+
 ### 16:55｜更新時間穩定化
 修正「後台更新時間會跳動」問題。`admin-cache-guard.js` 現在從 `admin-build.json` 讀取正式更新時間並寫入畫面；`admin-dashboard.js` 與 `admin-update-log.js` 不再各自覆寫時間。入口 HTML 已同步到同一時間，畫面不再先顯示舊時間、讀取中、再跳到新時間。
 
@@ -72,3 +78,4 @@ SEO／Google Ads／AI SEO 成效中心加入主管模式與細節收合。
 - 單一工作區版型備份：`backup/admin-20260915-1631-master-detail`
 - 快取修正版備份：`backup/admin-20260915-1640-cachefix`
 - 統一快取機制備份：`backup/admin-20260915-1646-cache-system`
+- 本次施工前備份：`backup/admin-20260915-1710-preload-fix`
