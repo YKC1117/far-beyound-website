@@ -12,6 +12,7 @@
     ['specs','產品規格'],
     ['files','產品文件']
   ];
+  const PRODUCT_HEADERS=['產品ID','品牌','型號','分類','系列','類型','產品名稱','副標題','產品狀態','前台狀態','首頁精選','缺少資料','商品網址'];
 
   function csvCell(value){
     const text=String(value??'').replace(/\r\n?/g,'\n');
@@ -86,17 +87,27 @@
     }).map(([,label])=>label);
   }
 
+  function productMap(){
+    return new Map((productData().products||[]).map(product=>[String(product.id),product]));
+  }
+
   function visibleProducts(){
     const body=$('#adminProductRows');
     if(!body)return [];
-    const data=productData();
-    const map=new Map((data.products||[]).map(product=>[String(product.id),product]));
+    const map=productMap();
     return [...body.rows]
       .filter(row=>!row.hidden)
       .map(row=>{
         const id=row.dataset.productId||$('.edit-product',row)?.dataset.id||'';
         return map.get(String(id));
       })
+      .filter(Boolean);
+  }
+
+  function selectedProducts(){
+    const map=productMap();
+    return $$('.pm-select:checked')
+      .map(input=>map.get(String(input.dataset.id||'')))
       .filter(Boolean);
   }
 
@@ -108,16 +119,10 @@
     }
   }
 
-  function exportProducts(){
-    const products=visibleProducts();
-    if(!products.length){
-      alert('目前沒有可匯出的產品。請調整產品搜尋／篩選條件後再試。');
-      return;
-    }
-
+  function productRows(products){
     const data=productData();
     const categories=new Map((data.categories||[]).map(category=>[String(category.id),category.name||category.id]));
-    const rows=products.map(product=>[
+    return products.map(product=>[
       product.id||'',
       product.brand||'',
       product.model||'',
@@ -132,12 +137,25 @@
       productMissing(product).join('、'),
       productUrl(product.id||'')
     ]);
+  }
 
-    downloadCsv(
-      `產品清單_目前篩選結果_${dateTag()}.csv`,
-      ['產品ID','品牌','型號','分類','系列','類型','產品名稱','副標題','產品狀態','前台狀態','首頁精選','缺少資料','商品網址'],
-      rows
-    );
+  function exportProducts(){
+    const products=visibleProducts();
+    if(!products.length){
+      alert('目前沒有可匯出的產品。請調整產品搜尋／篩選條件後再試。');
+      return;
+    }
+    downloadCsv(`產品清單_目前篩選結果_${dateTag()}.csv`,PRODUCT_HEADERS,productRows(products));
+  }
+
+  function exportSelectedProducts(){
+    const products=selectedProducts();
+    if(!products.length){
+      alert('請先勾選要匯出的產品。');
+      updateSelectedExportState();
+      return;
+    }
+    downloadCsv(`產品清單_已選產品_${dateTag()}.csv`,PRODUCT_HEADERS,productRows(products));
   }
 
   function updateInquiryExportState(){
@@ -146,6 +164,14 @@
     const count=visibleInquiryRows().length;
     button.disabled=!count;
     button.textContent=count?`匯出目前清單 CSV（${count}）`:'匯出目前清單 CSV';
+  }
+
+  function updateSelectedExportState(){
+    const button=$('#adminProductExportSelectedCsv');
+    if(!button)return;
+    const count=selectedProducts().length;
+    button.disabled=!count;
+    button.textContent=count?`匯出已選產品 CSV（${count}）`:'匯出已選產品 CSV';
   }
 
   function mountInquiryExport(){
@@ -180,6 +206,22 @@
     return true;
   }
 
+  function mountSelectedProductExport(){
+    if($('#adminProductExportSelectedCsv'))return true;
+    const actions=$('#pmBatchBar .pm-batch-actions');
+    if(!actions)return false;
+    const button=document.createElement('button');
+    button.id='adminProductExportSelectedCsv';
+    button.className='btn btn-secondary btn-sm admin-csv-export';
+    button.type='button';
+    button.textContent='匯出已選產品 CSV';
+    button.disabled=true;
+    button.addEventListener('click',exportSelectedProducts);
+    actions.appendChild(button);
+    updateSelectedExportState();
+    return true;
+  }
+
   function injectStyle(){
     if($('#adminCmsOpsStyle'))return;
     const style=document.createElement('style');
@@ -188,29 +230,36 @@
       .admin-csv-export{white-space:nowrap}
       @media(max-width:820px){
         #adminInquiries .admin-csv-export,
-        #products .admin-csv-export{flex:1 1 auto;min-height:40px}
+        #products .admin-csv-export,
+        #pmBatchBar .admin-csv-export{flex:1 1 auto;min-height:40px}
       }
     `;
     document.head.appendChild(style);
   }
 
+  function mountAll(){
+    return [mountInquiryExport(),mountProductExport(),mountSelectedProductExport()].every(Boolean);
+  }
+
   function boot(){
     injectStyle();
-    const inquiryReady=mountInquiryExport();
-    const productReady=mountProductExport();
-    if(inquiryReady&&productReady)return;
+    if(mountAll())return;
 
     const root=document.querySelector('.admin-main')||document.body;
     if(!root)return;
     const observer=new MutationObserver(()=>{
-      const inquiryDone=mountInquiryExport();
-      const productDone=mountProductExport();
-      if(inquiryDone&&productDone)observer.disconnect();
+      if(mountAll())observer.disconnect();
     });
     observer.observe(root,{childList:true,subtree:true});
     setTimeout(()=>observer.disconnect(),5000);
   }
 
   window.addEventListener('farbeyound:inquiries-rendered',updateInquiryExportState);
+  document.addEventListener('change',event=>{
+    if(event.target?.matches?.('.pm-select,#pmSelectVisible'))requestAnimationFrame(updateSelectedExportState);
+  });
+  document.addEventListener('click',event=>{
+    if(event.target?.closest?.('#pmClearSelected'))setTimeout(updateSelectedExportState,0);
+  });
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
 })();
