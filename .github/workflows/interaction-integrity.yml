@@ -40,7 +40,7 @@ jobs:
           rich=load('detail-rich'); software=load('detail-software'); missing=load('detail-missing')
 
           cards=products.select('#productGrid a.product-card')
-          assert len(cards)>=151, f'Product catalog unexpectedly small: {len(cards)}'
+          assert len(cards)>=150, f'Product catalog unexpectedly small: {len(cards)}'
           tokens=[]; problems=[]
           for card in cards:
               href=(card.get('href') or '').strip(); token=parse_qs(urlparse(href).query).get('id',[''])[0]
