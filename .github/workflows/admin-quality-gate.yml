@@ -44,16 +44,31 @@ jobs:
           from pathlib import Path
           html=Path('qa-admin/admin-rendered.html').read_text(encoding='utf-8')
           soup=BeautifulSoup(html,'html.parser')
-          required=['adminDashboard','adminSelfCheck','adminSeoCenter','adminAccessCenter','adminSecurityCenter','adminBackupCenter','adminTransitionSecurityNote','adminFrontFeatureManager','adminBrandManager','adminLocationManager']
+
+          # Transitional production mode: keep the shared-password admin flow active.
+          # Personal-account / Owner / 2FA centers remain future architecture and must
+          # not be required for the current backend to render or operate.
+          required=[
+              'adminDashboard','adminSelfCheck','adminSeoCenter','adminSecurityCenter',
+              'adminBackupCenter','adminTransitionSecurityNote','adminFrontFeatureManager',
+              'adminBrandManager','adminLocationManager','adminPassword','adminPasswordForm'
+          ]
           missing=[x for x in required if not soup.find(id=x)]
           assert not missing, f'Missing rendered admin modules: {missing}'
+
           ids=[x.get('id') for x in soup.find_all(id=True)]
           dup=sorted({x for x in ids if ids.count(x)>1})
           assert not dup, f'Duplicate DOM ids: {dup[:20]}'
+
           form=soup.find(id='adminPasswordForm')
-          assert form is not None and form.has_attr('hidden'), 'Legacy online password-change form must be hidden by transition hardening'
+          assert form is not None, 'Shared-password management form missing'
+          assert not form.has_attr('hidden'), 'Shared-password management form must stay available in transition mode'
+          assert '共用發布密碼' in soup.get_text(' ',strip=True), 'Shared-password transition copy missing'
+          assert '尚未正式啟用 Owner／個人帳號／2FA' in soup.get_text(' ',strip=True), 'Transition-mode explanation missing'
+
           print(f'RENDERED_ADMIN_IDS={len(ids)}')
           print('ADMIN_DYNAMIC_MODULES=PASS')
+          print('ADMIN_SHARED_PASSWORD_UI=PASS')
           PY
 
       - name: Capture mobile admin
