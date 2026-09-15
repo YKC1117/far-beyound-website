@@ -1,12 +1,15 @@
 /* Desktop phone compatibility and meeting-stability layer.
  * final-fixes.js remains the DOM owner for the quick-contact rail.
- * This file keeps the desktop contact rail stable, restores the phone popover
- * contract, and disables automatic hero rotation in-memory to prevent flashes.
+ * Keep this layer idempotent: no whole-page polling/repaint loops.
  */
 (function(){
   'use strict';
   if(window.__fbDesktopPhonePopoverCompat)return;
   window.__fbDesktopPhonePopoverCompat=true;
+
+  /* The document body is already fully parsed when this bottom script runs.
+   * Reveal it immediately instead of waiting for overlapping delayed prepaint timers. */
+  document.body?.classList.add('fb-public-ready');
 
   let activeItem=null;
   let classObserver=null;
@@ -61,6 +64,7 @@
 
   function bind(){
     if(document.body?.dataset?.page==='admin')return false;
+    document.body?.classList.add('fb-public-ready');
     const rail=document.querySelector('.quick-contact');
     if(!rail)return false;
     lockRail(rail);
@@ -98,15 +102,21 @@
 
   function boot(){
     stabilizeHero();
-    bind();
+    if(bind())return;
+
+    /* final-fixes.js may create the rail later in the same DOMContentLoaded turn.
+     * Observe only until it exists, then disconnect permanently. */
     const root=document.body||document.documentElement;
-    const domObserver=new MutationObserver(()=>bind());
+    const domObserver=new MutationObserver(()=>{
+      if(bind())domObserver.disconnect();
+    });
     domObserver.observe(root,{childList:true,subtree:true});
-    window.addEventListener('load',()=>{stabilizeHero();bind()},{once:true});
-    window.addEventListener('farbeyound:datachange',()=>{stabilizeHero();requestAnimationFrame(bind)});
+    setTimeout(()=>domObserver.disconnect(),1500);
   }
 
   stabilizeHero();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
+  window.addEventListener('load',()=>{document.body?.classList.add('fb-public-ready');stabilizeHero();bind()},{once:true});
+  window.addEventListener('farbeyound:datachange',()=>{stabilizeHero();requestAnimationFrame(bind)});
 })();
