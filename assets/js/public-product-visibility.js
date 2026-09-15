@@ -31,17 +31,17 @@
       const id=idFromHref(a.getAttribute('href')||'');if(!id)return;
       const off=hidden.has(id);
       const card=a.closest('.product-card')||a.closest('.hero-rotate-card')||a.closest('.hero-rotate-side')||a;
-      if(card)card.style.display=off?'none':'';
+      if(card){const next=off?'none':'';if(card.style.display!==next)card.style.display=next}
     });
   }
   function applyProductsPage(){
     if(document.body.dataset.page!=='products')return;
     const d=current(),f=activeFilters();
     const list=(d.products||[]).filter(p=>p.published!==false&&(f.category==='all'||p.category===f.category)&&(f.brand==='all'||p.brand===f.brand));
-    const count=$('#productCount');if(count)count.textContent=`${list.length} 項產品`;
+    const count=$('#productCount');if(count){const text=`${list.length} 項產品`;if(count.textContent!==text)count.textContent=text}
     $$('#brandTabs .brand-chip').forEach(a=>{
-      const u=new URL(a.href,location.href),brand=u.searchParams.get('brand')||'all';if(brand==='all'){a.style.display='';return}
-      const has=(d.products||[]).some(p=>p.published!==false&&p.brand===brand&&(f.category==='all'||p.category===f.category));a.style.display=has?'':'none';
+      const u=new URL(a.href,location.href),brand=u.searchParams.get('brand')||'all';if(brand==='all'){if(a.style.display)a.style.display='';return}
+      const has=(d.products||[]).some(p=>p.published!==false&&p.brand===brand&&(f.category==='all'||p.category===f.category));const next=has?'':'none';if(a.style.display!==next)a.style.display=next;
     });
     const grid=$('#productGrid');if(grid){const visible=$$('.product-card',grid).filter(x=>getComputedStyle(x).display!=='none');let empty=$('#publishedProductEmpty',grid);if(!visible.length&&!empty){empty=document.createElement('div');empty.id='publishedProductEmpty';empty.className='empty-state wide';empty.innerHTML='<b>目前沒有公開展示的產品</b><span>可切換其他分類或品牌查看。</span>';grid.appendChild(empty)}else if(visible.length&&empty)empty.remove()}
   }
@@ -52,7 +52,17 @@
     main.innerHTML='<section class="section"><div class="container"><div class="empty-state wide" style="padding:48px 24px"><b>此產品目前未公開</b><span>產品資料仍保留於管理後台，前台暫時不提供瀏覽。</span><a class="btn btn-primary" href="products.html" style="margin-top:18px">返回產品資訊</a></div></div></section>';
     document.title='產品目前未公開｜萬里資訊';
   }
-  function run(){if(!window.FBStore)return;applyCards();applyProductsPage();applyProductPage()}
-  function init(){installContactStyle();run();setTimeout(run,80);setTimeout(run,350);const obs=new MutationObserver(()=>{clearTimeout(window.__fbPublicProductVisibilityTimer);window.__fbPublicProductVisibilityTimer=setTimeout(run,40)});obs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['href']});window.addEventListener('farbeyound:datachange',()=>setTimeout(run,50))}
+  function run(){if(!window.FBStore)return false;applyCards();applyProductsPage();applyProductPage();return true}
+  let scheduled=false;
+  function scheduleRun(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;run()})}
+  function init(){
+    installContactStyle();
+    run();
+    const obs=new MutationObserver(mutations=>{
+      if(mutations.some(m=>m.type==='childList'||m.type==='attributes'))scheduleRun();
+    });
+    obs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['href']});
+    window.addEventListener('farbeyound:datachange',scheduleRun);
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
