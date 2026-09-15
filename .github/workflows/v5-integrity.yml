@@ -68,7 +68,16 @@ jobs:
           assert contact.select_one('.v5-page-meta'), 'Contact page service-meta row missing'
           assert about.select_one('.v5-page-meta'), 'About page service-meta row missing'
 
-          assert contact.select_one('.quick-contact [data-back-top]'), 'Desktop utility rail TOP missing'
+          rail=contact.select_one('.quick-contact')
+          assert rail is not None, 'Desktop quick-contact rail missing'
+          items=rail.select('.quick-contact-item')
+          assert len(items)==3, f'Expected exactly three desktop contact actions, got {len(items)}'
+          labels=[x.get_text(' ',strip=True) for x in items]
+          assert any('電話' in x for x in labels), labels
+          assert any('LINE' in x.upper() for x in labels), labels
+          assert any('詢問' in x for x in labels), labels
+          assert not rail.select_one('[data-back-top]'), 'Deprecated TOP action returned to desktop contact rail'
+
           assert contact.select_one('#serviceLocations'), 'Contact service locations missing'
           assert len(contact.select('#serviceLocations .location-mini-action')) == 2, 'Contact map navigation incomplete'
 
@@ -84,6 +93,7 @@ jobs:
           print('V5_PRODUCT_SEARCH=OK')
           print('V5_DOWNLOAD_SEARCH=OK')
           print(f'V5_PRODUCT_CARDS={len(cards)}')
+          print('V5_CONTACT_ACTIONS=3')
           print('V5_INNER_PAGE_META=OK')
           print('V5_CONTACT_MAPS=2')
           print('V5_PUBLIC_COPY_CLEAN=OK')
