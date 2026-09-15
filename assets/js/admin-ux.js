@@ -228,6 +228,7 @@
     loadModule('assets/js/admin-friendly.js?v=20260915-1552','fbAdminFriendlyLoader');
     loadModule('assets/js/admin-performance-ux.js?v=20260915-1552','fbAdminPerformanceUxLoader');
     loadModule('assets/js/admin-quick-find.js?v=20260915-1552','fbAdminQuickFindLoader');
+    loadModule('assets/js/admin-nav-state.js?v=20260915-1622','fbAdminNavStateLoader');
   }
 
   function init(){
