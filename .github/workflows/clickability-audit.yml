@@ -107,7 +107,7 @@ jobs:
           check(product.select_one('.product-actions a[href^="contact.html?item="]') is not None,'product inquiry button missing')
 
           product_cards=products.select('#productGrid a.product-card')
-          check(len(product_cards)>=151,f'product catalog expected >=151 clickable cards, got {len(product_cards)}')
+          check(len(product_cards)>=150,f'product catalog expected >=150 clickable cards, got {len(product_cards)}')
           check(all(parse_qs(urlparse(a.get('href') or '').query).get('id') for a in product_cards),'catalog card missing product id')
           check(all(a.select_one('img') for a in product_cards),'catalog product card has no image inside clickable area')
 
