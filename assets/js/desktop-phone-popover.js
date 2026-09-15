@@ -1,7 +1,7 @@
-/* Desktop phone compatibility layer.
- * final-fixes.js owns the quick-contact DOM. This file only restores the
- * stable popover contract used by desktop interaction checks and legacy pages,
- * without creating a second contact rail.
+/* Desktop phone compatibility and meeting-stability layer.
+ * final-fixes.js remains the DOM owner for the quick-contact rail.
+ * This file only keeps the desktop phone panel visible when opened and
+ * disables automatic hero rotation in-memory to prevent recurring flashes.
  */
 (function(){
   'use strict';
@@ -11,16 +11,31 @@
   let activeItem=null;
   let classObserver=null;
 
+  function stabilizeHero(){
+    if(document.body?.dataset?.page!=='home')return;
+    const data=window.FBStore?.getData?.();
+    if(!data)return;
+    data.homeHero=Object.assign({},data.homeHero||{}, {autoplay:false});
+  }
+
   function sync(item,button,panel){
     const open=item.classList.contains('is-open');
     button.setAttribute('aria-expanded',String(open));
     panel.setAttribute('aria-hidden',String(!open));
+    panel.style.setProperty('display','block','important');
+    panel.style.setProperty('visibility',open?'visible':'hidden','important');
+    panel.style.setProperty('opacity',open?'1':'0','important');
+    panel.style.setProperty('transform',open?'none':'translateX(8px)','important');
+    panel.style.setProperty('pointer-events',open?'auto':'none','important');
+    panel.style.setProperty('z-index','120','important');
   }
 
   function bind(){
     if(document.body?.dataset?.page==='admin')return false;
     const rail=document.querySelector('.quick-contact');
     if(!rail)return false;
+    rail.style.setProperty('overflow','visible','important');
+
     const items=[...rail.querySelectorAll('.quick-contact-item')];
     const item=rail.querySelector('.quick-contact-item[data-contact-phone]')||items[0];
     if(!item)return false;
@@ -52,13 +67,16 @@
   }
 
   function boot(){
+    stabilizeHero();
     bind();
     const root=document.body||document.documentElement;
     const domObserver=new MutationObserver(()=>bind());
     domObserver.observe(root,{childList:true,subtree:true});
-    window.addEventListener('load',bind,{once:true});
+    window.addEventListener('load',()=>{stabilizeHero();bind()},{once:true});
+    window.addEventListener('farbeyound:datachange',()=>{stabilizeHero();requestAnimationFrame(bind)});
   }
 
+  stabilizeHero();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
 })();
