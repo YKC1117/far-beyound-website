@@ -1,7 +1,7 @@
 /* Desktop phone compatibility and meeting-stability layer.
  * final-fixes.js remains the DOM owner for the quick-contact rail.
- * This file only keeps the desktop phone panel visible when opened and
- * disables automatic hero rotation in-memory to prevent recurring flashes.
+ * This file keeps the desktop contact rail stable, restores the phone popover
+ * contract, and disables automatic hero rotation in-memory to prevent flashes.
  */
 (function(){
   'use strict';
@@ -10,12 +10,41 @@
 
   let activeItem=null;
   let classObserver=null;
+  const COLORS=['#17324d','#06C755','#F28C28'];
 
   function stabilizeHero(){
     if(document.body?.dataset?.page!=='home')return;
     const data=window.FBStore?.getData?.();
     if(!data)return;
     data.homeHero=Object.assign({},data.homeHero||{}, {autoplay:false});
+  }
+
+  function lockRail(rail){
+    rail.style.setProperty('overflow','visible','important');
+    [...rail.querySelectorAll('.quick-contact-btn')].slice(0,3).forEach((button,index)=>{
+      button.style.setProperty('background',COLORS[index],'important');
+      button.style.setProperty('color','#fff','important');
+      button.style.setProperty('transition','none','important');
+      button.querySelectorAll('svg').forEach(svg=>svg.style.setProperty('stroke','#fff','important'));
+      button.querySelectorAll('span,b,small').forEach(node=>node.style.setProperty('color','#fff','important'));
+    });
+  }
+
+  function normalizePhonePanel(panel){
+    const links=[...panel.querySelectorAll('a[href^="tel:"]')];
+    const expected=[
+      {label:'新北辦公室',number:'02-82217759',href:'tel:0282217759'},
+      {label:'台南辦公室',number:'06-2360139',href:'tel:062360139'}
+    ];
+    expected.forEach((info,index)=>{
+      const link=links[index];
+      if(!link)return;
+      link.href=info.href;
+      const label=link.querySelector('span');
+      const number=link.querySelector('b');
+      if(label)label.textContent=info.label;
+      if(number)number.textContent=info.number;
+    });
   }
 
   function sync(item,button,panel){
@@ -34,7 +63,7 @@
     if(document.body?.dataset?.page==='admin')return false;
     const rail=document.querySelector('.quick-contact');
     if(!rail)return false;
-    rail.style.setProperty('overflow','visible','important');
+    lockRail(rail);
 
     const items=[...rail.querySelectorAll('.quick-contact-item')];
     const item=rail.querySelector('.quick-contact-item[data-contact-phone]')||items[0];
@@ -47,6 +76,7 @@
 
     panel.id='fbDesktopPhonePopover';
     button.setAttribute('aria-controls',panel.id);
+    normalizePhonePanel(panel);
     sync(item,button,panel);
 
     if(activeItem!==item){
@@ -58,7 +88,7 @@
 
     if(!item.dataset.desktopPopoverCompat){
       item.dataset.desktopPopoverCompat='1';
-      const refresh=()=>requestAnimationFrame(()=>sync(item,button,panel));
+      const refresh=()=>requestAnimationFrame(()=>{lockRail(rail);normalizePhonePanel(panel);sync(item,button,panel)});
       button.addEventListener('click',refresh);
       item.addEventListener('mouseenter',refresh);
       item.addEventListener('mouseleave',refresh);
