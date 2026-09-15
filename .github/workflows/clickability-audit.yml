@@ -37,7 +37,7 @@ jobs:
             'products|products.html' \
             'downloads|downloads.html'; do
             name=${spec%%|*}; path=${spec#*|}
-            "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=4800 --dump-dom "http://127.0.0.1:8080/$path" > "qa-click/$name.html"
+            "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5200 --dump-dom "http://127.0.0.1:8080/$path" > "qa-click/$name.html"
           done
       - name: Audit clickable affordances
         run: |
@@ -107,9 +107,25 @@ jobs:
           check(product.select_one('.product-actions a[href^="contact.html?item="]') is not None,'product inquiry button missing')
 
           product_cards=products.select('#productGrid a.product-card')
-          check(len(product_cards)>=150,f'product catalog expected >=150 clickable cards, got {len(product_cards)}')
-          check(all(parse_qs(urlparse(a.get('href') or '').query).get('id') for a in product_cards),'catalog card missing product id')
+          check(len(product_cards)>=151,f'product catalog expected >=151 clickable cards, got {len(product_cards)}')
+          tokens=[parse_qs(urlparse(a.get('href') or '').query).get('id',[''])[0] for a in product_cards]
+          check(all(tokens),'catalog card missing product id')
+          check('urovo-dt66-ct48c-dt50-dt40-rt40s' in tokens,'curated UROVO product missing from public catalog')
           check(all(a.select_one('img') for a in product_cards),'catalog product card has no image inside clickable area')
+
+          rail=home.select_one('.quick-contact')
+          mobile=home.select_one('.mobile-contact-bar')
+          check(rail is not None,'homepage desktop contact rail missing')
+          check(mobile is not None,'homepage mobile contact bar missing')
+          if rail:
+              actions=rail.select('.quick-contact-item')
+              check(len(actions)==3,f'homepage desktop contact actions expected 3, got {len(actions)}')
+              check([x.get('data-action') for x in actions]==['phone','line','inquiry'],f'homepage desktop contact action order wrong: {[x.get("data-action") for x in actions]}')
+              check(rail.select_one('[data-back-top]') is None,'deprecated TOP action returned')
+          if mobile:
+              actions=mobile.select('.mobile-contact-item')
+              check(len(actions)==3,f'homepage mobile contact actions expected 3, got {len(actions)}')
+              check([x.get('data-action') for x in actions]==['phone','line','inquiry'],f'homepage mobile contact action order wrong: {[x.get("data-action") for x in actions]}')
 
           check(downloads.select_one('#downloadSearch') is not None,'download search missing')
           check(downloads.select_one('#downloadTypeFilters') is not None,'download type selector missing')
@@ -134,6 +150,8 @@ jobs:
           print('LOCATION_MAP_LINKS=',len(maps))
           print('PRODUCT_CARD_LINKS=',len(product_cards))
           print('PRODUCT_IMAGE_ZOOM=',bool(product.select_one('.product-image-zoom')))
+          print('DESKTOP_CONTACT_ACTIONS=',len(rail.select('.quick-contact-item')) if rail else 0)
+          print('MOBILE_CONTACT_ACTIONS=',len(mobile.select('.mobile-contact-item')) if mobile else 0)
 
           if errors:
               print('\nFAILURES:')
