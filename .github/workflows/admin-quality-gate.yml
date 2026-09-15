@@ -81,15 +81,105 @@ jobs:
           print('ADMIN_SHARED_PASSWORD_UI=PASS')
           PY
 
-      - name: Capture mobile admin
+      - name: Capture and verify mobile admin
         if: always()
         run: |
+          set -e
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           if [ -n "$CHROME" ]; then
             mkdir -p qa-admin
-            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=7000 --screenshot=qa-admin/admin-mobile.png http://127.0.0.1:8080/admin.html || true
+            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=7000 --dump-dom http://127.0.0.1:8080/admin.html > qa-admin/admin-mobile-rendered.html
+            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=7000 --screenshot=qa-admin/admin-mobile.png http://127.0.0.1:8080/admin.html
+            pip install --disable-pip-version-check beautifulsoup4 >/dev/null
+            python3 - <<'PY'
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+          import json
+
+          html=Path('qa-admin/admin-mobile-rendered.html').read_text(encoding='utf-8')
+          soup=BeautifulSoup(html,'html.parser')
+          body=soup.body
+          required_mobile=['amcMobileBar','amcMobileMenu','amcMobileTitle','amcMobileBackdrop','adminMobileNav']
+          missing=[x for x in required_mobile if not soup.find(id=x)]
+          classes=set(body.get('class',[])) if body else set()
+          report={
+              'required_mobile':required_mobile,
+              'missing_mobile':missing,
+              'mobile_mode_class':'admin-mobile-cms' in classes,
+              'menu_expanded':(soup.find(id='amcMobileMenu') or {}).get('aria-expanded'),
+          }
+          Path('qa-admin/admin-mobile-diagnostics.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          assert not missing, f'Missing mobile admin chrome: {missing}'
+          assert report['mobile_mode_class'], 'Mobile admin mode class was not activated at 390px'
+          print('ADMIN_MOBILE_CHROME=PASS')
+          PY
           fi
           cp /tmp/farbeyound-admin-http.log qa-admin/http.log 2>/dev/null || true
+
+      - name: Verify admin desktop and mobile horizontal overflow
+        run: |
+          pip install --disable-pip-version-check selenium >/dev/null
+          python3 - <<'PY'
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+
+          viewports = {
+              'desktop': (1440, 1200),
+              'mobile': (390, 844),
+          }
+          options = Options()
+          options.add_argument('--headless=new')
+          options.add_argument('--no-sandbox')
+          options.add_argument('--disable-gpu')
+          options.add_argument('--hide-scrollbars')
+          driver = webdriver.Chrome(options=options)
+          failures=[]
+          try:
+              for mode,(width,height) in viewports.items():
+                  driver.set_window_size(width,height)
+                  driver.get('http://127.0.0.1:8080/admin.html')
+                  time.sleep(2.2)
+                  sizes=driver.execute_script('''
+                      const de=document.documentElement;
+                      const body=document.body;
+                      return {
+                        client:de.clientWidth,
+                        inner:window.innerWidth,
+                        scroll:Math.max(de.scrollWidth,body?body.scrollWidth:0)
+                      };
+                  ''')
+                  overflow=max(0,int(sizes['scroll'])-int(sizes['client']))
+                  mobile_mode=driver.execute_script("return document.body.classList.contains('admin-mobile-cms')")
+                  mobile_bar=driver.execute_script("return !!document.getElementById('amcMobileBar')")
+                  print(f'{mode.upper()} client={sizes["client"]} scroll={sizes["scroll"]} overflow={overflow} mobile_mode={mobile_mode} mobile_bar={mobile_bar}')
+                  if mode=='mobile' and (not mobile_mode or not mobile_bar):
+                      failures.append((mode,'mobile chrome inactive',sizes,[]))
+                  if mode=='desktop' and mobile_mode:
+                      failures.append((mode,'mobile class active on desktop',sizes,[]))
+                  if overflow>2:
+                      culprits=driver.execute_script('''
+                          const limit=document.documentElement.clientWidth+2;
+                          return Array.from(document.querySelectorAll('body *'))
+                            .map(el=>{
+                              const r=el.getBoundingClientRect();
+                              return {tag:el.tagName,id:el.id||'',cls:String(el.className||'').slice(0,80),right:Math.round(r.right),width:Math.round(r.width)};
+                            })
+                            .filter(x=>x.right>limit&&x.width>0)
+                            .slice(0,15);
+                      ''')
+                      failures.append((mode,'horizontal overflow',sizes,culprits))
+          finally:
+              driver.quit()
+
+          if failures:
+              for mode,reason,sizes,culprits in failures:
+                  print(f'ADMIN_RESPONSIVE_FAIL {mode}: {reason}; {sizes}; culprits={culprits}')
+              raise SystemExit(f'Admin responsive QA failed: {len(failures)} issue(s)')
+
+          print('ADMIN_RESPONSIVE_OVERFLOW=PASS')
+          PY
 
       - uses: actions/upload-artifact@v4
         if: always()
