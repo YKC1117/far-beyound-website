@@ -1,4 +1,5 @@
 /* Meeting-stability first paint: keep the public page visible and avoid white/blank flashes. */
+html body[data-page]:not([data-page="admin"]):not(.fb-public-ready){visibility:visible!important;opacity:1!important;transition:none!important}
 html body[data-page]:not([data-page="admin"]){visibility:visible!important;opacity:1!important;transition:none!important}
 html body[data-page]:not([data-page="admin"]).fb-public-ready{visibility:visible!important;opacity:1!important;transition:none!important}
 
