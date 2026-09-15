@@ -8,42 +8,55 @@
   if(window.__fbDesktopPhonePopoverCompat)return;
   window.__fbDesktopPhonePopoverCompat=true;
 
+  let activeItem=null;
+  let classObserver=null;
+
+  function sync(item,button,panel){
+    const open=item.classList.contains('is-open');
+    button.setAttribute('aria-expanded',String(open));
+    panel.setAttribute('aria-hidden',String(!open));
+  }
+
   function bind(){
     if(document.body?.dataset?.page==='admin')return false;
-    const item=document.querySelector('.quick-contact-item[data-contact-phone]');
+    const rail=document.querySelector('.quick-contact');
+    if(!rail)return false;
+    const items=[...rail.querySelectorAll('.quick-contact-item')];
+    const item=rail.querySelector('.quick-contact-item[data-contact-phone]')||items[0];
     if(!item)return false;
+    if(!item.hasAttribute('data-contact-phone'))item.setAttribute('data-contact-phone','');
+
     const button=item.querySelector('.quick-contact-btn');
     const panel=item.querySelector('.quick-phone-panel');
     if(!button||!panel)return false;
 
     panel.id='fbDesktopPhonePopover';
     button.setAttribute('aria-controls',panel.id);
+    sync(item,button,panel);
 
-    const sync=()=>{
-      const open=item.classList.contains('is-open');
-      button.setAttribute('aria-expanded',String(open));
-      panel.setAttribute('aria-hidden',String(!open));
-    };
-    sync();
+    if(activeItem!==item){
+      if(classObserver)classObserver.disconnect();
+      activeItem=item;
+      classObserver=new MutationObserver(()=>sync(item,button,panel));
+      classObserver.observe(item,{attributes:true,attributeFilter:['class']});
+    }
 
     if(!item.dataset.desktopPopoverCompat){
       item.dataset.desktopPopoverCompat='1';
-      const observer=new MutationObserver(sync);
-      observer.observe(item,{attributes:true,attributeFilter:['class']});
-      button.addEventListener('click',()=>requestAnimationFrame(sync));
-      item.addEventListener('mouseenter',()=>requestAnimationFrame(sync));
-      item.addEventListener('mouseleave',()=>requestAnimationFrame(sync));
+      const refresh=()=>requestAnimationFrame(()=>sync(item,button,panel));
+      button.addEventListener('click',refresh);
+      item.addEventListener('mouseenter',refresh);
+      item.addEventListener('mouseleave',refresh);
     }
     return true;
   }
 
   function boot(){
-    if(bind())return;
-    let tries=0;
-    const timer=setInterval(()=>{
-      tries+=1;
-      if(bind()||tries>=40)clearInterval(timer);
-    },25);
+    bind();
+    const root=document.body||document.documentElement;
+    const domObserver=new MutationObserver(()=>bind());
+    domObserver.observe(root,{childList:true,subtree:true});
+    window.addEventListener('load',bind,{once:true});
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
