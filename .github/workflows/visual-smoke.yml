@@ -10,6 +10,7 @@ permissions:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - name: Start local preview server
@@ -137,19 +138,21 @@ jobs:
           PY
       - name: Capture desktop pages
         run: |
+          set -e
           mkdir -p screenshots
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           for spec in 'home|index.html' 'products|products.html' 'downloads|downloads.html' 'contact|contact.html'; do
             name=${spec%%|*}; path=${spec#*|}
-            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=4200 --screenshot="screenshots/$name.png" "http://127.0.0.1:8080/$path"
+            timeout 45s "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=1440,1100 --virtual-time-budget=4200 --screenshot="screenshots/$name.png" "http://127.0.0.1:8080/$path"
           done
       - name: Capture mobile pages
         run: |
+          set -e
           mkdir -p screenshots
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
           for spec in 'home|index.html' 'products|products.html' 'downloads|downloads.html' 'contact|contact.html'; do
             name=${spec%%|*}; path=${spec#*|}
-            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=4200 --screenshot="screenshots/mobile-$name.png" "http://127.0.0.1:8080/$path"
+            timeout 45s "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --window-size=390,844 --virtual-time-budget=4200 --screenshot="screenshots/mobile-$name.png" "http://127.0.0.1:8080/$path"
           done
       - name: Verify desktop and mobile horizontal overflow
         run: |
@@ -189,7 +192,7 @@ jobs:
                           return {
                             client: de.clientWidth,
                             inner: window.innerWidth,
-                            scroll: Math.max(de.scrollWidth, body ? body.scrollWidth : 0)
+                            scroll: Math.max(de.scrollWidth, body ? body.scrollWidth: 0)
                           };
                       ''')
                       overflow = max(0, int(sizes['scroll']) - int(sizes['client']))
