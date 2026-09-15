@@ -2,7 +2,7 @@
   if(document.body.dataset.page!=='admin'||window.__fbAdminDashboard)return;
   window.__fbAdminDashboard=true;
 
-  const ADMIN_STAMP='後台介面版本：2026/09/15 15:32（非正式網站發布時間）';
+  const ADMIN_STAMP='後台介面版本：2026/09/15 15:40（非正式網站發布時間）';
   const setStamp=()=>{const v=document.querySelector('.admin-version-note');if(v)v.textContent=ADMIN_STAMP};
 
   // 主管常用功能放前面，技術性功能留在各管理區內。
@@ -61,6 +61,15 @@
     old?.remove();
   };
 
+  const loadAdminHelper=(src,id)=>{
+    if(document.getElementById(id))return;
+    const s=document.createElement('script');
+    s.id=id;
+    s.src=src;
+    s.defer=true;
+    document.head.appendChild(s);
+  };
+
   const style=()=>{
     if(document.getElementById('adminDashboardStyle'))return;
     const st=document.createElement('style');
@@ -84,6 +93,14 @@
     document.head.appendChild(st);
   };
 
-  const run=()=>{style();build();improveJumpNav();setStamp()};
+  const run=()=>{
+    style();
+    build();
+    improveJumpNav();
+    setStamp();
+    // 補上操作狀態與工作區快速控制，避免後台功能變多後難以操作。
+    loadAdminHelper('assets/js/admin-friendly.js?v=20260915-1540','fbAdminFriendlyLoader');
+    loadAdminHelper('assets/js/admin-workspace-tools.js?v=20260915-1540','fbAdminWorkspaceToolsLoader');
+  };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
