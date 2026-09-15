@@ -102,23 +102,57 @@
     if(!item.dataset.desktopPopoverCompat){
       item.dataset.desktopPopoverCompat='1';
 
-      /* A real pointer click is preceded by mouseenter. Older code toggled the
-       * already-hover-open state back to closed. Capture the click first and
-       * make click semantics deterministic: click always opens the phone card;
-       * mouseleave / outside click still closes it. */
+      /* hoverState only previews the card. Once the user clicks, clickState
+       * takes priority until the pointer leaves, so the second click can close
+       * the card without mouseenter immediately reopening it. */
+      let clickState=null;
+      let openedByHover=false;
+
       button.addEventListener('click',e=>{
         e.preventDefault();
         e.stopImmediatePropagation();
+
+        if(openedByHover){
+          clickState=true;
+          openedByHover=false;
+          openPhone(item,button,panel);
+          return;
+        }
+
+        if(clickState===true||item.classList.contains('is-open')){
+          clickState=false;
+          closePhone(item,button,panel);
+          return;
+        }
+
+        clickState=true;
         openPhone(item,button,panel);
       },true);
 
-      item.addEventListener('mouseenter',()=>openPhone(item,button,panel));
-      item.addEventListener('mouseleave',()=>closePhone(item,button,panel));
-      document.addEventListener('click',e=>{
-        if(!item.contains(e.target))closePhone(item,button,panel);
+      item.addEventListener('mouseenter',()=>{
+        if(clickState===false)return;
+        if(clickState===null)openedByHover=true;
+        openPhone(item,button,panel);
       });
+
+      item.addEventListener('mouseleave',()=>{
+        clickState=null;
+        openedByHover=false;
+        closePhone(item,button,panel);
+      });
+
+      document.addEventListener('click',e=>{
+        if(item.contains(e.target))return;
+        clickState=null;
+        openedByHover=false;
+        closePhone(item,button,panel);
+      });
+
       document.addEventListener('keydown',e=>{
-        if(e.key==='Escape')closePhone(item,button,panel);
+        if(e.key!=='Escape')return;
+        clickState=false;
+        openedByHover=false;
+        closePhone(item,button,panel);
       });
     }
     return true;
