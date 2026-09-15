@@ -55,7 +55,6 @@
     const jump=document.querySelector('.admin-section-jump');
     if(!jump)return;
 
-    // SEO／AI SEO 為高頻查看項，固定放快速列第一個。
     let link=jump.querySelector('[data-seo-ai-jump]');
     if(!link){
       link=document.createElement('a');
@@ -66,7 +65,6 @@
     const first=jump.querySelector('a');
     first?jump.insertBefore(link,first):jump.appendChild(link);
 
-    // 避免快速列同時出現兩個分析入口。
     const old=jump.querySelector('a[href="#adminAnalytics"]:not([data-seo-ai-jump])');
     old?.remove();
   };
@@ -107,9 +105,9 @@
     style();
     build();
     improveJumpNav();
-    // 更新紀錄先載入，時間顯示統一由它提供。
-    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1618','fbAdminUpdateLogLoader');
-    loadAdminHelper('assets/js/admin-backup-status.js?v=20260915-1618','fbAdminBackupStatusLoader');
+    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1622','fbAdminUpdateLogLoader');
+    loadAdminHelper('assets/js/admin-backup-status.js?v=20260915-1620','fbAdminBackupStatusLoader');
+    loadAdminHelper('assets/js/admin-current-task.js?v=20260915-1622','fbAdminCurrentTaskLoader');
     loadAdminHelper('assets/js/admin-friendly.js?v=20260915-1540','fbAdminFriendlyLoader');
     loadAdminHelper('assets/js/admin-workspace-tools.js?v=20260915-1540','fbAdminWorkspaceToolsLoader');
     setTimeout(setStamp,80);
