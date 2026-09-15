@@ -83,6 +83,15 @@
       a.setAttribute('title','點一下直接寄信');
       a.setAttribute('rel','noopener');
     });
+    $$('#adminInquiries a[href^="tel:"]').forEach(a=>a.setAttribute('title','點一下直接撥號'));
+  }
+
+  function injectUtilityStyle(){
+    if($('#amcUtilityStyle'))return;
+    const s=document.createElement('style');
+    s.id='amcUtilityStyle';
+    s.textContent='.inquiry-contact-stack{display:grid;gap:5px}.inquiry-contact-link{display:inline-flex;align-items:center;min-height:30px;width:max-content;max-width:100%;padding:4px 8px;border:1px solid #dce7ec;border-radius:8px;background:#f8fbfc;color:#25647a;text-decoration:none;font-weight:800;overflow-wrap:anywhere}.inquiry-contact-link:hover{background:#edf7f9;border-color:#bcd8df}@media(max-width:820px){.inquiry-contact-stack{gap:7px}.inquiry-contact-link{width:100%;min-height:38px;justify-content:center;text-align:center;background:#fff}}';
+    document.head.appendChild(s);
   }
 
   function enhanceProductTools(){
@@ -128,6 +137,7 @@
   }
 
   function init(){
+    injectUtilityStyle();
     buildMobileChrome();
     applyMode();
     cardizeTables();
