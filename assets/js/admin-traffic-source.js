@@ -12,5 +12,6 @@
   // SEO / AI SEO 延伸面板採獨立模組載入，避免影響既有分析與前台。
   function loadModule(src,id){if(document.getElementById(id))return;const s=document.createElement('script');s.id=id;s.src=src;s.defer=true;document.head.appendChild(s)}
   loadModule('assets/js/admin-seo-center.js?v=20260915-1452','fbAdminSeoCenterLoader');
-  loadModule('assets/js/admin-search-ai-insights.js?v=20260915-1452','fbAdminSearchAiInsightsLoader');
+  loadModule('assets/js/admin-search-ai-insights.js?v=20260915-1508','fbAdminSearchAiInsightsLoader');
+  loadModule('assets/js/admin-search-ai-enhance.js?v=20260915-1508','fbAdminSearchAiEnhanceLoader');
 })();
