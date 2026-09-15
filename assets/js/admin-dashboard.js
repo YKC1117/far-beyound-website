@@ -15,7 +15,6 @@
     }
   };
 
-  // 主管常用功能放前面，技術性功能留在各管理區內。
   const build=()=>{
     if(document.getElementById('adminDashboard'))return;
     const main=document.querySelector('.admin-main'),anchor=document.querySelector('.admin-usage-note');
@@ -54,7 +53,6 @@
   const improveJumpNav=()=>{
     const jump=document.querySelector('.admin-section-jump');
     if(!jump)return;
-
     let link=jump.querySelector('[data-seo-ai-jump]');
     if(!link){
       link=document.createElement('a');
@@ -64,7 +62,6 @@
     }
     const first=jump.querySelector('a');
     first?jump.insertBefore(link,first):jump.appendChild(link);
-
     const old=jump.querySelector('a[href="#adminAnalytics"]:not([data-seo-ai-jump])');
     old?.remove();
   };
@@ -105,7 +102,7 @@
     style();
     build();
     improveJumpNav();
-    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1622','fbAdminUpdateLogLoader');
+    loadAdminHelper('assets/js/admin-update-log.js?v=20260915-1640','fbAdminUpdateLogLoader');
     loadAdminHelper('assets/js/admin-backup-status.js?v=20260915-1620','fbAdminBackupStatusLoader');
     loadAdminHelper('assets/js/admin-current-task.js?v=20260915-1622','fbAdminCurrentTaskLoader');
     loadAdminHelper('assets/js/admin-friendly.js?v=20260915-1540','fbAdminFriendlyLoader');
