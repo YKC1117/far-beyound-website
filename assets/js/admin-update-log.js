@@ -6,9 +6,12 @@
   const $=(s,p=document)=>p.querySelector(s);
 
   const UPDATE_INFO={
-    updatedAt:'2026/09/15 20:20',
+    updatedAt:'2026/09/15 23:54',
     label:'後台更新',
     entries:[
+      {time:'2026/09/15 23:54',type:'網站詢問',text:'新增「匯出目前清單 CSV」，會依目前搜尋與篩選結果匯出詢問 ID、時間、公司／聯絡人、洽詢項目、聯絡方式、Email 通知與詢問內容；尚未讀取資料時不會誤匯出空白檔案。'},
+      {time:'2026/09/15 23:54',type:'產品管理',text:'新增「匯出目前產品 CSV」，依目前產品搜尋與篩選結果匯出品牌、型號、分類、上下架、首頁精選、缺少資料與商品網址，方便盤點、交接與整理。'},
+      {time:'2026/09/15 23:54',type:'版本／快取',text:'後台入口、Dashboard fallback、工作區動態載入與 admin-build.json 統一升級為 20260915-2354，避免入口先顯示舊版時間或動態模組混用舊快取。'},
       {time:'2026/09/15 20:20',type:'版本封口',text:'手機 CMS 最終修正完成後再次更新 build，確保手機第一次開啟後台就載入完整最新版，不混用 20:16 施工中的快取。'},
       {time:'2026/09/15 20:16',type:'手機後台',text:'新增手機專用管理列與抽屜式功能選單，手機不再先看到整段左側選單；目前工作區與未儲存狀態可直接從頂部查看。'},
       {time:'2026/09/15 20:16',type:'產品管理',text:'手機版產品表格改為直式卡片，搜尋、篩選、批次操作與產品動作重新排列；產品編輯抽屜改為全螢幕並保留底部儲存操作。'},
@@ -76,6 +79,6 @@
   }
 
   function run(){style();build()}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true}):run();
   setTimeout(run,500);
 })();
