@@ -40,7 +40,7 @@ jobs:
           rich=load('detail-rich'); software=load('detail-software'); missing=load('detail-missing')
 
           cards=products.select('#productGrid a.product-card')
-          assert len(cards)>=150, f'Product catalog unexpectedly small: {len(cards)}'
+          assert len(cards)>=151, f'Product catalog unexpectedly small: {len(cards)}'
           tokens=[]; problems=[]
           for card in cards:
               href=(card.get('href') or '').strip(); token=parse_qs(urlparse(href).query).get('id',[''])[0]
@@ -73,7 +73,18 @@ jobs:
           expected_line='https://line.me/R/ti/p/@453haosc'
           assert expected_line in [a.get('href','') for a in rail.select('a')], 'Desktop LINE link missing'
           assert expected_line in [a.get('href','') for a in mobile.select('a')], 'Mobile LINE link missing'
-          assert rail.select_one('[data-back-top] .quick-contact-btn'), 'Back-to-top button not integrated into right rail'
+
+          desktop_items=rail.select('.quick-contact-item')
+          mobile_items=mobile.select('.mobile-contact-item')
+          assert len(desktop_items)==3, f'Desktop contact actions expected 3, got {len(desktop_items)}'
+          assert len(mobile_items)==3, f'Mobile contact actions expected 3, got {len(mobile_items)}'
+          desktop_labels=[x.get_text(' ',strip=True) for x in desktop_items]
+          mobile_labels=[x.get_text(' ',strip=True) for x in mobile_items]
+          for labels in [desktop_labels,mobile_labels]:
+              assert any('電話' in x for x in labels), labels
+              assert any('LINE' in x.upper() for x in labels), labels
+              assert any('詢問' in x for x in labels), labels
+          assert not rail.select_one('[data-back-top]'), 'Deprecated TOP action returned to desktop rail'
           assert not home.select_one('.back-top'), 'Legacy standalone back-to-top remains'
 
           assert rich.select_one('.product-detail-visual img'), 'Rich product image missing'
@@ -106,8 +117,8 @@ jobs:
           print('CURATED_SOFTWARE_UROVO=OK')
           print(f'LOCAL_PRODUCT_IMAGES_OK={len(cards)}')
           print('CLICKABLE_BRAND_ENTRIES_OK=12')
-          print('FLOATING_CONTACT_DESKTOP=OK')
-          print('FLOATING_CONTACT_MOBILE=OK')
+          print('FLOATING_CONTACT_DESKTOP=3')
+          print('FLOATING_CONTACT_MOBILE=3')
           print('PRODUCT_DETAIL_BARTENDER=OK')
           print('CONTACT_FORM_FIELDS=OK')
           print(f'DOWNLOAD_TYPE_FILTERS={len(type_buttons)}')
