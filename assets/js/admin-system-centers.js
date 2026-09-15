@@ -9,6 +9,7 @@
     'admin-audit.js','admin-seo-center.js','admin-account-security-ui.js','admin-users-ui.js','admin-security-policy-ui.js',
     'admin-security-tools.js','admin-security-clarity.js','admin-transition-status.js','admin-permissions-ui.js'
   ];
+  const SYSTEM_IDS=new Set(['adminAccessCenter','adminSecurityCenter','adminBackupCenter']);
 
   function ensureAccessBody(){
     let box=document.getElementById('adminAccessCenter');
@@ -58,6 +59,11 @@
     });
   }
 
+  function restoreSystemHash(){
+    const hash=(location.hash||'').slice(1);
+    if(SYSTEM_IDS.has(hash))window.FBAdminWorkspace?.open?.(hash);
+  }
+
   function boot(){
     ensureAccessBody();
     ensureCenter('adminSecurityCenter','系統安全中心','集中處理登入保護、資安政策、登入活動與操作稽核。',[['5 次','登入失敗策略基準'],['15 分','判斷時間窗基準'],['30 分','暫時鎖定時間基準'],['60 分','Session 基準']]);
@@ -65,7 +71,7 @@
     ensureTransitionNote();
     ensureAccessBody();
     load();
-    setTimeout(()=>window.FBAdminWorkspace?.open?.((location.hash||'').slice(1)),120);
+    setTimeout(restoreSystemHash,120);
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,180),{once:true});else setTimeout(boot,180);
