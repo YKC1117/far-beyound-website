@@ -47,5 +47,6 @@
   }
   function contactProductPrefill(){if(document.body.dataset.page!=='contact')return;const item=params().get('item'),select=document.getElementById('subject');if(!item||!select)return;const existing=[...select.options].find(o=>o.value===item||o.textContent===item);if(existing){select.value=existing.value;return}const option=document.createElement('option');option.value=`產品洽詢｜${item}`;option.textContent=`產品洽詢｜${item}`;option.selected=true;select.appendChild(option)}
   function run(){style();logo();currentNav();quickContact();contactProductPrefill();productPageQuality()}
-  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,120);setTimeout(run,700)});if(document.readyState!=='loading'){setTimeout(run,0);setTimeout(run,700)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
+  window.addEventListener('farbeyound:datachange',run);
 })();
