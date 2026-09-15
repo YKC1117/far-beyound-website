@@ -145,9 +145,77 @@ jobs:
           done
       - name: Capture mobile pages
         run: |
+          mkdir -p screenshots
           CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=4200 --screenshot=screenshots/mobile-home.png http://127.0.0.1:8080/index.html
-          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=4200 --screenshot=screenshots/mobile-products.png http://127.0.0.1:8080/products.html
+          for spec in 'home|index.html' 'products|products.html' 'downloads|downloads.html' 'contact|contact.html'; do
+            name=${spec%%|*}; path=${spec#*|}
+            "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=4200 --screenshot="screenshots/mobile-$name.png" "http://127.0.0.1:8080/$path"
+          done
+      - name: Verify desktop and mobile horizontal overflow
+        run: |
+          pip install --disable-pip-version-check selenium >/dev/null
+          python3 - <<'PY'
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+
+          pages = {
+              'home': 'index.html',
+              'products': 'products.html',
+              'downloads': 'downloads.html',
+              'contact': 'contact.html',
+          }
+          viewports = {
+              'desktop': (1440, 1100),
+              'mobile': (390, 844),
+          }
+
+          options = Options()
+          options.add_argument('--headless=new')
+          options.add_argument('--no-sandbox')
+          options.add_argument('--disable-gpu')
+          options.add_argument('--hide-scrollbars')
+          driver = webdriver.Chrome(options=options)
+          failures = []
+          try:
+              for mode, (width, height) in viewports.items():
+                  driver.set_window_size(width, height)
+                  for name, path in pages.items():
+                      driver.get(f'http://127.0.0.1:8080/{path}')
+                      time.sleep(1.2)
+                      sizes = driver.execute_script('''
+                          const de = document.documentElement;
+                          const body = document.body;
+                          return {
+                            client: de.clientWidth,
+                            inner: window.innerWidth,
+                            scroll: Math.max(de.scrollWidth, body ? body.scrollWidth : 0)
+                          };
+                      ''')
+                      overflow = max(0, int(sizes['scroll']) - int(sizes['client']))
+                      print(f'{mode.upper()}_{name.upper()} client={sizes["client"]} scroll={sizes["scroll"]} overflow={overflow}')
+                      if overflow > 2:
+                          culprits = driver.execute_script('''
+                              const limit = document.documentElement.clientWidth + 2;
+                              return Array.from(document.querySelectorAll('body *'))
+                                .map(el => {
+                                  const r = el.getBoundingClientRect();
+                                  return {tag: el.tagName, id: el.id || '', cls: String(el.className || '').slice(0,80), right: Math.round(r.right), width: Math.round(r.width)};
+                                })
+                                .filter(x => x.right > limit && x.width > 0)
+                                .slice(0, 12);
+                          ''')
+                          failures.append((mode, name, sizes, culprits))
+          finally:
+              driver.quit()
+
+          if failures:
+              for mode, name, sizes, culprits in failures:
+                  print(f'OVERFLOW_FAIL {mode}/{name}: {sizes}; culprits={culprits}')
+              raise SystemExit(f'Horizontal overflow detected on {len(failures)} viewport/page combinations')
+
+          print('RESPONSIVE_HORIZONTAL_OVERFLOW=PASS')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: website-screenshots
