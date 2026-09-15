@@ -79,6 +79,7 @@
   }
 
   function run(){style();build()}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true}):run();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});
+  else run();
   setTimeout(run,500);
 })();
