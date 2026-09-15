@@ -1,14 +1,13 @@
-/* Desktop phone compatibility and meeting-stability layer.
- * final-fixes.js remains the DOM owner for the quick-contact rail.
- * Keep this layer idempotent: no whole-page polling/repaint loops.
+/* Desktop phone interaction authority.
+ * final-fixes.js builds the quick-contact DOM; this file owns the final
+ * desktop phone accessibility/state contract so hover and click never cancel
+ * each other during the same pointer interaction.
  */
 (function(){
   'use strict';
   if(window.__fbDesktopPhonePopoverCompat)return;
   window.__fbDesktopPhonePopoverCompat=true;
 
-  /* The document body is already fully parsed when this bottom script runs.
-   * Reveal it immediately instead of waiting for overlapping delayed prepaint timers. */
   document.body?.classList.add('fb-public-ready');
 
   let activeItem=null;
@@ -62,6 +61,16 @@
     panel.style.setProperty('z-index','120','important');
   }
 
+  function openPhone(item,button,panel){
+    item.classList.add('is-open');
+    sync(item,button,panel);
+  }
+
+  function closePhone(item,button,panel){
+    item.classList.remove('is-open');
+    sync(item,button,panel);
+  }
+
   function bind(){
     if(document.body?.dataset?.page==='admin')return false;
     document.body?.classList.add('fb-public-ready');
@@ -92,10 +101,25 @@
 
     if(!item.dataset.desktopPopoverCompat){
       item.dataset.desktopPopoverCompat='1';
-      const refresh=()=>requestAnimationFrame(()=>{lockRail(rail);normalizePhonePanel(panel);sync(item,button,panel)});
-      button.addEventListener('click',refresh);
-      item.addEventListener('mouseenter',refresh);
-      item.addEventListener('mouseleave',refresh);
+
+      /* A real pointer click is preceded by mouseenter. Older code toggled the
+       * already-hover-open state back to closed. Capture the click first and
+       * make click semantics deterministic: click always opens the phone card;
+       * mouseleave / outside click still closes it. */
+      button.addEventListener('click',e=>{
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        openPhone(item,button,panel);
+      },true);
+
+      item.addEventListener('mouseenter',()=>openPhone(item,button,panel));
+      item.addEventListener('mouseleave',()=>closePhone(item,button,panel));
+      document.addEventListener('click',e=>{
+        if(!item.contains(e.target))closePhone(item,button,panel);
+      });
+      document.addEventListener('keydown',e=>{
+        if(e.key==='Escape')closePhone(item,button,panel);
+      });
     }
     return true;
   }
@@ -104,8 +128,6 @@
     stabilizeHero();
     if(bind())return;
 
-    /* final-fixes.js may create the rail later in the same DOMContentLoaded turn.
-     * Observe only until it exists, then disconnect permanently. */
     const root=document.body||document.documentElement;
     const domObserver=new MutationObserver(()=>{
       if(bind())domObserver.disconnect();
