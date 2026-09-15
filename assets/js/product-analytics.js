@@ -14,7 +14,10 @@
     let host='';
     try{host=document.referrer?new URL(document.referrer).hostname.toLowerCase():''}catch(_){host=''}
     if(!host||host===location.hostname.toLowerCase())return {referrer_domain:'',traffic_source:'direct'};
-    const ai=['chatgpt.com','openai.com','perplexity.ai','claude.ai','gemini.google.com','copilot.microsoft.com','you.com'];
+    const ai=[
+      'chatgpt.com','openai.com','perplexity.ai','claude.ai','gemini.google.com',
+      'copilot.microsoft.com','grok.com','x.ai','you.com','poe.com','deepseek.com','meta.ai'
+    ];
     if(ai.some(d=>host===d||host.endsWith('.'+d)))return {referrer_domain:host.slice(0,180),traffic_source:'ai'};
     if(/(^|\.)google\./.test(host))return {referrer_domain:host.slice(0,180),traffic_source:'google'};
     if(host==='bing.com'||host.endsWith('.bing.com'))return {referrer_domain:host.slice(0,180),traffic_source:'bing'};
