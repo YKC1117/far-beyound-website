@@ -119,7 +119,7 @@
       <div id="saiBrief" class="sai-brief"><h4>本期重點摘要</h4><ul><li>正在等待真實統計資料。</li></ul></div>
       <div class="sai-warning"><b>Google 關鍵字：</b>目前尚未連接公司 Google Search Console，因此不顯示虛構的曝光、CTR、平均排名或關鍵字名次。正式串接後，這裡才會呈現 Google 官方搜尋資料。</div>
       <div class="sai-block"><h4>AI 品牌導流</h4><div class="sai-table-wrap"><table class="sai-table"><thead><tr><th>AI 平台</th><th>本期導流</th><th>前期</th><th>變化</th><th>資料來源</th><th>資料狀態</th></tr></thead><tbody id="saiAiRows"><tr><td colspan="6">尚未讀取資料。</td></tr></tbody></table></div></div>
-      <div class="sai-note"><b>資料統計來源：</b><br>①「有效瀏覽／產品熱門度」來自網站產品頁自己的匿名瀏覽事件統計，並以 30 分鐘同產品冷卻避免短時間重複計數。<br>②「Google／Bing／AI／社群導流」依瀏覽器提供的 Referrer 網域分類，資料送至目前網站分析後端彙總。<br>③「ChatGPT、Gemini、Copilot、Perplexity、Claude、Grok 等 AI 品牌」只有在 Referrer 能辨識來源網域時才能細分；無法辨識時會列為「AI（來源未細分）」。<br>④「Google 關鍵字曝光、點擊、CTR、平均排名」必須以公司 Google Search Console 為準，目前尚未串接。<br>⑤「AI 提及／引用萬里資訊」與「AI 導流」是不同指標；目前只統計可辨識的導流，不把未量測的 AI 回答提及次數當成真實數據。</div>
+      <div class="sai-note"><b>資料統計來源：</b><br>①「有效瀏覽／產品熱門度」來自網站產品頁自己的匿名瀏覽事件統計，並以 30 分鐘同產品冷卻避免短時間重複計數。<br>②「Google／Bing／AI／社群導流」依瀏覽器提供的 Referrer 網域分類，資料送至目前網站分析後端彙總。<br>③「ChatGPT、Gemini、Copilot、Perplexity、Claude、Grok 等 AI 品牌」由分析後端依 Referrer 網域分組後再辨識品牌；無法辨識時會列為「AI（來源未細分）」。<br>④「Google 關鍵字曝光、點擊、CTR、平均排名」必須以公司 Google Search Console 為準，目前尚未串接。<br>⑤「AI 提及／引用萬里資訊」與「AI 導流」是不同指標；目前只統計可辨識的導流，不把未量測的 AI 回答提及次數當成真實數據。</div>
     `;
     const status=$('#analyticsStatus');
     status?.after(panel);
@@ -136,12 +136,16 @@
     if(!sum||!body||!brief)return;
     body.innerHTML='<tr><td colspan="6">正在讀取統計資料…</td></tr>';
     try{
-      const data=await load(days),products=Array.isArray(data.rows)?data.rows:[],sources=Array.isArray(data.sources)?data.sources:[];
+      const data=await load(days);
+      const products=Array.isArray(data.rows)?data.rows:[];
+      const sources=Array.isArray(data.sources)?data.sources:[];
+      const sourceDomains=Array.isArray(data.source_domains)?data.source_domains:[];
       const total=products.reduce((n,x)=>n+(Number(x.views)||0),0);
       const prev=products.reduce((n,x)=>n+(Number(x.previous_views)||0),0);
-      const aiRows=sources.filter(x=>x.traffic_source==='ai'||platformOf(x));
-      const ai=aiRows.reduce((n,x)=>n+(Number(x.views)||0),0);
-      const aiPrev=aiRows.reduce((n,x)=>n+(Number(x.previous_views)||0),0);
+      const aiSource=sources.find(x=>x.traffic_source==='ai');
+      const ai=Number(aiSource?.views)||0;
+      const aiPrev=Number(aiSource?.previous_views)||0;
+      const aiRows=sourceDomains.filter(x=>x.traffic_source==='ai'||platformOf(x));
       const platforms=aggregatePlatforms(aiRows);
       const named=platforms.filter(x=>!['unknown','other'].includes(x.key));
       const product=topProduct(products),brand=topBrand(products);
@@ -149,12 +153,12 @@
         <div class="sai-card"><b>${total}</b><span>本期有效瀏覽｜較前期 ${esc(pct(total,prev))}</span><small>來源：網站匿名產品瀏覽事件</small></div>
         <div class="sai-card"><b>${ai}</b><span>AI 助理導流｜較前期 ${esc(pct(ai,aiPrev))}</span><small>來源：瀏覽器 Referrer＋站內分析後端</small></div>
         <div class="sai-card"><b>待串接</b><span>Google Search Console 關鍵字</span><small>來源：Google Search Console（尚未連接）</small></div>
-        <div class="sai-card"><b>${named.length||0}</b><span>本期可辨識 AI 品牌數</span><small>來源：可辨識 AI Referrer 網域</small></div>`;
+        <div class="sai-card"><b>${named.length||0}</b><span>本期可辨識 AI 品牌數</span><small>來源：Referrer 網域明細統計</small></div>`;
       brief.innerHTML=buildBrief({total,prev,ai,aiPrev,platforms,product,brand}).map(x=>`<li>${esc(x)}</li>`).join('');
-      body.innerHTML=platforms.length?platforms.map(x=>`<tr><td><b>${esc(x.label)}</b></td><td>${x.views}</td><td>${x.previous_views}</td><td>${esc(pct(x.views,x.previous_views))}</td><td><span class="sai-source">Referrer 網域</span></td><td>${x.key==='unknown'?'Referrer 未提供品牌細節':'Referrer 可辨識'}</td></tr>`).join(''):'<tr><td colspan="6">本期尚無可辨識 AI 導流資料。</td></tr>';
+      body.innerHTML=platforms.length?platforms.map(x=>`<tr><td><b>${esc(x.label)}</b></td><td>${x.views}</td><td>${x.previous_views}</td><td>${esc(pct(x.views,x.previous_views))}</td><td><span class="sai-source">Referrer 網域明細</span></td><td>${x.key==='unknown'?'Referrer 未提供品牌細節':'Referrer 可辨識'}</td></tr>`).join(''):'<tr><td colspan="6">本期尚無可辨識 AI 導流資料。</td></tr>';
     }catch(err){
       const login=String(err?.message||'')==='login_required'||String(err?.message||'')==='unauthorized';
-      sum.innerHTML=`<div class="sai-card"><b>—</b><span>本期有效瀏覽</span><small>來源：網站匿名產品瀏覽事件</small></div><div class="sai-card"><b>—</b><span>AI 助理導流</span><small>來源：瀏覽器 Referrer＋站內分析後端</small></div><div class="sai-card"><b>待串接</b><span>Google Search Console 關鍵字</span><small>來源：Google Search Console（尚未連接）</small></div><div class="sai-card"><b>—</b><span>AI 品牌來源</span><small>來源：可辨識 AI Referrer 網域</small></div>`;
+      sum.innerHTML=`<div class="sai-card"><b>—</b><span>本期有效瀏覽</span><small>來源：網站匿名產品瀏覽事件</small></div><div class="sai-card"><b>—</b><span>AI 助理導流</span><small>來源：瀏覽器 Referrer＋站內分析後端</small></div><div class="sai-card"><b>待串接</b><span>Google Search Console 關鍵字</span><small>來源：Google Search Console（尚未連接）</small></div><div class="sai-card"><b>—</b><span>AI 品牌來源</span><small>來源：Referrer 網域明細統計</small></div>`;
       brief.innerHTML=`<li>${login?'登入具備「流量分析」權限的個人帳號後，才會顯示真實統計摘要。':'統計資料目前無法讀取，未顯示任何推估值。'}</li>`;
       body.innerHTML=`<tr><td colspan="6">${login?'請登入具備「流量分析」權限的個人帳號後查看真實統計。':'統計資料目前無法讀取。'}</td></tr>`;
     }
