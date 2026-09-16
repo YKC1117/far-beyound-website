@@ -1439,3 +1439,224 @@ html body.fb-approved-skin-20260916 .footer-bottom {
     transition-duration: .01ms !important;
   }
 }
+
+/*
+ * Runtime visual authority
+ * The existing site appends legacy presentation styles after page load. These
+ * selectors intentionally outrank those visual-only declarations while leaving
+ * visibility, data rendering, event handling, and application state untouched.
+ */
+html body.fb-approved-skin-20260916 .site-header,
+html body.fb-approved-skin-20260916 .site-header.scrolled {
+  border-bottom-color: rgba(255,255,255,.14) !important;
+  background: #17191a !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916 .header-inner,
+html body.fb-approved-skin-20260916 .site-header.scrolled .header-inner {
+  height: 84px !important;
+  min-height: 84px !important;
+}
+
+html body.fb-approved-skin-20260916 .header-inner .brand-copy strong,
+html body.fb-approved-skin-20260916 .site-header.scrolled .header-inner .brand-copy strong {
+  color: #f1eee8 !important;
+  font-weight: 700 !important;
+}
+
+html body.fb-approved-skin-20260916 .header-inner .brand-copy small,
+html body.fb-approved-skin-20260916 .site-header.scrolled .header-inner .brand-copy small {
+  color: #aaa8a2 !important;
+}
+
+html body.fb-approved-skin-20260916 .desktop-nav > a,
+html body.fb-approved-skin-20260916 .desktop-nav > .nav-item > a,
+html body.fb-approved-skin-20260916 .site-header.scrolled .desktop-nav > a,
+html body.fb-approved-skin-20260916 .site-header.scrolled .desktop-nav > .nav-item > a {
+  color: #d1cec7 !important;
+}
+
+html body.fb-approved-skin-20260916 .desktop-nav > a:hover,
+html body.fb-approved-skin-20260916 .desktop-nav > .nav-item > a:hover,
+html body.fb-approved-skin-20260916 .desktop-nav .current > a,
+html body.fb-approved-skin-20260916 .desktop-nav > a.current {
+  color: #f5a16a !important;
+}
+
+html body.fb-approved-skin-20260916 .header-actions .btn,
+html body.fb-approved-skin-20260916 .header-actions .btn-primary {
+  border-color: #f28b4b !important;
+  border-radius: 2px !important;
+  background: #f28b4b !important;
+  color: #17191a !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero.v2-home-hero {
+  min-height: 610px !important;
+  padding: 58px 0 46px !important;
+  background: #17191a !important;
+  color: #f5f1e9 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero-copy h1,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-copy h1 span {
+  color: #f5f1e9 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero-copy h1 em {
+  color: #f19a62 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero-copy > p {
+  color: #c3bdb4 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v5-hero-meta,
+html body.fb-approved-skin-20260916[data-page="home"] .v5-hero-meta span,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-copy > .eyebrow {
+  border-color: rgba(255,255,255,.28) !important;
+  color: #ceac91 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero-actions .btn-primary {
+  border-color: #f5a16a !important;
+  background: #f5a16a !important;
+  color: #18232a !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero-actions .btn-secondary {
+  border-color: rgba(255,255,255,.34) !important;
+  background: transparent !important;
+  color: #eee7dc !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero-trust,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-trust a {
+  border-color: rgba(255,255,255,.14) !important;
+  color: #b7afa5 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side > a,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-card,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side {
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .real-product-media,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .home-photo-main,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .home-photo-tile {
+  border-radius: 0 !important;
+  background: rgba(255,255,255,.96) !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v5-credibility {
+  border-color: rgba(255,255,255,.10) !important;
+  background: #222423 !important;
+  color: #ddd7ce !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] main > .section {
+  padding: 68px 0 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .category-card,
+html body.fb-approved-skin-20260916[data-page="home"] .product-card,
+html body.fb-approved-skin-20260916[data-page="home"] .solution-card,
+html body.fb-approved-skin-20260916[data-page="home"] .v5-case-card {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] #homeNews .news-row:hover {
+  border-radius: 0 !important;
+  background: rgba(255,255,255,.04) !important;
+}
+
+html body.fb-approved-skin-20260916 .page-hero,
+html body.fb-approved-skin-20260916 .downloads-hero,
+html body.fb-approved-skin-20260916 .guide-hero {
+  border-bottom-color: rgba(255,255,255,.14) !important;
+  background: #242827 !important;
+  color: #f2ede5 !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916 .page-hero h1,
+html body.fb-approved-skin-20260916 .downloads-hero h1,
+html body.fb-approved-skin-20260916 .guide-hero h1 {
+  color: #f5f1e9 !important;
+}
+
+html body.fb-approved-skin-20260916 .page-hero p,
+html body.fb-approved-skin-20260916 .downloads-hero p,
+html body.fb-approved-skin-20260916 .guide-hero p {
+  color: #c2bbb1 !important;
+}
+
+html body.fb-approved-skin-20260916 .page-hero .eyebrow,
+html body.fb-approved-skin-20260916 .downloads-hero .eyebrow,
+html body.fb-approved-skin-20260916 .guide-hero .eyebrow {
+  color: #f5a16a !important;
+}
+
+html body.fb-approved-skin-20260916 .page-hero .v5-page-meta span {
+  border-color: rgba(255,255,255,.26) !important;
+  background: rgba(255,255,255,.04) !important;
+  color: #eadfd2 !important;
+}
+
+html body.fb-approved-skin-20260916 .cta-band {
+  border-radius: 0 !important;
+  background: #b96939 !important;
+  color: #191b1a !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916 .site-footer {
+  background: #18282f !important;
+  color: #d0dce1 !important;
+}
+
+html body.fb-approved-skin-20260916 .footer-location {
+  margin: 10px 0 0 !important;
+  padding: 13px !important;
+  border-color: #526770 !important;
+  border-radius: 5px !important;
+  background: #20343d !important;
+}
+
+html body.fb-approved-skin-20260916 .footer-location-head small {
+  color: #ffc196 !important;
+}
+
+@media (max-width: 980px) {
+  html body.fb-approved-skin-20260916 .header-inner,
+  html body.fb-approved-skin-20260916 .site-header.scrolled .header-inner {
+    height: 72px !important;
+    min-height: 72px !important;
+  }
+
+  html body.fb-approved-skin-20260916[data-page="home"] .hero.v2-home-hero {
+    min-height: 0 !important;
+    padding: 48px 0 42px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  html body.fb-approved-skin-20260916[data-page="home"] .hero.v2-home-hero {
+    padding: 38px 0 34px !important;
+  }
+
+  html body.fb-approved-skin-20260916[data-page="home"] main > .section {
+    padding: 52px 0 !important;
+  }
+}
