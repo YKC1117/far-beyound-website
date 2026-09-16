@@ -1,0 +1,135 @@
+name: Runtime RWD gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-rwd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start local preview server
+        run: |
+          python3 -m http.server 8080 >/tmp/farbeyound-rwd-http.log 2>&1 &
+          sleep 2
+
+      - name: Check 7 viewports, overflow and browser errors
+        run: |
+          set -o pipefail
+          pip install --disable-pip-version-check selenium >/dev/null
+          python3 - <<'PY' | tee qa-rwd-report.txt
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+
+          pages = {
+              'home': 'index.html',
+              'products': 'products.html',
+              'downloads': 'downloads.html',
+              'contact': 'contact.html',
+          }
+          viewports = {
+              'mobile-375': (375, 812),
+              'mobile-390': (390, 844),
+              'mobile-430': (430, 932),
+              'tablet-768': (768, 1024),
+              'desktop-1366': (1366, 900),
+              'desktop-1440': (1440, 1100),
+              'desktop-1920': (1920, 1080),
+          }
+
+          options = Options()
+          options.add_argument('--headless=new')
+          options.add_argument('--no-sandbox')
+          options.add_argument('--disable-gpu')
+          options.add_argument('--disable-dev-shm-usage')
+          options.add_argument('--hide-scrollbars')
+          options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
+          driver = webdriver.Chrome(options=options)
+          failures = []
+          environment_warnings = []
+          try:
+              for mode, (width, height) in viewports.items():
+                  driver.set_window_size(width, height)
+                  for name, path in pages.items():
+                      driver.get(f'http://127.0.0.1:8080/{path}')
+                      time.sleep(1.0)
+                      state = driver.execute_script('''
+                          const de = document.documentElement;
+                          const body = document.body;
+                          const visible = el => {
+                            if (!el) return false;
+                            const s = getComputedStyle(el), r = el.getBoundingClientRect();
+                            return s.display !== 'none' && s.visibility !== 'hidden' && r.width > 0 && r.height > 0;
+                          };
+                          return {
+                            client: de.clientWidth,
+                            scroll: Math.max(de.scrollWidth, body ? body.scrollWidth : 0),
+                            header: !!document.querySelector('#siteHeader'),
+                            footer: !!document.querySelector('#siteFooter'),
+                            skin: document.body.classList.contains('fb-approved-skin-20260916'),
+                            mainVisible: visible(document.querySelector('main'))
+                          };
+                      ''')
+                      overflow = max(0, int(state['scroll']) - int(state['client']))
+                      if overflow > 2:
+                          failures.append(f'{mode}/{name}: horizontal overflow {overflow}px')
+                      if not state['header'] or not state['footer'] or not state['skin'] or not state['mainVisible']:
+                          failures.append(f'{mode}/{name}: shell/skin/main visibility check failed: {state}')
+
+                      js_errors = []
+                      page_warnings = []
+                      for entry in driver.get_log('browser'):
+                          if entry.get('level') != 'SEVERE':
+                              continue
+                          message = entry.get('message', '')
+                          if 'chrome-extension://' in message:
+                              continue
+                          # Local CI intentionally runs on 127.0.0.1. Production cloud-sync only allows
+                          # the GitHub Pages origin, so its local CORS/fetch failure is an environment warning.
+                          expected_local_cloud_sync = (
+                              'papqrnqbfauwuipjwwdh.supabase.co/functions/v1/site-state' in message
+                              and ('blocked by CORS policy' in message or 'Failed to load resource:' in message)
+                          ) or ('[cloud-sync] pull failed' in message and 'Failed to fetch' in message)
+                          if expected_local_cloud_sync:
+                              page_warnings.append(message)
+                              continue
+                          js_errors.append(message)
+                      if js_errors:
+                          failures.append(f'{mode}/{name}: browser JS/runtime errors: {js_errors[:4]}')
+                      if page_warnings:
+                          environment_warnings.extend(f'{mode}/{name}: {x}' for x in page_warnings[:4])
+                      print(f'RWD {mode}/{name}: overflow={overflow} skin={state["skin"]} js_errors={len(js_errors)} env_warnings={len(page_warnings)}')
+          finally:
+              driver.quit()
+
+          if environment_warnings:
+              print(f'EXPECTED_LOCAL_ENV_WARNINGS={len(environment_warnings)}')
+              for item in environment_warnings[:12]:
+                  print('WARN:', item)
+
+          if failures:
+              print('RUNTIME_RWD_GATE=FAIL')
+              for item in failures:
+                  print('ERROR:', item)
+              raise SystemExit(1)
+
+          print('RUNTIME_RWD_GATE=PASS')
+          print(f'VIEWPORTS={len(viewports)}')
+          print(f'PAGE_VIEWPORT_COMBINATIONS={len(viewports) * len(pages)}')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-rwd-report
+          path: qa-rwd-report.txt
+          retention-days: 3
