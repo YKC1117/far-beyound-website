@@ -68,6 +68,10 @@ jobs:
           print('HTML references OK')
           PY
 
+      - name: Run public site integrity audit
+        shell: bash
+        run: python tools/audit_public_site_integrity.py
+
       - name: Check required production files
         shell: bash
         run: |
