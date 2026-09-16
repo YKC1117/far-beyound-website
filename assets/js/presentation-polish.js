@@ -1,4 +1,7 @@
 (function(){
+  if(window.__fbPresentationPolishStable)return;
+  window.__fbPresentationPolishStable=true;
+
   let sanitizing=false;
   const TAIPEI_ADDRESS='新北市中和區中山路二段351號10樓之1';
   const TAINAN_ADDRESS='台南市永康區中華路425號4樓之18';
@@ -121,13 +124,6 @@
     sanitizePublicText();
   }
 
-  function watchPublicCopy(){
-    if(document.body.dataset.page==='admin'||window.__fbCopyObserver)return;
-    window.__fbCopyObserver=true;
-    const ob=new MutationObserver(()=>queueMicrotask(()=>{sanitizePublicText();polishFooter()}));
-    ob.observe(document.body,{childList:true,subtree:true,characterData:true});
-  }
-
   function attachBackTop(){
     if(document.body.dataset.page==='admin')return;
     const rail=document.querySelector('.quick-contact');
@@ -135,7 +131,7 @@
     const old=rail.querySelector('.back-top');if(old)old.remove();
     const item=document.createElement('div');item.className='quick-contact-item';item.dataset.backTop='1';
     item.innerHTML='<button type="button" class="quick-contact-btn" aria-label="回到頁首" title="回到頁首"><span class="quick-back-arrow" aria-hidden="true">↑</span><span>TOP</span></button>';
-    item.querySelector('button').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+    item.querySelector('button')?.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
     rail.appendChild(item);
   }
 
@@ -145,7 +141,27 @@
     if(success)success.innerHTML='<b>感謝您的詢問</b><br>我們將依您提供的聯絡資料與需求內容協助確認後續。';
   }
 
-  function run(){styles();cleanCopy();watchPublicCopy();attachBackTop();contactNote()}
-  document.addEventListener('DOMContentLoaded',run,{once:true});
-  if(document.readyState!=='loading')run();
+  let refreshQueued=false;
+  function refresh(){
+    if(document.body.dataset.page==='admin'||refreshQueued)return;
+    refreshQueued=true;
+    requestAnimationFrame(()=>{
+      refreshQueued=false;
+      cleanCopy();
+      attachBackTop();
+      contactNote();
+    });
+  }
+
+  function run(){
+    styles();
+    refresh();
+    setTimeout(refresh,180);
+    setTimeout(refresh,650);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});
+  else run();
+
+  window.addEventListener('farbeyound:datachange',()=>setTimeout(refresh,60));
 })();
