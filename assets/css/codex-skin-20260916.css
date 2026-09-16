@@ -1,0 +1,219 @@
+/* 萬里資訊官網新版視覺皮膚｜2026-09-16
+   僅覆寫公開網站外觀，不修改資料、連結、功能或後台。 */
+
+body[data-page]:not([data-page="admin"]){
+  --skin-bg:#f2f5f6;
+  --skin-surface:#ffffff;
+  --skin-soft:#e8f0f1;
+  --skin-soft-2:#f8faf9;
+  --skin-ink:#152a38;
+  --skin-muted:#61727c;
+  --skin-line:#d6e0e3;
+  --skin-navy:#0b2639;
+  --skin-navy-2:#10364c;
+  --skin-accent:#147f78;
+  --skin-accent-2:#2b9a8e;
+  --skin-accent-soft:#dcefeb;
+  --skin-shadow:0 14px 36px rgba(11,38,57,.09);
+  --skin-radius:16px;
+  background:var(--skin-bg);
+  color:var(--skin-ink);
+}
+
+body[data-page]:not([data-page="admin"]) .container{width:min(calc(100% - 48px),1220px)}
+body[data-page]:not([data-page="admin"]) .eyebrow{color:var(--skin-accent);font-weight:800;letter-spacing:.15em}
+body[data-page]:not([data-page="admin"]) .section{padding:78px 0;background:var(--skin-bg)}
+body[data-page]:not([data-page="admin"]) .section-white{background:var(--skin-surface)}
+body[data-page]:not([data-page="admin"]) .section-dark{background:var(--skin-navy);color:#fff}
+body[data-page]:not([data-page="admin"]) .section-head{margin-bottom:30px;border-bottom:1px solid var(--skin-line);padding-bottom:22px}
+body[data-page]:not([data-page="admin"]) .section-head h2{color:var(--skin-ink);font-size:clamp(28px,3.2vw,42px);letter-spacing:-.025em}
+body[data-page]:not([data-page="admin"]) .section-head p{color:var(--skin-muted)}
+body[data-page]:not([data-page="admin"]) .section-dark .section-head{border-color:rgba(255,255,255,.15)}
+body[data-page]:not([data-page="admin"]) .section-dark .section-head h2{color:#fff}
+body[data-page]:not([data-page="admin"]) .section-dark .section-head p{color:#c4d2d9}
+
+/* 頂部資訊列與主導覽 */
+body[data-page]:not([data-page="admin"]) .topbar{background:#071d2d;color:#d7e1e6;border-bottom:1px solid rgba(255,255,255,.08)}
+body[data-page]:not([data-page="admin"]) .topbar-inner{min-height:38px}
+body[data-page]:not([data-page="admin"]) .site-header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--skin-line);backdrop-filter:blur(16px)}
+body[data-page]:not([data-page="admin"]) .site-header.scrolled{box-shadow:0 8px 28px rgba(11,38,57,.08)}
+body[data-page]:not([data-page="admin"]) .header-inner{height:78px}
+body[data-page]:not([data-page="admin"]) .brand-copy strong{color:var(--skin-navy);font-weight:800}
+body[data-page]:not([data-page="admin"]) .desktop-nav>a,
+body[data-page]:not([data-page="admin"]) .nav-item>a{color:#263a46;font-weight:700}
+body[data-page]:not([data-page="admin"]) .desktop-nav>a:after,
+body[data-page]:not([data-page="admin"]) .nav-item>a:after{background:var(--skin-accent);height:3px;bottom:15px}
+body[data-page]:not([data-page="admin"]) .mega-menu{border-color:var(--skin-line);border-radius:0 0 16px 16px;box-shadow:0 22px 55px rgba(11,38,57,.15)}
+body[data-page]:not([data-page="admin"]) .mega-card{border-color:var(--skin-line);border-radius:10px;background:#fff}
+body[data-page]:not([data-page="admin"]) .mega-card:hover{background:var(--skin-soft-2);border-color:#8dbdb7}
+body[data-page]:not([data-page="admin"]) .btn{border-radius:9px;font-weight:800}
+body[data-page]:not([data-page="admin"]) .btn-primary{background:var(--skin-accent);color:#fff}
+body[data-page]:not([data-page="admin"]) .btn-primary:hover{background:#0e6e68}
+
+/* 首頁主視覺：維持橫向，不改既有產品與連結 */
+body[data-page="home"] .hero.v2-home-hero{min-height:570px;background:linear-gradient(112deg,#0a2234 0%,#0d3047 55%,#144f57 100%)}
+body[data-page="home"] .hero.v2-home-hero:before{background:linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px}
+body[data-page="home"] .hero-inner{grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);gap:56px;padding:70px 0}
+body[data-page="home"] .hero-copy h1{font-size:clamp(42px,4.7vw,66px);line-height:1.08;margin:13px 0 22px}
+body[data-page="home"] .hero-copy h1 em{color:#8bd8cf}
+body[data-page="home"] .hero-copy>p{color:#d2dde3;font-size:16px;line-height:1.9}
+body[data-page="home"] .hero-trust{padding-top:18px;border-top:1px solid rgba(255,255,255,.14)}
+body[data-page="home"] .hero-trust a{color:#dbe7eb}
+body[data-page="home"] .v2-hero-products{border-radius:14px!important;box-shadow:0 28px 65px rgba(0,0,0,.24)!important;overflow:hidden}
+body[data-page="home"] .v2-stage-main,
+body[data-page="home"] .v2-stage-side a{border-radius:0!important}
+
+/* 首頁區塊採深淺交錯，避免整站同色單調 */
+body[data-page="home"] .v5-credibility{background:#fff;border-top:1px solid var(--skin-line);border-bottom:1px solid var(--skin-line)}
+body[data-page="home"] .brand-portfolio{background:var(--skin-soft-2);border-bottom:1px solid var(--skin-line)}
+body[data-page="home"] .v2-service-strip{background:var(--skin-navy)}
+body[data-page="home"] .v2-service-item{border-color:rgba(255,255,255,.13)!important;color:#fff!important;background:transparent!important}
+body[data-page="home"] .v2-service-item b{color:#fff!important}
+body[data-page="home"] .v2-service-item small{color:#b9cbd3!important}
+body[data-page="home"] .v2-service-no{color:#73c9bf!important}
+body[data-page="home"] main>.section:nth-of-type(5){background:#fff}
+body[data-page="home"] main>.section:nth-of-type(6){background:var(--skin-bg)}
+body[data-page="home"] .v5-case-section{background:#fff}
+body[data-page="home"] main>.section:nth-last-of-type(1){background:var(--skin-soft-2)}
+
+/* 卡片與列表：增加層次與閱讀對比 */
+body[data-page]:not([data-page="admin"]) .category-card,
+body[data-page]:not([data-page="admin"]) .product-card,
+body[data-page]:not([data-page="admin"]) .v5-case-card,
+body[data-page]:not([data-page="admin"]) .contact-form,
+body[data-page]:not([data-page="admin"]) .detail-block{
+  border:1px solid var(--skin-line);
+  border-radius:var(--skin-radius);
+  box-shadow:none;
+}
+body[data-page]:not([data-page="admin"]) .category-card:hover,
+body[data-page]:not([data-page="admin"]) .product-card:hover,
+body[data-page]:not([data-page="admin"]) .v5-case-card:hover{transform:translateY(-3px);box-shadow:var(--skin-shadow);border-color:#9fc4c0}
+body[data-page]:not([data-page="admin"]) .product-card-visual{background:linear-gradient(145deg,#eef2f3,#fafbfb)}
+body[data-page]:not([data-page="admin"]) .product-card h3,
+body[data-page]:not([data-page="admin"]) .category-card h3{color:var(--skin-ink)}
+body[data-page]:not([data-page="admin"]) .product-card p,
+body[data-page]:not([data-page="admin"]) .category-body p{color:var(--skin-muted)}
+body[data-page]:not([data-page="admin"]) .news-row{border-color:var(--skin-line);padding:20px 12px}
+body[data-page]:not([data-page="admin"]) .news-row:hover{background:#fff}
+body[data-page]:not([data-page="admin"]) .text-link,
+body[data-page]:not([data-page="admin"]) .card-link{color:var(--skin-accent)}
+
+/* 內頁統一橫向標題帶 */
+body[data-page]:not([data-page="admin"]):not([data-page="home"]) .page-hero,
+body[data-page="downloads"] .downloads-hero{background:linear-gradient(110deg,#0a2234,#10384d 70%,#17565a);color:#fff;border-bottom:4px solid var(--skin-accent)}
+body[data-page]:not([data-page="admin"]):not([data-page="home"]) .page-hero{padding:64px 0}
+body[data-page]:not([data-page="admin"]):not([data-page="home"]) .page-hero h1,
+body[data-page="downloads"] .downloads-hero h1{color:#fff;letter-spacing:-.025em}
+body[data-page]:not([data-page="admin"]):not([data-page="home"]) .page-hero p,
+body[data-page="downloads"] .downloads-hero p{color:#cddbe1;max-width:820px}
+body[data-page]:not([data-page="admin"]):not([data-page="home"]) .page-hero .eyebrow,
+body[data-page="downloads"] .downloads-kicker{color:#83d5ca}
+
+/* 產品列表 */
+body[data-page="products"] .filter-wrap{background:#fff;border-color:var(--skin-line);box-shadow:0 7px 22px rgba(11,38,57,.04)}
+body[data-page="products"] .catalog-head{border-bottom:1px solid var(--skin-line);padding-bottom:18px;margin-bottom:24px}
+body[data-page="products"] .filter-row button,
+body[data-page="products"] .filter-row a{border-radius:8px!important}
+
+/* 產品詳細 */
+body[data-page="product"] main>.container{padding-top:28px}
+body[data-page="product"] .breadcrumb{color:var(--skin-muted)}
+body[data-page="product"] .product-detail{background:#fff;border:1px solid var(--skin-line);border-radius:18px;box-shadow:none}
+body[data-page="product"] .detail-grid{gap:24px}
+body[data-page="product"] .detail-block{background:#fff}
+body[data-page="product"] .spec-table{border-color:var(--skin-line)}
+body[data-page="product"] .related{background:transparent}
+
+/* 下載中心：保留所有篩選與下載功能，只重畫外觀 */
+body[data-page="downloads"] .downloads-main{padding-top:38px;padding-bottom:70px}
+body[data-page="downloads"] .downloads-toolbar{background:#fff;border:1px solid var(--skin-line);border-radius:14px;box-shadow:none}
+body[data-page="downloads"] .downloads-layout{gap:28px}
+body[data-page="downloads"] .downloads-filters,
+body[data-page="downloads"] .downloads-content{background:#fff;border:1px solid var(--skin-line);border-radius:14px}
+body[data-page="downloads"] .filter-section{border-color:var(--skin-line)}
+body[data-page="downloads"] .downloads-search{border-color:var(--skin-line);border-radius:9px;background:#fbfcfc}
+body[data-page="downloads"] .downloads-search:focus{outline:2px solid rgba(20,127,120,.18);border-color:var(--skin-accent)}
+
+/* 關於我們 */
+body[data-page="about"] .about-page-grid h2{color:var(--skin-navy)}
+body[data-page="about"] .about-fact,
+body[data-page="about"] .scope-card{border-color:var(--skin-line);background:#fff}
+body[data-page="about"] .about-fact b,
+body[data-page="about"] .scope-card b{color:var(--skin-ink)}
+
+/* 聯絡我們 */
+body[data-page="contact"] .contact-grid{gap:46px}
+body[data-page="contact"] .contact-form{background:#fff;padding:30px}
+body[data-page="contact"] .field input,
+body[data-page="contact"] .field select,
+body[data-page="contact"] .field textarea{border-color:var(--skin-line);border-radius:8px;background:#fbfcfc}
+body[data-page="contact"] .field input:focus,
+body[data-page="contact"] .field select:focus,
+body[data-page="contact"] .field textarea:focus{outline:2px solid rgba(20,127,120,.16);border-color:var(--skin-accent)}
+body[data-page="contact"] .budget-options label{border-color:var(--skin-line)!important;border-radius:8px;background:#fbfcfc!important}
+
+/* 系統方案 */
+body[data-page="solutions"] .solution-nav{border-color:var(--skin-line)}
+body[data-page="solutions"] #solutionSections>section{border-color:var(--skin-line)}
+
+/* CTA */
+body[data-page]:not([data-page="admin"]) .cta-band{margin-top:0;margin-bottom:72px;background:linear-gradient(105deg,#0e6f69,#15847a);border-radius:14px;box-shadow:none}
+body[data-page]:not([data-page="admin"]) .cta-band h2{font-size:26px}
+body[data-page]:not([data-page="admin"]) .cta-band .btn{background:#fff;color:#0c625d}
+
+/* 完整頁尾：只改皮膚，不刪任何既有欄位或連結 */
+body[data-page]:not([data-page="admin"]) .site-footer{background:#071d2d;color:#d3dee3;border-top:4px solid var(--skin-accent)}
+body[data-page]:not([data-page="admin"]) .site-footer .footer-grid{padding-top:58px;padding-bottom:44px;gap:44px}
+body[data-page]:not([data-page="admin"]) .site-footer h4{color:#fff;font-size:14px;letter-spacing:.04em;margin-bottom:16px}
+body[data-page]:not([data-page="admin"]) .site-footer a,
+body[data-page]:not([data-page="admin"]) .site-footer span,
+body[data-page]:not([data-page="admin"]) .site-footer p{color:#b8c8d0}
+body[data-page]:not([data-page="admin"]) .site-footer a:hover{color:#fff}
+body[data-page]:not([data-page="admin"]) .site-footer .brand-copy strong{color:#fff}
+body[data-page]:not([data-page="admin"]) .site-footer .brand-copy small{color:#89a5b2}
+body[data-page]:not([data-page="admin"]) .footer-bottom{border-top:1px solid rgba(255,255,255,.11);padding-top:20px;padding-bottom:24px}
+
+/* 手機／平板 RWD */
+@media(max-width:1080px){
+  body[data-page]:not([data-page="admin"]) .container{width:min(calc(100% - 36px),1220px)}
+  body[data-page="home"] .hero-inner{grid-template-columns:1fr 1fr;gap:34px}
+  body[data-page="home"] .hero-copy h1{font-size:clamp(38px,5vw,54px)}
+}
+
+@media(max-width:900px){
+  body[data-page]:not([data-page="admin"]) .container{width:min(calc(100% - 30px),1220px)}
+  body[data-page]:not([data-page="admin"]) .topbar{display:none}
+  body[data-page]:not([data-page="admin"]) .header-inner{height:68px}
+  body[data-page="home"] .hero.v2-home-hero{min-height:auto}
+  body[data-page="home"] .hero-inner{grid-template-columns:1fr;gap:32px;padding:52px 0}
+  body[data-page="home"] .v2-hero-products{max-width:680px;width:100%;margin:0 auto}
+  body[data-page]:not([data-page="admin"]) .section{padding:62px 0}
+  body[data-page]:not([data-page="admin"]) .section-head{align-items:flex-start;flex-direction:column;gap:12px}
+  body[data-page]:not([data-page="admin"]) .site-footer .footer-grid{gap:30px}
+}
+
+@media(max-width:640px){
+  body[data-page]:not([data-page="admin"]) .container{width:min(calc(100% - 24px),1220px)}
+  body[data-page]:not([data-page="admin"]) .header-inner{height:64px}
+  body[data-page]:not([data-page="admin"]) .brand-copy strong{font-size:19px}
+  body[data-page="home"] .hero-inner{padding:42px 0}
+  body[data-page="home"] .hero-copy h1{font-size:36px}
+  body[data-page="home"] .hero-copy>p{font-size:14px;line-height:1.8}
+  body[data-page="home"] .hero-actions{display:grid;grid-template-columns:1fr 1fr}
+  body[data-page="home"] .hero-actions .btn{width:100%;padding-left:10px;padding-right:10px}
+  body[data-page]:not([data-page="admin"]) .section{padding:50px 0}
+  body[data-page]:not([data-page="admin"]) .page-hero{padding:48px 0!important}
+  body[data-page]:not([data-page="admin"]) .section-head h2{font-size:30px}
+  body[data-page]:not([data-page="admin"]) .cta-band{width:calc(100% - 24px);padding:26px 22px;display:block}
+  body[data-page]:not([data-page="admin"]) .cta-band .btn{margin-top:18px;width:100%}
+  body[data-page="contact"] .contact-form{padding:20px}
+  body[data-page="downloads"] .downloads-layout{gap:18px}
+  body[data-page]:not([data-page="admin"]) .site-footer .footer-grid{padding-top:44px;padding-bottom:34px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body[data-page]:not([data-page="admin"]) *,
+  body[data-page]:not([data-page="admin"]) *:before,
+  body[data-page]:not([data-page="admin"]) *:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
