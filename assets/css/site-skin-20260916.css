@@ -287,6 +287,7 @@ html:root body.fb-skin-20260916 .footer-media-arrow {color:#91ded7!important}
  * contain the complete product photograph, and keep dark-band metadata legible. */
 html:root body.fb-skin-20260916 .v2-stage-main img,
 html:root body.fb-skin-20260916 .hero-rotate-side img {background:transparent!important}
+html:root body.fb-skin-20260916 .product-detail-visual .official-product-photo img {width:86%!important;height:86%!important;object-fit:contain!important}
 html:root body.fb-skin-20260916 .v5-hero-meta span {color:#bfd2de!important}
 html:root body.fb-skin-20260916 .v5-hero-meta span:first-child {background:#dcebe9!important;color:#193b45!important;border-color:#dcebe9!important}
 html:root body.fb-skin-20260916 .page-hero .v5-page-meta span {color:#bfd2de!important}
