@@ -1,0 +1,111 @@
+name: Runtime RWD gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-rwd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start local preview server
+        run: |
+          python3 -m http.server 8080 >/tmp/farbeyound-rwd-http.log 2>&1 &
+          sleep 2
+
+      - name: Check 7 viewports, overflow and browser errors
+        run: |
+          pip install --disable-pip-version-check selenium >/dev/null
+          python3 - <<'PY'
+          import json
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+
+          pages = {
+              'home': 'index.html',
+              'products': 'products.html',
+              'downloads': 'downloads.html',
+              'contact': 'contact.html',
+          }
+          viewports = {
+              'mobile-375': (375, 812),
+              'mobile-390': (390, 844),
+              'mobile-430': (430, 932),
+              'tablet-768': (768, 1024),
+              'desktop-1366': (1366, 900),
+              'desktop-1440': (1440, 1100),
+              'desktop-1920': (1920, 1080),
+          }
+
+          options = Options()
+          options.add_argument('--headless=new')
+          options.add_argument('--no-sandbox')
+          options.add_argument('--disable-gpu')
+          options.add_argument('--disable-dev-shm-usage')
+          options.add_argument('--hide-scrollbars')
+          options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
+          driver = webdriver.Chrome(options=options)
+          failures = []
+          try:
+              for mode, (width, height) in viewports.items():
+                  driver.set_window_size(width, height)
+                  for name, path in pages.items():
+                      driver.get(f'http://127.0.0.1:8080/{path}')
+                      time.sleep(1.0)
+                      state = driver.execute_script('''
+                          const de = document.documentElement;
+                          const body = document.body;
+                          const visible = el => {
+                            if (!el) return false;
+                            const s = getComputedStyle(el), r = el.getBoundingClientRect();
+                            return s.display !== 'none' && s.visibility !== 'hidden' && r.width > 0 && r.height > 0;
+                          };
+                          return {
+                            client: de.clientWidth,
+                            scroll: Math.max(de.scrollWidth, body ? body.scrollWidth : 0),
+                            header: !!document.querySelector('#siteHeader'),
+                            footer: !!document.querySelector('#siteFooter'),
+                            skin: document.body.classList.contains('fb-approved-skin-20260916'),
+                            mainVisible: visible(document.querySelector('main'))
+                          };
+                      ''')
+                      overflow = max(0, int(state['scroll']) - int(state['client']))
+                      if overflow > 2:
+                          failures.append(f'{mode}/{name}: horizontal overflow {overflow}px')
+                      if not state['header'] or not state['footer'] or not state['skin'] or not state['mainVisible']:
+                          failures.append(f'{mode}/{name}: shell/skin/main visibility check failed: {state}')
+
+                      severe = []
+                      for entry in driver.get_log('browser'):
+                          if entry.get('level') != 'SEVERE':
+                              continue
+                          message = entry.get('message', '')
+                          # Chrome may emit its own extension/devtools noise; page JS and resource failures remain blocking.
+                          if 'chrome-extension://' in message:
+                              continue
+                          severe.append(message)
+                      if severe:
+                          failures.append(f'{mode}/{name}: browser severe errors: {severe[:4]}')
+                      print(f'RWD {mode}/{name}: overflow={overflow} skin={state["skin"]} severe={len(severe)}')
+          finally:
+              driver.quit()
+
+          if failures:
+              print('RUNTIME_RWD_GATE=FAIL')
+              for item in failures:
+                  print('ERROR:', item)
+              raise SystemExit(1)
+
+          print('RUNTIME_RWD_GATE=PASS')
+          print(f'VIEWPORTS={len(viewports)}')
+          print(f'PAGE_VIEWPORT_COMBINATIONS={len(viewports) * len(pages)}')
+          PY
