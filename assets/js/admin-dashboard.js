@@ -2,7 +2,7 @@
   if(document.body.dataset.page!=='admin'||window.__fbAdminDashboard)return;
   window.__fbAdminDashboard=true;
 
-  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260916-1414').replace(/[^0-9A-Za-z._-]/g,'');
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260916-1450').replace(/[^0-9A-Za-z._-]/g,'');
 
   const build=()=>{
     if(document.getElementById('adminDashboard'))return;
