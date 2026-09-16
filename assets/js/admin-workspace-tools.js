@@ -5,7 +5,7 @@
 
   const $=(s,p=document)=>p.querySelector(s);
   const KEEP_OPEN=new Set(['adminAnalytics']);
-  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-2354').replace(/[^0-9A-Za-z._-]/g,'');
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260916-0010').replace(/[^0-9A-Za-z._-]/g,'');
 
   function loadHelper(src,id){
     if(document.getElementById(id))return;
