@@ -31,10 +31,15 @@ jobs:
       - name: Click desktop phone and verify panel
         run: |
           python3 - <<'PY'
+          import time
           from selenium import webdriver
           from selenium.webdriver.common.by import By
           from selenium.webdriver.support.ui import WebDriverWait
           from selenium.webdriver.support import expected_conditions as EC
+          from selenium.common.exceptions import StaleElementReferenceException
+
+          BUTTON = '.quick-contact-item[data-contact-phone] .quick-contact-btn'
+          POPOVER = '#fbDesktopPhonePopover'
 
           options = webdriver.ChromeOptions()
           options.add_argument('--headless=new')
@@ -44,16 +49,51 @@ jobs:
 
           driver = webdriver.Chrome(options=options)
           wait = WebDriverWait(driver, 15)
+
+          def get_button():
+              return wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, BUTTON)))
+
+          def get_popover():
+              return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, POPOVER)))
+
+          def click_fresh():
+              last_error = None
+              for _ in range(6):
+                  try:
+                      button = get_button()
+                      button.click()
+                      return
+                  except StaleElementReferenceException as exc:
+                      last_error = exc
+                      time.sleep(0.15)
+              raise last_error
+
+          def button_attr(name):
+              try:
+                  return driver.find_element(By.CSS_SELECTOR, BUTTON).get_attribute(name)
+              except StaleElementReferenceException:
+                  return None
+
+          def popover_attr(name):
+              try:
+                  return driver.find_element(By.CSS_SELECTOR, POPOVER).get_attribute(name)
+              except StaleElementReferenceException:
+                  return None
+
           try:
               driver.get('http://127.0.0.1:8080/index.html')
-              button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.quick-contact-item[data-contact-phone] .quick-contact-btn')))
-              popover = wait.until(EC.presence_of_element_located((By.ID, 'fbDesktopPhonePopover')))
+              get_button()
+              get_popover()
 
-              button.click()
-              wait.until(lambda d: button.get_attribute('aria-expanded') == 'true')
-              wait.until(lambda d: popover.get_attribute('aria-hidden') == 'false')
-              wait.until(EC.visibility_of(popover))
+              # 舊版腳本可能在首頁載入初期重建一次快速聯絡列；重新取 DOM 後再操作。
+              time.sleep(0.35)
 
+              click_fresh()
+              wait.until(lambda d: button_attr('aria-expanded') == 'true')
+              wait.until(lambda d: popover_attr('aria-hidden') == 'false')
+              wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, POPOVER)))
+
+              popover = get_popover()
               links = popover.find_elements(By.CSS_SELECTOR, 'a[href^="tel:"]')
               hrefs = [a.get_attribute('href') for a in links]
               labels = [a.text for a in links]
@@ -65,9 +105,9 @@ jobs:
               assert any('台南辦公室' in t and '06-2360139' in t for t in labels), labels
               assert all(a.is_displayed() for a in links), 'Phone links are present but not visible'
 
-              button.click()
-              wait.until(lambda d: button.get_attribute('aria-expanded') == 'false')
-              wait.until(lambda d: popover.get_attribute('aria-hidden') == 'true')
+              click_fresh()
+              wait.until(lambda d: button_attr('aria-expanded') == 'false')
+              wait.until(lambda d: popover_attr('aria-hidden') == 'true')
               print('DESKTOP PHONE INTERACTION PASSED')
           finally:
               driver.quit()
