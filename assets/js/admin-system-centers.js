@@ -3,7 +3,7 @@
   if(document.body?.dataset?.page!=='admin'||window.__fbAdminSystemCenters)return;
   window.__fbAdminSystemCenters=true;
 
-  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260915-1945').replace(/[^0-9A-Za-z._-]/g,'');
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260916-1401').replace(/[^0-9A-Za-z._-]/g,'');
   const modules=[
     'admin-url-validation.js','admin-self-check.js','admin-front-features.js','admin-brand-manager.js','admin-location-manager.js',
     'admin-audit.js','admin-seo-center.js','admin-account-security-ui.js','admin-users-ui.js','admin-security-policy-ui.js',
