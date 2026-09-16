@@ -352,6 +352,8 @@ body:not([data-page="admin"]) .cta-band .btn{
 
 /* ---------- 所有內頁：一致的淺色橫向標題區 ---------- */
 body:not([data-page="admin"]):not([data-page="home"]) .page-hero{
+  position:relative;
+  overflow:hidden;
   padding-top:52px!important;
   padding-bottom:52px!important;
   background:
