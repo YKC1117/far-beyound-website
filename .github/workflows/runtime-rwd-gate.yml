@@ -23,8 +23,9 @@ jobs:
 
       - name: Check 7 viewports, overflow and browser errors
         run: |
+          set -o pipefail
           pip install --disable-pip-version-check selenium >/dev/null
-          python3 - <<'PY'
+          python3 - <<'PY' | tee qa-rwd-report.txt
           import time
           from selenium import webdriver
           from selenium.webdriver.chrome.options import Options
@@ -119,3 +120,10 @@ jobs:
           print(f'VIEWPORTS={len(viewports)}')
           print(f'PAGE_VIEWPORT_COMBINATIONS={len(viewports) * len(pages)}')
           PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-rwd-report
+          path: qa-rwd-report.txt
+          retention-days: 3
