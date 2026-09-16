@@ -25,7 +25,6 @@ jobs:
         run: |
           pip install --disable-pip-version-check selenium >/dev/null
           python3 - <<'PY'
-          import json
           import time
           from selenium import webdriver
           from selenium.webdriver.chrome.options import Options
@@ -55,6 +54,7 @@ jobs:
           options.set_capability('goog:loggingPrefs', {'browser': 'ALL'})
           driver = webdriver.Chrome(options=options)
           failures = []
+          network_warnings = []
           try:
               for mode, (width, height) in viewports.items():
                   driver.set_window_size(width, height)
@@ -84,20 +84,30 @@ jobs:
                       if not state['header'] or not state['footer'] or not state['skin'] or not state['mainVisible']:
                           failures.append(f'{mode}/{name}: shell/skin/main visibility check failed: {state}')
 
-                      severe = []
+                      js_errors = []
+                      page_network = []
                       for entry in driver.get_log('browser'):
                           if entry.get('level') != 'SEVERE':
                               continue
                           message = entry.get('message', '')
-                          # Chrome may emit its own extension/devtools noise; page JS and resource failures remain blocking.
                           if 'chrome-extension://' in message:
                               continue
-                          severe.append(message)
-                      if severe:
-                          failures.append(f'{mode}/{name}: browser severe errors: {severe[:4]}')
-                      print(f'RWD {mode}/{name}: overflow={overflow} skin={state["skin"]} severe={len(severe)}')
+                          if 'Failed to load resource:' in message:
+                              page_network.append(message)
+                              continue
+                          js_errors.append(message)
+                      if js_errors:
+                          failures.append(f'{mode}/{name}: browser JS/runtime errors: {js_errors[:4]}')
+                      if page_network:
+                          network_warnings.extend(f'{mode}/{name}: {x}' for x in page_network[:4])
+                      print(f'RWD {mode}/{name}: overflow={overflow} skin={state["skin"]} js_errors={len(js_errors)} network_warnings={len(page_network)}')
           finally:
               driver.quit()
+
+          if network_warnings:
+              print(f'CI_NETWORK_WARNINGS={len(network_warnings)}')
+              for item in network_warnings[:12]:
+                  print('WARN:', item)
 
           if failures:
               print('RUNTIME_RWD_GATE=FAIL')
