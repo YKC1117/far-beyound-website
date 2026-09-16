@@ -1,0 +1,627 @@
+/* 萬里資訊官網｜2026-09-16 視覺皮膚
+   僅覆蓋公開網站外觀，不修改產品資料、文字、網址、下載連結、SEO 或 JavaScript 流程。 */
+
+:root{
+  --skin-navy:#0b2945;
+  --skin-navy-2:#123b5f;
+  --skin-blue:#176b93;
+  --skin-blue-2:#2f88ad;
+  --skin-cyan:#38a7bf;
+  --skin-ink:#153047;
+  --skin-muted:#667b8e;
+  --skin-line:#d4e1e9;
+  --skin-soft:#edf5f9;
+  --skin-soft-2:#e4eff5;
+  --skin-white:#ffffff;
+  --skin-radius:14px;
+  --skin-shadow:0 14px 34px rgba(10,44,73,.10);
+  --skin-shadow-strong:0 22px 48px rgba(8,38,64,.16);
+}
+
+body:not([data-page="admin"]){
+  --navy:var(--skin-navy);
+  --navy2:var(--skin-navy-2);
+  --teal:var(--skin-blue);
+  --teal2:var(--skin-cyan);
+  --ink:var(--skin-ink);
+  --muted:var(--skin-muted);
+  --line:var(--skin-line);
+  --soft:var(--skin-soft);
+  --radius:var(--skin-radius);
+  --shadow:var(--skin-shadow);
+  background:#f4f7f9;
+  color:var(--skin-ink);
+}
+
+body:not([data-page="admin"]) .container{
+  width:min(calc(100% - 48px),1240px);
+}
+
+/* ---------- 頂部與主選單：維持橫向、提高辨識度 ---------- */
+body:not([data-page="admin"]) .topbar{
+  background:#071f35;
+  color:#c9d9e5;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+body:not([data-page="admin"]) .site-header{
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid #d6e2e9;
+  box-shadow:0 5px 18px rgba(14,45,70,.05);
+}
+
+body:not([data-page="admin"]) .site-header.scrolled{
+  box-shadow:0 10px 28px rgba(9,39,65,.11);
+}
+
+@media(min-width:981px){
+  body:not([data-page="admin"]) .header-inner{
+    height:80px!important;
+    gap:24px;
+  }
+  body:not([data-page="admin"]) .desktop-nav>a,
+  body:not([data-page="admin"]) .nav-item>a{
+    padding:29px 13px!important;
+    color:#1f3b53;
+  }
+  body:not([data-page="admin"]) .desktop-nav>a:after,
+  body:not([data-page="admin"]) .nav-item>a:after{
+    bottom:18px;
+    height:3px;
+    background:var(--skin-blue-2);
+    border-radius:999px;
+  }
+}
+
+body:not([data-page="admin"]) .mega-menu{
+  border-color:#d5e1e8;
+  border-radius:0 0 18px 18px;
+  box-shadow:0 24px 54px rgba(9,39,65,.16);
+}
+
+body:not([data-page="admin"]) .mega-card{
+  border-color:#dce6ec;
+  border-radius:11px;
+  background:#f9fbfc;
+}
+
+body:not([data-page="admin"]) .mega-card:hover{
+  border-color:#9dc7d9;
+  background:#edf6fa;
+}
+
+/* ---------- 按鈕 ---------- */
+body:not([data-page="admin"]) .btn{
+  border-radius:9px;
+  font-weight:800;
+}
+
+body:not([data-page="admin"]) .btn-primary{
+  background:linear-gradient(135deg,var(--skin-blue),var(--skin-blue-2));
+  box-shadow:0 8px 18px rgba(23,107,147,.18);
+}
+
+body:not([data-page="admin"]) .btn-primary:hover{
+  background:linear-gradient(135deg,#125d82,#257c9f);
+  box-shadow:0 10px 22px rgba(23,107,147,.24);
+}
+
+body:not([data-page="admin"]) .btn-secondary{
+  border-color:#c9d8e2;
+  background:#fff;
+}
+
+body:not([data-page="admin"]) .text-link,
+body:not([data-page="admin"]) .card-link{
+  color:var(--skin-blue);
+}
+
+/* ---------- 首頁主視覺：保留橫式配置 ---------- */
+body[data-page="home"] .hero.v2-home-hero{
+  background:
+    radial-gradient(circle at 80% 24%,rgba(75,174,199,.18),transparent 30%),
+    linear-gradient(112deg,#f8fbfd 0%,#eef5f8 54%,#e1edf3 100%)!important;
+  color:var(--skin-ink)!important;
+  border-bottom:1px solid #d7e3ea!important;
+}
+
+body[data-page="home"] .hero.v2-home-hero:before{
+  background:
+    linear-gradient(rgba(15,58,89,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(15,58,89,.035) 1px,transparent 1px)!important;
+  background-size:42px 42px!important;
+  opacity:.7;
+}
+
+body[data-page="home"] .hero.v2-home-hero .hero-inner{
+  grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)!important;
+  gap:62px!important;
+  min-height:520px!important;
+  padding-top:54px!important;
+  padding-bottom:54px!important;
+}
+
+body[data-page="home"] .hero.v2-home-hero .hero-copy{
+  position:relative;
+  z-index:2;
+}
+
+body[data-page="home"] .hero.v2-home-hero .hero-copy .eyebrow,
+body[data-page="home"] .v5-hero-meta{
+  color:var(--skin-blue)!important;
+}
+
+body[data-page="home"] .hero.v2-home-hero .hero-copy h1{
+  color:#0e3150!important;
+  font-size:clamp(42px,4.4vw,60px)!important;
+  line-height:1.16!important;
+  letter-spacing:-.035em!important;
+}
+
+body[data-page="home"] .hero.v2-home-hero .hero-copy h1 em{
+  color:var(--skin-blue)!important;
+}
+
+body[data-page="home"] .hero.v2-home-hero .hero-copy>p{
+  color:#526c80!important;
+  font-size:15px!important;
+  line-height:1.9!important;
+}
+
+body[data-page="home"] .hero.v2-home-hero .hero-trust{
+  color:#61798b!important;
+}
+
+body[data-page="home"] .hero.v2-home-hero .btn-secondary{
+  color:#173c59!important;
+  background:#fff!important;
+  border-color:#bfd0dc!important;
+}
+
+body[data-page="home"] .v2-stage-main,
+body[data-page="home"] .v2-stage-side>a{
+  border-radius:14px!important;
+  border:1px solid rgba(114,148,169,.22)!important;
+  box-shadow:0 15px 32px rgba(15,53,80,.10)!important;
+  background:#fff!important;
+}
+
+/* ---------- 深淺交錯：讓首頁不再整片同色 ---------- */
+body[data-page="home"] .brand-portfolio{
+  background:#fff!important;
+  border-top:1px solid #dde7ed;
+  border-bottom:1px solid #dde7ed;
+}
+
+body[data-page="home"] .v2-service-strip{
+  background:var(--skin-soft)!important;
+  border-top:0!important;
+  border-bottom:1px solid #d3e1e9!important;
+}
+
+body[data-page="home"] .section:not(.section-white):not(.section-dark):not(.v5-case-section){
+  background:var(--skin-soft)!important;
+}
+
+body[data-page="home"] .section.section-white{
+  background:#fff!important;
+}
+
+body[data-page="home"] .section.section-dark,
+body[data-page="home"] .v5-process{
+  background:linear-gradient(115deg,#0a2945,#123f61)!important;
+}
+
+body[data-page="home"] .v5-case-section{
+  background:#e8f2f7!important;
+  border-color:#d1e0e8!important;
+}
+
+body[data-page="home"] .v5-credibility{
+  background:linear-gradient(100deg,#0b2b48,#124567)!important;
+  border-color:#284f6a!important;
+}
+
+body[data-page="home"] .v5-cred-item{
+  min-height:104px;
+}
+
+/* ---------- 區塊標題 ---------- */
+body:not([data-page="admin"]) .section{
+  padding-top:72px;
+  padding-bottom:72px;
+}
+
+body:not([data-page="admin"]) .section-head{
+  position:relative;
+  align-items:flex-end;
+  margin-bottom:30px!important;
+  padding-top:18px!important;
+}
+
+body:not([data-page="admin"]) .section-head:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:52px;
+  height:4px;
+  border-radius:999px;
+  background:var(--skin-blue-2);
+}
+
+body:not([data-page="admin"]) .section-dark .section-head:before,
+body:not([data-page="admin"]) .v5-process .section-head:before{
+  background:#63bdd2;
+}
+
+body:not([data-page="admin"]) .section-head h2{
+  color:#123652;
+  font-size:clamp(28px,3vw,39px)!important;
+}
+
+body:not([data-page="admin"]) .section-dark .section-head h2,
+body:not([data-page="admin"]) .v5-process .section-head h2{
+  color:#fff!important;
+}
+
+body:not([data-page="admin"]) .eyebrow{
+  color:var(--skin-blue);
+}
+
+/* ---------- 卡片：統一清楚、不要顏色糊在一起 ---------- */
+body:not([data-page="admin"]) .category-card,
+body:not([data-page="admin"]) .product-card,
+body:not([data-page="admin"]) .case-pill,
+body:not([data-page="admin"]) .news-card,
+body:not([data-page="admin"]) .contact-card,
+body:not([data-page="admin"]) .contact-form,
+body:not([data-page="admin"]) .detail-block,
+body:not([data-page="admin"]) .download-item,
+body:not([data-page="admin"]) .solution-nav a{
+  border-color:#d4e0e8;
+  border-radius:var(--skin-radius);
+  background:#fff;
+  box-shadow:0 7px 20px rgba(12,51,79,.055);
+}
+
+body:not([data-page="admin"]) .category-card:hover,
+body:not([data-page="admin"]) .product-card:hover,
+body:not([data-page="admin"]) .solution-nav a:hover{
+  border-color:#94bfd2;
+  box-shadow:var(--skin-shadow-strong);
+}
+
+body:not([data-page="admin"]) .product-card-visual{
+  background:linear-gradient(145deg,#f4f8fa,#e8f1f5)!important;
+}
+
+body:not([data-page="admin"]) .product-meta span:first-child{
+  background:#e7f2f7;
+  color:#17678d;
+}
+
+body[data-page="home"] .solution-card{
+  border-radius:13px!important;
+  border-color:rgba(255,255,255,.17)!important;
+  background:rgba(255,255,255,.065)!important;
+}
+
+body[data-page="home"] .solution-card:hover{
+  background:rgba(255,255,255,.11)!important;
+}
+
+body[data-page="home"] .v5-case-card{
+  background:#fff!important;
+  border-color:#cfdee7!important;
+}
+
+body[data-page="home"] .v5-case-card:hover{
+  background:#f7fbfd!important;
+}
+
+/* ---------- 最新消息 ---------- */
+body:not([data-page="admin"]) .news-list{
+  border-top:1px solid #ccdce5;
+}
+
+body:not([data-page="admin"]) .news-row{
+  border-bottom-color:#d6e2e9!important;
+  transition:background .18s ease,padding .18s ease;
+}
+
+body:not([data-page="admin"]) .news-row:hover{
+  background:#f3f8fb;
+}
+
+/* ---------- CTA ---------- */
+body:not([data-page="admin"]) .cta-band{
+  border-radius:16px!important;
+  background:linear-gradient(105deg,#0b3151,#17698e)!important;
+  box-shadow:0 18px 42px rgba(10,47,77,.22);
+}
+
+body:not([data-page="admin"]) .cta-band p{
+  color:#d6e7f0!important;
+}
+
+body:not([data-page="admin"]) .cta-band .btn{
+  background:#fff!important;
+  color:#12577b!important;
+}
+
+/* ---------- 所有內頁：一致的淺色橫向標題區 ---------- */
+body:not([data-page="admin"]):not([data-page="home"]) .page-hero{
+  padding-top:52px!important;
+  padding-bottom:52px!important;
+  background:
+    radial-gradient(circle at 82% 30%,rgba(65,164,192,.17),transparent 30%),
+    linear-gradient(110deg,#f7fafc,#e6f0f5)!important;
+  color:#123550!important;
+  border-bottom:1px solid #d4e1e8;
+}
+
+body:not([data-page="admin"]):not([data-page="home"]) .page-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(rgba(21,66,98,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(21,66,98,.028) 1px,transparent 1px);
+  background-size:38px 38px;
+}
+
+body:not([data-page="admin"]):not([data-page="home"]) .page-hero .container{
+  position:relative;
+  z-index:1;
+}
+
+body:not([data-page="admin"]):not([data-page="home"]) .page-hero h1{
+  color:#103550!important;
+  font-size:clamp(36px,4vw,50px)!important;
+}
+
+body:not([data-page="admin"]):not([data-page="home"]) .page-hero p{
+  color:#5f7588!important;
+}
+
+body:not([data-page="admin"]):not([data-page="home"]) .page-hero .eyebrow{
+  color:var(--skin-blue)!important;
+}
+
+body:not([data-page="admin"]) .filter-wrap{
+  background:#fff;
+  border-bottom-color:#d3e0e8;
+  box-shadow:0 6px 16px rgba(13,48,74,.035);
+}
+
+body:not([data-page="admin"]) .filter-chip,
+body:not([data-page="admin"]) .brand-chip{
+  border-color:#cbd9e2;
+  border-radius:8px;
+  background:#fff;
+}
+
+body:not([data-page="admin"]) .filter-chip.active,
+body:not([data-page="admin"]) .brand-chip.active{
+  background:var(--skin-navy);
+  border-color:var(--skin-navy);
+}
+
+/* ---------- 產品、下載、聯絡等內頁 ---------- */
+body[data-page="products"] main,
+body[data-page="product"] main,
+body[data-page="downloads"] main,
+body[data-page="about"] main,
+body[data-page="contact"] main,
+body[data-page="solutions"] main,
+body[data-page="cases"] main,
+body[data-page="news"] main,
+body[data-page="locations"] main{
+  background:#f4f7f9;
+}
+
+body[data-page="products"] .section,
+body[data-page="downloads"] .section,
+body[data-page="about"] .section,
+body[data-page="contact"] .section,
+body[data-page="cases"] .section,
+body[data-page="news"] .section,
+body[data-page="locations"] .section{
+  background:#f4f7f9;
+}
+
+body[data-page="product"] .product-detail-visual{
+  background:#fff!important;
+  border:1px solid #d1dee7!important;
+  border-radius:16px!important;
+  box-shadow:var(--skin-shadow);
+}
+
+body[data-page="product"] .detail-block:nth-child(even){
+  background:#eef5f8;
+}
+
+body[data-page="downloads"] .download-sidebar{
+  border-color:#d2dfe7;
+  border-radius:12px;
+  box-shadow:0 8px 22px rgba(12,48,74,.06);
+}
+
+body[data-page="downloads"] .download-brand:hover,
+body[data-page="downloads"] .download-brand.active{
+  background:#e8f2f6;
+  color:#145f84;
+}
+
+body[data-page="contact"] .contact-form{
+  box-shadow:var(--skin-shadow)!important;
+}
+
+body:not([data-page="admin"]) .field input,
+body:not([data-page="admin"]) .field select,
+body:not([data-page="admin"]) .field textarea{
+  border-color:#cbd9e2;
+  border-radius:8px;
+  background:#fff;
+}
+
+body:not([data-page="admin"]) .field input:focus,
+body:not([data-page="admin"]) .field select:focus,
+body:not([data-page="admin"]) .field textarea:focus{
+  border-color:#5ba6c3;
+  box-shadow:0 0 0 3px rgba(47,136,173,.11);
+}
+
+/* ---------- 頁尾：完整資訊保留，只換深藍視覺 ---------- */
+body:not([data-page="admin"]) .site-footer{
+  position:relative;
+  overflow:hidden;
+  margin-top:0!important;
+  padding-top:54px;
+  background:linear-gradient(112deg,#061d32 0%,#0a2c49 58%,#104a69 100%);
+  color:#dce9f2;
+}
+
+body:not([data-page="admin"]) .site-footer:before{
+  content:"";
+  position:absolute;
+  right:-130px;
+  bottom:-190px;
+  width:560px;
+  height:360px;
+  border-radius:50%;
+  border:1px solid rgba(108,188,211,.16);
+  box-shadow:0 0 0 65px rgba(87,171,198,.045),0 0 0 130px rgba(87,171,198,.028);
+  pointer-events:none;
+}
+
+body:not([data-page="admin"]) .site-footer .footer-grid,
+body:not([data-page="admin"]) .site-footer .footer-bottom{
+  position:relative;
+  z-index:1;
+}
+
+body:not([data-page="admin"]) .site-footer .footer-grid{
+  gap:34px;
+  padding-top:0!important;
+  padding-bottom:36px!important;
+}
+
+body:not([data-page="admin"]) .site-footer .footer-grid h4{
+  color:#fff;
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(255,255,255,.13);
+}
+
+body:not([data-page="admin"]) .site-footer .footer-grid a,
+body:not([data-page="admin"]) .site-footer .footer-grid span,
+body:not([data-page="admin"]) .site-footer .footer-brand p{
+  color:#aec3d2;
+}
+
+body:not([data-page="admin"]) .site-footer .footer-grid a:hover{
+  color:#fff;
+}
+
+body:not([data-page="admin"]) .site-footer .footer-bottom{
+  border-top-color:rgba(255,255,255,.13);
+  color:#8fa8ba;
+}
+
+/* ---------- 手機／平板 ---------- */
+@media(max-width:980px){
+  body:not([data-page="admin"]) .container{
+    width:min(calc(100% - 36px),1240px);
+  }
+
+  body[data-page="home"] .hero.v2-home-hero .hero-inner{
+    grid-template-columns:1fr!important;
+    gap:32px!important;
+    min-height:auto!important;
+  }
+
+  body[data-page="home"] .v2-hero-products{
+    width:100%;
+    max-width:760px;
+  }
+
+  body:not([data-page="admin"]) .footer-grid{
+    grid-template-columns:1.2fr 1fr 1fr;
+  }
+}
+
+@media(max-width:680px){
+  body:not([data-page="admin"]) .container{
+    width:min(calc(100% - 28px),1240px);
+  }
+
+  body[data-page="home"] .hero.v2-home-hero .hero-inner{
+    padding-top:30px!important;
+    padding-bottom:34px!important;
+  }
+
+  body[data-page="home"] .hero.v2-home-hero .hero-copy h1{
+    font-size:38px!important;
+  }
+
+  body[data-page="home"] .hero.v2-home-hero .hero-copy>p{
+    font-size:13px!important;
+  }
+
+  body:not([data-page="admin"]) .section{
+    padding-top:54px;
+    padding-bottom:54px;
+  }
+
+  body:not([data-page="admin"]) .section-head{
+    display:block;
+  }
+
+  body:not([data-page="admin"]):not([data-page="home"]) .page-hero{
+    padding-top:38px!important;
+    padding-bottom:38px!important;
+  }
+
+  body:not([data-page="admin"]):not([data-page="home"]) .page-hero h1{
+    font-size:35px!important;
+  }
+
+  body:not([data-page="admin"]) .cta-band{
+    border-radius:13px!important;
+  }
+
+  body:not([data-page="admin"]) .site-footer{
+    padding-top:44px;
+  }
+
+  body:not([data-page="admin"]) .footer-grid{
+    grid-template-columns:1fr 1fr;
+    gap:26px 20px;
+  }
+
+  body:not([data-page="admin"]) .footer-brand{
+    grid-column:1/-1;
+  }
+}
+
+@media(max-width:430px){
+  body[data-page="home"] .hero.v2-home-hero .hero-copy h1{
+    font-size:34px!important;
+  }
+
+  body:not([data-page="admin"]) .footer-grid{
+    grid-template-columns:1fr;
+  }
+
+  body:not([data-page="admin"]) .footer-brand{
+    grid-column:auto;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body:not([data-page="admin"]) *,
+  body:not([data-page="admin"]) *:before,
+  body:not([data-page="admin"]) *:after{
+    scroll-behavior:auto!important;
+  }
+}
