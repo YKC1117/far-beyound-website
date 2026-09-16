@@ -1,0 +1,309 @@
+/* 萬里資訊後台 UI Design System
+   統一字級、間距、卡片、按鈕與系統管理頁 RWD。 */
+body[data-page="admin"]{
+  --admin-text:#17324d;
+  --admin-heading:#12324b;
+  --admin-muted:#667d8d;
+  --admin-subtle:#8295a2;
+  --admin-line:#dfe8ed;
+  --admin-soft:#f7fafb;
+  --admin-accent:#168da5;
+  --admin-radius:14px;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* 共用文字層級 */
+body[data-page="admin"] .admin-main .eyebrow{
+  display:inline-block;
+  color:#587286;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.4;
+  letter-spacing:.12em;
+}
+body[data-page="admin"] .admin-panel-head{padding:24px 26px;gap:20px}
+body[data-page="admin"] .admin-panel-head h2{
+  margin:5px 0 0;
+  color:var(--admin-heading);
+  font-size:24px;
+  font-weight:800;
+  line-height:1.3;
+  letter-spacing:-.02em;
+}
+body[data-page="admin"] .admin-panel-head p{
+  max-width:760px;
+  margin:8px 0 0;
+  color:var(--admin-muted);
+  font-size:14px;
+  line-height:1.7;
+}
+body[data-page="admin"] .admin-usage-note,
+body[data-page="admin"] .admin-maintenance-copy,
+body[data-page="admin"] .admin-setting-note{
+  font-size:13px;
+  line-height:1.7;
+}
+body[data-page="admin"] .admin-status-pill,
+body[data-page="admin"] .admin-version-note,
+body[data-page="admin"] .admin-save-state{
+  min-height:30px;
+  padding:0 11px;
+  font-size:12px;
+  line-height:1.2;
+}
+
+/* 按鈕、表單、表格統一 */
+body[data-page="admin"] .btn{
+  min-height:40px;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  line-height:1.35;
+  font-weight:700;
+}
+body[data-page="admin"] .btn.btn-sm{min-height:38px;padding:7px 12px;font-size:13px}
+body[data-page="admin"] input,
+body[data-page="admin"] select,
+body[data-page="admin"] textarea{
+  font-size:14px;
+  line-height:1.5;
+}
+body[data-page="admin"] .admin-table th{
+  padding:12px 14px;
+  font-size:12px;
+  line-height:1.45;
+}
+body[data-page="admin"] .admin-table td{
+  padding:14px;
+  font-size:13px;
+  line-height:1.55;
+}
+body[data-page="admin"] .admin-table td span{font-size:12px;line-height:1.5}
+
+/* 系統管理中心：標頭與四張摘要卡 */
+body[data-page="admin"] .admin-system-center>.admin-panel-head{
+  align-items:center;
+  min-height:142px;
+}
+body[data-page="admin"] .admin-system-center>.admin-panel-head>div:first-child{min-width:0}
+body[data-page="admin"] .admin-system-center>.admin-stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin:0;
+  padding:18px 26px;
+  border-bottom:1px solid var(--admin-line);
+  background:#fbfcfd;
+}
+body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat{
+  display:flex;
+  min-width:0;
+  min-height:94px;
+  padding:16px 18px;
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+  border:1px solid #dce6eb;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:none;
+}
+body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat b{
+  display:block;
+  color:#102f48;
+  font-size:26px;
+  font-weight:800;
+  line-height:1.12;
+  letter-spacing:-.02em;
+}
+body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat span{
+  display:block;
+  color:#657b8b;
+  font-size:13px;
+  font-weight:650;
+  line-height:1.45;
+}
+body[data-page="admin"] .admin-system-body{padding:0 26px 24px}
+
+/* 資安政策、登入活動、操作稽核 */
+body[data-page="admin"] .admin-tool-block{
+  margin:0;
+  padding:20px 0;
+  border-top:1px solid var(--admin-line);
+}
+body[data-page="admin"] .admin-system-body>.admin-tool-block:first-child{border-top:0}
+body[data-page="admin"] .admin-tool-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+body[data-page="admin"] .admin-tool-head>div{min-width:0}
+body[data-page="admin"] .admin-tool-head b,
+body[data-page="admin"] .admin-tool-summary b{
+  display:block;
+  color:#173b55;
+  font-size:18px;
+  font-weight:800;
+  line-height:1.35;
+}
+body[data-page="admin"] .admin-tool-head small,
+body[data-page="admin"] .admin-tool-summary small{
+  display:block;
+  max-width:900px;
+  margin-top:5px;
+  color:#6d8392;
+  font-size:13px;
+  line-height:1.65;
+}
+body[data-page="admin"] .admin-tool-summary{
+  display:block;
+  padding:0;
+  list-style:none;
+  cursor:pointer;
+}
+body[data-page="admin"] .admin-tool-summary::-webkit-details-marker{display:none}
+body[data-page="admin"] .admin-tool-summary-main{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+body[data-page="admin"] .admin-fold-indicator{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 9px;
+  border:1px solid #d8e4e9;
+  border-radius:999px;
+  background:#f8fbfc;
+  color:#557080;
+  font-size:12px;
+  font-weight:700;
+}
+body[data-page="admin"] .admin-tool-result{margin-top:14px}
+body[data-page="admin"] .admin-tool-empty{
+  padding:14px 16px;
+  border-radius:10px;
+  background:#f6f9fa;
+  color:#667d8b;
+  font-size:13px;
+  line-height:1.6;
+}
+body[data-page="admin"] .admin-red{color:#b42323}
+
+/* 系統安全狀態說明改為可掃讀卡片 */
+body[data-page="admin"] .admin-security-truth{
+  margin:0 0 4px;
+  padding:16px 18px;
+  border:1px solid #dbe8ed;
+  border-left:4px solid #2b9db1;
+  border-radius:12px;
+  background:#f8fbfc;
+  color:#4f6878;
+  font-size:13px;
+  line-height:1.65;
+}
+body[data-page="admin"] .admin-security-truth-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+body[data-page="admin"] .admin-security-truth-head b{color:#173b55;font-size:16px}
+body[data-page="admin"] .admin-security-truth-head span{
+  flex:none;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#eaf7f8;
+  color:#167f93;
+  font-size:11px;
+  font-weight:800;
+}
+body[data-page="admin"] .admin-security-truth-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px 18px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+body[data-page="admin"] .admin-security-truth-list li{
+  position:relative;
+  min-width:0;
+  padding-left:16px;
+  color:#526b7b;
+  font-size:13px;
+  line-height:1.55;
+}
+body[data-page="admin"] .admin-security-truth-list li:before{
+  content:"";
+  position:absolute;
+  left:1px;
+  top:.66em;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#28a1b5;
+}
+
+/* 展開後設定表單 */
+body[data-page="admin"] #adminSecurityPolicyBody{padding-top:16px}
+body[data-page="admin"] #adminSecurityPolicyBody .form-grid{gap:14px 16px}
+body[data-page="admin"] #adminSecurityPolicyBody .field label{
+  margin-bottom:6px;
+  color:#466273;
+  font-size:13px;
+  font-weight:750;
+}
+body[data-page="admin"] #adminSecurityPolicyBody .field small{
+  display:block;
+  margin-top:5px;
+  color:#7a8e9a;
+  font-size:12px;
+  line-height:1.5;
+}
+body[data-page="admin"] #adminSecurityPolicyBody .field input{min-height:42px;padding:8px 10px}
+
+@media(max-width:1100px){
+  body[data-page="admin"] .admin-system-center>.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body[data-page="admin"] .admin-security-truth-list{grid-template-columns:1fr}
+}
+
+@media(max-width:780px){
+  body[data-page="admin"]{font-size:14px}
+  body[data-page="admin"] .admin-panel-head{padding:20px 18px}
+  body[data-page="admin"] .admin-panel-head h2{font-size:22px}
+  body[data-page="admin"] .admin-panel-head p{font-size:14px}
+  body[data-page="admin"] .admin-system-center>.admin-panel-head{
+    min-height:0;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  body[data-page="admin"] .admin-system-center>.admin-stats{
+    grid-template-columns:1fr 1fr;
+    padding:14px 16px;
+    gap:10px;
+  }
+  body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat{
+    min-height:86px;
+    padding:14px;
+  }
+  body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat b{font-size:22px}
+  body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat span{font-size:12px}
+  body[data-page="admin"] .admin-system-body{padding:0 16px 18px}
+  body[data-page="admin"] .admin-tool-head{align-items:stretch;flex-direction:column;gap:12px}
+  body[data-page="admin"] .admin-tool-head .btn{width:100%;min-height:44px}
+  body[data-page="admin"] .admin-security-truth{padding:14px}
+  body[data-page="admin"] .admin-security-truth-head{align-items:flex-start;flex-direction:column;gap:6px}
+  body[data-page="admin"] input,
+  body[data-page="admin"] select,
+  body[data-page="admin"] textarea{font-size:16px}
+}
+
+@media(max-width:430px){
+  body[data-page="admin"] .admin-system-center>.admin-stats{grid-template-columns:1fr}
+  body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat{min-height:78px}
+}
