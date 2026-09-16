@@ -1,5 +1,5 @@
 /* 萬里資訊後台 UI Design System
-   統一字級、間距、卡片、按鈕與系統管理頁 RWD。 */
+   單一來源統一字級、間距、卡片、按鈕與桌機／手機 RWD。 */
 body[data-page="admin"]{
   --admin-text:#17324d;
   --admin-heading:#12324b;
@@ -40,7 +40,8 @@ body[data-page="admin"] .admin-panel-head p{
 }
 body[data-page="admin"] .admin-usage-note,
 body[data-page="admin"] .admin-maintenance-copy,
-body[data-page="admin"] .admin-setting-note{
+body[data-page="admin"] .admin-setting-note,
+body[data-page="admin"] .admin-final-note{
   font-size:13px;
   line-height:1.7;
 }
@@ -69,6 +70,19 @@ body[data-page="admin"] textarea{
   font-size:14px;
   line-height:1.5;
 }
+body[data-page="admin"] .field label,
+body[data-page="admin"] .admin-editor-section label{
+  color:#506979;
+  font-size:13px;
+  font-weight:750;
+  line-height:1.45;
+}
+body[data-page="admin"] .field small,
+body[data-page="admin"] .admin-editor-section small{
+  color:#7a8e9a;
+  font-size:12px;
+  line-height:1.55;
+}
 body[data-page="admin"] .admin-table th{
   padding:12px 14px;
   font-size:12px;
@@ -81,7 +95,21 @@ body[data-page="admin"] .admin-table td{
 }
 body[data-page="admin"] .admin-table td span{font-size:12px;line-height:1.5}
 
-/* 系統管理中心：標頭與四張摘要卡 */
+/* 後台導覽與常用操作 */
+body[data-page="admin"] .admin-side .brand-copy small,
+body[data-page="admin"] .admin-nav .admin-nav-label,
+body[data-page="admin"] .admin-nav-section{font-size:11px;line-height:1.5}
+body[data-page="admin"] .admin-preview-links a,
+body[data-page="admin"] .admin-mode{font-size:12px;line-height:1.6}
+body[data-page="admin"] .admin-section-jump a{font-size:13px;line-height:1.4}
+body[data-page="admin"] .admin-section-jump:before{font-size:12px}
+body[data-page="admin"] .admin-fold-btn{min-height:38px;padding:0 12px;font-size:12px}
+body[data-page="admin"] .admin-group-fold small{font-size:12px;line-height:1.55}
+body[data-page="admin"] .admin-nav a.admin-important:after{font-size:10px;padding:3px 6px}
+body[data-page="admin"] .admin-nav-drag-hint,
+body[data-page="admin"] .admin-nav-custom-tools button{font-size:11px}
+
+/* 系統管理中心 */
 body[data-page="admin"] .admin-system-center>.admin-panel-head{
   align-items:center;
   min-height:142px;
@@ -125,8 +153,6 @@ body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat span{
   line-height:1.45;
 }
 body[data-page="admin"] .admin-system-body{padding:0 26px 24px}
-
-/* 資安政策、登入活動、操作稽核 */
 body[data-page="admin"] .admin-tool-block{
   margin:0;
   padding:20px 0;
@@ -141,7 +167,8 @@ body[data-page="admin"] .admin-tool-head{
 }
 body[data-page="admin"] .admin-tool-head>div{min-width:0}
 body[data-page="admin"] .admin-tool-head b,
-body[data-page="admin"] .admin-tool-summary b{
+body[data-page="admin"] .admin-tool-summary b,
+body[data-page="admin"] #adminPersonalSecurity>summary b{
   display:block;
   color:#173b55;
   font-size:18px;
@@ -149,7 +176,8 @@ body[data-page="admin"] .admin-tool-summary b{
   line-height:1.35;
 }
 body[data-page="admin"] .admin-tool-head small,
-body[data-page="admin"] .admin-tool-summary small{
+body[data-page="admin"] .admin-tool-summary small,
+body[data-page="admin"] #adminPersonalSecurity>summary small{
   display:block;
   max-width:900px;
   margin-top:5px;
@@ -164,12 +192,7 @@ body[data-page="admin"] .admin-tool-summary{
   cursor:pointer;
 }
 body[data-page="admin"] .admin-tool-summary::-webkit-details-marker{display:none}
-body[data-page="admin"] .admin-tool-summary-main{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
+body[data-page="admin"] .admin-tool-summary-main{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 body[data-page="admin"] .admin-fold-indicator{
   display:inline-flex;
   align-items:center;
@@ -193,7 +216,7 @@ body[data-page="admin"] .admin-tool-empty{
 }
 body[data-page="admin"] .admin-red{color:#b42323}
 
-/* 系統安全狀態說明改為可掃讀卡片 */
+/* 系統安全狀態 */
 body[data-page="admin"] .admin-security-truth{
   margin:0 0 4px;
   padding:16px 18px;
@@ -248,40 +271,11 @@ body[data-page="admin"] .admin-security-truth-list li:before{
   border-radius:50%;
   background:#28a1b5;
 }
-
-/* 展開後設定表單 */
 body[data-page="admin"] #adminSecurityPolicyBody{padding-top:16px}
 body[data-page="admin"] #adminSecurityPolicyBody .form-grid{gap:14px 16px}
-body[data-page="admin"] #adminSecurityPolicyBody .field label{
-  margin-bottom:6px;
-  color:#466273;
-  font-size:13px;
-  font-weight:750;
-}
-body[data-page="admin"] #adminSecurityPolicyBody .field small{
-  display:block;
-  margin-top:5px;
-  color:#7a8e9a;
-  font-size:12px;
-  line-height:1.5;
-}
 body[data-page="admin"] #adminSecurityPolicyBody .field input{min-height:42px;padding:8px 10px}
 
-/* 後台導覽與常用操作：統一最低可讀字級 */
-body[data-page="admin"] .admin-side .brand-copy small,
-body[data-page="admin"] .admin-nav .admin-nav-label,
-body[data-page="admin"] .admin-nav-section{font-size:11px;line-height:1.5}
-body[data-page="admin"] .admin-preview-links a,
-body[data-page="admin"] .admin-mode{font-size:12px;line-height:1.6}
-body[data-page="admin"] .admin-section-jump a{font-size:13px;line-height:1.4}
-body[data-page="admin"] .admin-section-jump:before{font-size:12px}
-body[data-page="admin"] .admin-fold-btn{min-height:38px;padding:0 12px;font-size:12px}
-body[data-page="admin"] .admin-group-fold small{font-size:12px;line-height:1.55}
-body[data-page="admin"] .admin-nav a.admin-important:after{font-size:10px;padding:3px 6px}
-body[data-page="admin"] .admin-nav-drag-hint,
-body[data-page="admin"] .admin-nav-custom-tools button{font-size:11px}
-
-/* 管理總覽：與各工作區共用同一字級階層 */
+/* 管理總覽 */
 body[data-page="admin"] .admin-dashboard{padding:22px;border-radius:16px}
 body[data-page="admin"] .admin-dashboard-head{margin-bottom:18px}
 body[data-page="admin"] .admin-dashboard-head h2{margin:5px 0 5px;font-size:24px;line-height:1.3}
@@ -296,11 +290,7 @@ body[data-page="admin"] .admin-dashboard-grid a b{font-size:15px;line-height:1.4
 body[data-page="admin"] .admin-dashboard-grid a span{font-size:13px;line-height:1.55}
 
 /* SEO／Ads／AI 成效中心 */
-body[data-page="admin"] #adminPerformanceWorkspace{
-  margin:18px 24px 16px;
-  padding:16px;
-  border-radius:13px;
-}
+body[data-page="admin"] #adminPerformanceWorkspace{margin:18px 24px 16px;padding:16px;border-radius:13px}
 body[data-page="admin"] .apu-workspace-copy{align-items:flex-start;margin-bottom:14px}
 body[data-page="admin"] .apu-workspace-copy b{font-size:16px;line-height:1.4}
 body[data-page="admin"] .apu-workspace-copy span{font-size:13px;line-height:1.6}
@@ -344,9 +334,84 @@ body[data-page="admin"] .pm-seo-preview b{font-size:15px;line-height:1.45}
 body[data-page="admin"] .pm-image-preview,
 body[data-page="admin"] .pm-completeness li{font-size:12px;line-height:1.55}
 
+/* 首頁管理 */
+body[data-page="admin"] .hero-admin-grid{gap:18px;padding:22px}
+body[data-page="admin"] .hero-admin-card{padding:18px}
+body[data-page="admin"] .hero-admin-card h3{font-size:17px;line-height:1.4}
+body[data-page="admin"] .hero-admin-help{font-size:13px;line-height:1.65}
+body[data-page="admin"] .hero-admin-checks label{font-size:13px;line-height:1.5}
+body[data-page="admin"] .hero-product-row{padding:12px}
+body[data-page="admin"] .hero-product-row b{font-size:14px;line-height:1.45}
+body[data-page="admin"] .hero-product-row small{font-size:12px;line-height:1.55}
+body[data-page="admin"] .hero-admin-preview{font-size:12px;line-height:1.55}
+body[data-page="admin"] .hero-trust-admin-head b{font-size:14px;line-height:1.4}
+body[data-page="admin"] .hero-trust-admin-row label{font-size:12px;line-height:1.45}
+body[data-page="admin"] .hero-order-actions button,
+body[data-page="admin"] .hero-trust-admin-row button{font-size:13px}
+
+/* 網站內容管理 */
+body[data-page="admin"] .admin-editor-section{padding:22px 24px}
+body[data-page="admin"] .admin-editor-section h3{font-size:17px;line-height:1.4}
+body[data-page="admin"] .admin-setting-note{color:#607786}
+body[data-page="admin"] .admin-final-note{
+  margin:16px 22px 0;
+  padding:13px 15px;
+  border:1px solid #dfe8ec;
+  border-radius:11px;
+  background:#f8fbfc;
+  color:#607786;
+}
+body[data-page="admin"] .admin-control-save{font-size:12px;line-height:1.55}
+
+/* 下載中心／系統方案 */
+body[data-page="admin"] .resource-admin-grid{gap:18px}
+body[data-page="admin"] .resource-row{padding:14px 18px;font-size:13px;line-height:1.55}
+body[data-page="admin"] .resource-row>small,
+body[data-page="admin"] .resource-row span small{font-size:12px;line-height:1.5}
+body[data-page="admin"] .resource-row b{font-size:14px;line-height:1.45}
+body[data-page="admin"] .resource-status{padding:4px 8px;font-size:11px;line-height:1.3}
+body[data-page="admin"] .panel-note{font-size:13px;line-height:1.65}
+body[data-page="admin"] .resource-actions .icon-text{font-size:12px}
+body[data-page="admin"] .resource-head h2{font-size:22px;line-height:1.35}
+
+/* 人員／權限 */
+body[data-page="admin"] .admin-account-console{font-size:13px;line-height:1.65}
+body[data-page="admin"] .admin-account-head b{font-size:17px;line-height:1.4}
+body[data-page="admin"] .admin-account-head small{font-size:13px;line-height:1.6}
+body[data-page="admin"] .admin-account-login-note,
+body[data-page="admin"] .admin-account-security-note{font-size:13px;line-height:1.65}
+body[data-page="admin"] .admin-invite-box h3{font-size:17px;line-height:1.4}
+body[data-page="admin"] .admin-invite-box small,
+body[data-page="admin"] .admin-owner-setup small{font-size:12px;line-height:1.55}
+body[data-page="admin"] .admin-permission-head b{font-size:17px;line-height:1.4}
+body[data-page="admin"] .admin-permission-head small{font-size:13px;line-height:1.6}
+body[data-page="admin"] .admin-permission-card{padding:13px}
+body[data-page="admin"] .admin-permission-card b{font-size:14px;line-height:1.4}
+body[data-page="admin"] .admin-permission-card small{font-size:12px;line-height:1.55}
+
+/* 備份狀態與異動紀錄 */
+body[data-page="admin"] #adminBackupStatus{padding:13px 15px}
+body[data-page="admin"] .abs-copy b{font-size:14px;line-height:1.4}
+body[data-page="admin"] .abs-copy span{font-size:12px;line-height:1.55}
+body[data-page="admin"] .abs-pill{padding:6px 9px;font-size:11px;line-height:1.35}
+body[data-page="admin"] .admin-history-panel>summary{padding:16px 18px}
+body[data-page="admin"] .admin-history-panel>summary b{font-size:15px;line-height:1.4}
+body[data-page="admin"] .admin-history-panel>summary small{font-size:12px;line-height:1.55}
+body[data-page="admin"] .admin-history-panel>summary>span:last-child{font-size:11px;line-height:1.35;padding:5px 8px}
+body[data-page="admin"] .admin-history-local-note{font-size:13px;line-height:1.65}
+body[data-page="admin"] .admin-history-row{padding:12px}
+body[data-page="admin"] .admin-history-row b{font-size:13px;line-height:1.45}
+body[data-page="admin"] .admin-history-row small{font-size:12px;line-height:1.5}
+body[data-page="admin"] .admin-history-empty{font-size:13px;line-height:1.6}
+body[data-page="admin"] .admin-history-row .icon-text{font-size:12px}
+
 @media(max-width:1100px){
   body[data-page="admin"] .admin-system-center>.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   body[data-page="admin"] .admin-security-truth-list{grid-template-columns:1fr}
+}
+
+@media(max-width:900px){
+  body[data-page="admin"] .resource-admin-grid{grid-template-columns:1fr}
 }
 
 @media(max-width:820px){
@@ -368,6 +433,9 @@ body[data-page="admin"] .pm-completeness li{font-size:12px;line-height:1.55}
   body[data-page="admin"] #adminPerformanceWorkspace{margin-left:12px;margin-right:12px;padding:14px}
   body[data-page="admin"] #adminSearchChannelCenter{margin-left:12px;margin-right:12px;padding:14px}
   body[data-page="admin"] .apu-tabs{grid-template-columns:1fr 1fr}
+  body[data-page="admin"] .hero-admin-grid{grid-template-columns:1fr!important;padding:14px!important}
+  body[data-page="admin"] .hero-admin-card{padding:14px!important}
+  body[data-page="admin"] .resource-row{grid-template-columns:100px minmax(0,1fr) auto}
 }
 
 @media(max-width:780px){
@@ -385,10 +453,7 @@ body[data-page="admin"] .pm-completeness li{font-size:12px;line-height:1.55}
     padding:14px 16px;
     gap:10px;
   }
-  body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat{
-    min-height:86px;
-    padding:14px;
-  }
+  body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat{min-height:86px;padding:14px}
   body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat b{font-size:22px}
   body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat span{font-size:12px}
   body[data-page="admin"] .admin-system-body{padding:0 16px 18px}
@@ -403,10 +468,27 @@ body[data-page="admin"] .pm-completeness li{font-size:12px;line-height:1.55}
   body[data-page="admin"] .admin-dashboard-head h2{font-size:22px}
   body[data-page="admin"] .seo-ai-card{min-height:0;padding:16px}
   body[data-page="admin"] .admin-dashboard-grid a{min-height:86px}
+  body[data-page="admin"] .admin-editor-section{padding:18px 16px}
+  body[data-page="admin"] .admin-final-note{margin:14px 14px 0}
+  body[data-page="admin"] .resource-row{
+    grid-template-columns:1fr;
+    gap:6px;
+    align-items:start;
+    padding:14px;
+  }
+  body[data-page="admin"] .resource-actions{white-space:normal;display:flex;gap:8px;flex-wrap:wrap}
+  body[data-page="admin"] .resource-actions .icon-text{min-height:38px;padding:7px 10px}
+  body[data-page="admin"] .admin-account-head,
+  body[data-page="admin"] .admin-permission-head{align-items:flex-start;flex-direction:column}
+  body[data-page="admin"] .admin-permission-grid{grid-template-columns:1fr}
+  body[data-page="admin"] .admin-permission-actions{display:grid;grid-template-columns:1fr}
+  body[data-page="admin"] .admin-permission-actions .btn{min-height:44px;width:100%}
+  body[data-page="admin"] .admin-history-row{align-items:flex-start;flex-direction:column}
 }
 
 @media(max-width:430px){
   body[data-page="admin"] .admin-system-center>.admin-stats{grid-template-columns:1fr}
   body[data-page="admin"] .admin-system-center>.admin-stats .admin-stat{min-height:78px}
   body[data-page="admin"] .apu-tabs{grid-template-columns:1fr}
+  body[data-page="admin"] .hero-admin-checks{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
 }
