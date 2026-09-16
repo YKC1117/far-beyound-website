@@ -4,8 +4,7 @@
   window.__fbAdminWorkspaceTools=true;
 
   const $=(s,p=document)=>p.querySelector(s);
-  const KEEP_OPEN=new Set(['adminAnalytics']);
-  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260916-1401').replace(/[^0-9A-Za-z._-]/g,'');
+  const BUILD=(new URL(location.href).searchParams.get('build')||window.FB_ADMIN_BUILD||'20260916-1702').replace(/[^0-9A-Za-z._-]/g,'');
 
   function loadHelper(src,id){
     if(document.getElementById(id))return;
@@ -16,69 +15,37 @@
     document.head.appendChild(s);
   }
 
-  function buttonState(btn,open){
-    btn.setAttribute('aria-expanded',open?'true':'false');
-    btn.innerHTML=open?'收合 <span>−</span>':'展開 <span>＋</span>';
-  }
-
-  function collapseHost(host){
-    if(!host||KEEP_OPEN.has(host.id))return;
-    if(host.matches('.admin-panel')){
-      host.classList.add('is-folded');
-      const btn=host.querySelector(':scope > .admin-panel-head .admin-fold-btn');
-      if(btn)buttonState(btn,false);
-      return;
-    }
-    const panel=host.querySelector(':scope > .admin-panel');
-    if(panel){
-      panel.classList.add('is-folded');
-      const btn=panel.querySelector(':scope > .admin-panel-head .admin-fold-btn');
-      if(btn)buttonState(btn,false);
-    }
-    if(host.classList.contains('admin-lowfreq-host')){
-      host.classList.add('is-group-folded');
-      const btn=host.querySelector(':scope > .admin-group-fold .admin-fold-btn');
-      if(btn)buttonState(btn,false);
-    }
-  }
-
-  function openHost(host){
-    if(!host)return;
-    if(host.tagName==='DETAILS')host.open=true;
-    if(host.matches('.admin-panel')){
-      host.classList.remove('is-folded');
-      const btn=host.querySelector(':scope > .admin-panel-head .admin-fold-btn');
-      if(btn)buttonState(btn,true);
-    }
-    const panel=host.querySelector(':scope > .admin-panel');
-    if(panel){
-      panel.classList.remove('is-folded');
-      const btn=panel.querySelector(':scope > .admin-panel-head .admin-fold-btn');
-      if(btn)buttonState(btn,true);
-    }
-    if(host.classList.contains('admin-lowfreq-host')){
-      host.classList.remove('is-group-folded');
-      const btn=host.querySelector(':scope > .admin-group-fold .admin-fold-btn');
-      if(btn)buttonState(btn,true);
-    }
-  }
-
-  function allManageHosts(){
-    const ids=['adminAnalytics','adminInquiries','products','homeHeroAdmin','adminFrontFeatureManager','siteControlAdmin','adminBrandManager','adminLocationManager','contentControlAdmin','siteStructureAdmin','adminExtended','resourceAdmin','adminPassword','adminAccessCenter','adminSecurityCenter','adminBackupCenter','adminHistory','adminMaintenance'];
-    return ids.map(id=>document.getElementById(id)).filter(Boolean);
-  }
-
-  function compactView(){
-    allManageHosts().forEach(collapseHost);
-    openHost(document.getElementById('adminAnalytics'));
-    document.getElementById('adminAnalytics')?.scrollIntoView({behavior:'smooth',block:'start'});
-  }
-
-  function expandAll(){allManageHosts().forEach(openHost);}
-
   function resetView(){
-    try{localStorage.removeItem('farbeyoundAdminFoldV4');}catch(_){/* ignore */}
-    location.reload();
+    if(!confirm('要重設目前後台的介面偏好嗎？\n\n只會重設工作區、收合與分頁位置，不會修改產品、網站內容或下載資料。'))return;
+    try{
+      [
+        'farbeyoundAdminWorkspaceV1','farbeyoundAdminWorkspaceV2','farbeyoundAdminFoldV4',
+        'farbeyoundAdminNavGroupV1','farbeyoundAdminNavGroupV2',
+        'farbeyoundAdminHomeTabV1','farbeyoundAdminContentTabV1',
+        'farbeyoundPerformanceFoldV1','farbeyoundPerformanceTabV2','farbeyoundPerformanceTabV3'
+      ].forEach(key=>localStorage.removeItem(key));
+    }catch(_){/* ignore */}
+    location.href='admin.html';
+  }
+
+  function openQuickFind(){
+    if(window.FBAdminQuickFind?.open){window.FBAdminQuickFind.open();return}
+    const input=$('#adminQuickFind .aqf-input');
+    if(input){input.focus();return}
+    document.dispatchEvent(new CustomEvent('farbeyound:quickfind'));
+  }
+
+  function goHome(){
+    if(window.FBAdminWorkspace?.home){window.FBAdminWorkspace.home();return}
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function syncHomeButton(){
+    const btn=$('#adminWorkspaceHome');
+    if(!btn)return;
+    const atHome=document.body.classList.contains('admin-workspace-home');
+    btn.disabled=atHome;
+    btn.title=atHome?'目前已在管理總覽':'返回管理總覽';
   }
 
   function build(){
@@ -89,17 +56,20 @@
     box.id='adminWorkspaceTools';
     box.className='admin-workspace-tools';
     box.innerHTML=`
-      <div>
+      <div class="admin-workspace-copy">
         <b>後台工作區</b>
-        <span>左側選功能，右側只顯示目前工作區。</span>
+        <span>快速切換功能，不會修改任何網站資料。桌機可直接按 Ctrl+K。</span>
       </div>
       <div class="admin-workspace-actions">
-        <button type="button" class="btn btn-secondary btn-sm" id="adminCompactView">只看常用</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="adminWorkspaceFind">快速找功能</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="adminWorkspaceHome">回管理總覽</button>
         <button type="button" class="btn btn-secondary btn-sm" id="adminResetView">重設版面</button>
       </div>`;
     top.insertAdjacentElement('afterend',box);
-    $('#adminCompactView').addEventListener('click',compactView);
+    $('#adminWorkspaceFind').addEventListener('click',openQuickFind);
+    $('#adminWorkspaceHome').addEventListener('click',goHome);
     $('#adminResetView').addEventListener('click',resetView);
+    syncHomeButton();
     return true;
   }
 
@@ -108,17 +78,26 @@
     const s=document.createElement('style');
     s.id='adminWorkspaceToolsStyle';
     s.textContent=`
-      .admin-workspace-tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 12px;padding:10px 12px;border:1px solid #dfe8ec;border-radius:12px;background:#fff}
-      .admin-workspace-tools>div:first-child{display:grid;gap:2px}.admin-workspace-tools b{color:#294b5d;font-size:11px}.admin-workspace-tools span{color:#7b8d98;font-size:9px}.admin-workspace-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-      @media(max-width:720px){.admin-workspace-tools{align-items:flex-start;flex-direction:column}.admin-workspace-actions{width:100%;justify-content:flex-start}.admin-workspace-actions .btn{flex:1 1 auto}}
+      .admin-workspace-tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 12px;padding:11px 13px;border:1px solid #dfe8ec;border-radius:12px;background:#fff;box-shadow:0 4px 14px rgba(30,59,75,.035)}
+      .admin-workspace-copy{display:grid;gap:2px;min-width:0}.admin-workspace-tools b{color:#294b5d;font-size:12px}.admin-workspace-tools span{color:#7b8d98;font-size:10px;line-height:1.5}.admin-workspace-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.admin-workspace-actions .btn:disabled{opacity:.48;cursor:not-allowed}
+      @media(max-width:820px){.admin-workspace-tools{align-items:flex-start;flex-direction:column}.admin-workspace-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;justify-content:stretch}.admin-workspace-actions .btn{width:100%}.admin-workspace-actions #adminResetView{grid-column:1/-1}}
+      @media(max-width:480px){.admin-workspace-actions{grid-template-columns:1fr}}
     `;
     document.head.appendChild(s);
   }
 
+  function observeWorkspace(){
+    const body=document.body;
+    if(!body||body.dataset.workspaceToolsObserver)return;
+    body.dataset.workspaceToolsObserver='1';
+    new MutationObserver(syncHomeButton).observe(body,{attributes:true,attributeFilter:['class']});
+  }
+
   function boot(){
     style();
-    if(!build())setTimeout(boot,120);
-    // 真正載入單一工作區、成效中心分頁與營運匯出工具；避免檔案存在但入口未執行。
+    if(!build()){setTimeout(boot,120);return}
+    observeWorkspace();
+    // 載入單一工作區、成效中心與營運工具；只處理後台 UI，不改正式網站資料。
     loadHelper('assets/js/admin-master-detail.js','fbAdminMasterDetailLoader');
     loadHelper('assets/js/admin-performance-ux.js','fbAdminPerformanceUxLoader');
     loadHelper('assets/js/admin-cms-ops.js','fbAdminCmsOpsLoader');
