@@ -6,7 +6,7 @@
   const $=(s,p=document)=>p.querySelector(s);
   const BACKUPS={
     frontend:{label:'前台穩定基準',ref:'e2feba253ec741c22412c4ff78a41577e6a3fbed'},
-    backend:{label:'後台施工備份',ref:'backup/admin-20260915-1605-update-log'}
+    backend:{label:'後台完成版備份',ref:'backup/admin-20260916-1446-ops-ui-unify-complete'}
   };
 
   function style(){
@@ -28,7 +28,7 @@
     if(!anchor)return;
     const box=document.createElement('div');
     box.id='adminBackupStatus';
-    box.innerHTML=`<div class="abs-copy"><b>備份／救援狀態</b><span>前台穩定版與後台施工版分開保留；後續若有異常可依對應節點回復。</span></div><div class="abs-refs"><span class="abs-pill">${BACKUPS.frontend.label}：${BACKUPS.frontend.ref.slice(0,8)}</span><span class="abs-pill">${BACKUPS.backend.label}：${BACKUPS.backend.ref}</span></div>`;
+    box.innerHTML=`<div class="abs-copy"><b>備份／救援狀態</b><span>前台穩定版與後台完成版分開保留；後續若有異常可依對應節點回復。</span></div><div class="abs-refs"><span class="abs-pill">${BACKUPS.frontend.label}：${BACKUPS.frontend.ref.slice(0,8)}</span><span class="abs-pill">${BACKUPS.backend.label}：${BACKUPS.backend.ref}</span></div>`;
     anchor.insertAdjacentElement('afterend',box);
   }
 
