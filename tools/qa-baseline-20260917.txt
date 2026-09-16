@@ -1,4 +1,0 @@
-萬里資訊官網 QA 強化基準
-日期：2026-09-17
-施工前 main：490310113c243be6eb7bfde73f22d9d83b314deb
-範圍：僅強化自動驗收與 RWD/runtime gate，不修改前台/後台 runtime、產品資料、下載資料、URL、SEO 或儲存邏輯。
