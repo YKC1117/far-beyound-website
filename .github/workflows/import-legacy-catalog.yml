@@ -1,9 +1,10 @@
-name: Import legacy official catalog
+name: Import official catalog
 
 on:
   push:
     paths:
       - 'tools/import_legacy_catalog.py'
+      - 'tools/enrich_official_specs.py'
       - '.github/workflows/import-legacy-catalog.yml'
   workflow_dispatch:
 
@@ -11,14 +12,14 @@ permissions:
   contents: write
 
 concurrency:
-  group: legacy-catalog-import
+  group: official-catalog-import-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   import-catalog:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,8 +29,10 @@ jobs:
           python-version: '3.12'
       - name: Install importer dependencies
         run: pip install --disable-pip-version-check requests beautifulsoup4
-      - name: Crawl current official website
+      - name: Crawl current company website
         run: python tools/import_legacy_catalog.py
+      - name: Extract full product specification sections
+        run: python tools/enrich_official_specs.py
       - name: Commit catalog and mirrored product images
         shell: bash
         run: |
@@ -39,7 +42,7 @@ jobs:
           if git diff --cached --quiet; then
             echo 'Catalog already current.'
           else
-            git commit -m 'Sync products from current official website'
-            git pull --rebase origin main
-            git push origin main
+            git commit -m 'Sync products from current company website [skip ci]'
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
