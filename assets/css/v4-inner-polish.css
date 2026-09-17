@@ -175,6 +175,52 @@ body.fb-approved-skin-20260916[data-page="solutions"] .solution-nav a svg{
   color:var(--fb-skin-orange,#f28b4b)!important;
 }
 
+/* Final approved visual authority: remove residual legacy cyan without changing layout or behavior. */
+body.fb-approved-skin-20260916 .page-hero::after,
+body.fb-approved-skin-20260916 .downloads-hero::after,
+body.fb-approved-skin-20260916 .guide-hero::after{
+  left:auto!important;
+  bottom:auto!important;
+}
+body.fb-approved-skin-20260916 .section-head>div::after{
+  background:var(--fb-skin-orange,#f28b4b)!important;
+}
+body.fb-approved-skin-20260916[data-page="products"] .brand-chip.active{
+  border-bottom-color:#243740!important;
+  background:#243740!important;
+  color:#fff!important;
+}
+body.fb-approved-skin-20260916 .product-meta span:first-child{
+  border-color:#d8c5b6!important;
+  background:#f3e5d9!important;
+  color:#8b4d2b!important;
+}
+body.fb-approved-skin-20260916[data-page="home"] .v2-stage-caption{
+  border-top-color:var(--fb-skin-orange,#f28b4b)!important;
+}
+body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-dots button.active{
+  background:var(--fb-skin-orange,#f28b4b)!important;
+}
+body.fb-approved-skin-20260916[data-page="cases"] .case-page-link{
+  color:#8d4a25!important;
+}
+body.fb-approved-skin-20260916[data-page="cases"] .case-page-card:hover{
+  border-color:#c79266!important;
+  box-shadow:0 8px 20px rgba(32,51,60,.06)!important;
+}
+body.fb-approved-skin-20260916 .hero-trust-inner a:hover{
+  color:var(--fb-skin-orange-soft,#f5a16a)!important;
+}
+body.fb-approved-skin-20260916 .v2-stage-main:focus-visible,
+body.fb-approved-skin-20260916 .v2-stage-side a:focus-visible,
+body.fb-approved-skin-20260916 .scope-card:focus-visible,
+body.fb-approved-skin-20260916 .case-page-card:focus-visible{
+  outline-color:var(--fb-skin-orange,#f28b4b)!important;
+}
+body.fb-approved-skin-20260916[data-page="locations"] .location-map-arrow{
+  color:#8d4a25!important;
+}
+
 @media(max-width:680px){
   body[data-page="contact"] .location-mini{padding:18px!important}
   body[data-page="contact"] .location-mini b{font-size:21px!important}
