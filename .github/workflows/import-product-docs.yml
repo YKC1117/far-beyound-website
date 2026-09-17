@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - migration/official-site-direct-20260917
     paths:
       - 'assets/js/legacy-catalog.js'
       - '.github/workflows/import-product-docs.yml'
@@ -27,7 +26,7 @@ jobs:
           fetch-depth: 0
       - name: Install parser dependencies
         run: python -m pip install --disable-pip-version-check requests beautifulsoup4 >/dev/null
-      - name: Import document and social links
+      - name: Import official product document links
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -71,27 +70,15 @@ jobs:
               for future in as_completed(futures):
                   url,rows=future.result()
                   if url and rows:docs[url]=rows
-          youtube=''
-          try:
-              r=requests.get(root+'/',headers=HEADERS,timeout=18);r.raise_for_status();html=r.text;soup=BeautifulSoup(html,'html.parser');candidates=[]
-              for tag in soup.find_all(True):
-                  for attr in ('href','src','data-href','data-url'):
-                      value=(tag.get(attr) or '').strip()
-                      if 'youtube.com' in value.lower() or 'youtu.be' in value.lower():candidates.append(urljoin(root+'/',value))
-              if not candidates:candidates=re.findall(r'https?://[^\s\"\'<>]*(?:youtube\.com|youtu\.be)[^\s\"\'<>]*',html,re.I)
-              if candidates:
-                  candidates=list(dict.fromkeys(candidates));candidates.sort(key=lambda u:(0 if any(x in u for x in ('/channel/','/@','/user/','/c/')) else 1,len(u)));youtube=candidates[0]
-          except Exception as exc:print('WARN homepage',type(exc).__name__,str(exc)[:120])
           Path('assets/js/product-docs.js').write_text('// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBProductDocs = '+json.dumps({'generatedAt':now,'source':root,'items':dict(sorted(docs.items()))},ensure_ascii=False,indent=2)+';\n',encoding='utf-8')
-          Path('assets/js/site-social.js').write_text('// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBSocialLinks = '+json.dumps({'generatedAt':now,'youtube':youtube},ensure_ascii=False,indent=2)+';\n',encoding='utf-8')
           print('PRODUCTS',len(products));print('PRODUCT_PAGES_WITH_DOCUMENTS',len(docs));print('DOCUMENT_LINKS',sum(len(v) for v in docs.values()))
           PY
       - name: Commit imported resources
         run: |
-          if git diff --quiet -- assets/js/product-docs.js assets/js/site-social.js; then echo 'No resource changes'; exit 0; fi
+          if git diff --quiet -- assets/js/product-docs.js; then echo 'No document changes'; exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/js/product-docs.js assets/js/site-social.js
+          git add assets/js/product-docs.js
           git commit -m 'Import official product document links [skip ci]'
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
