@@ -3,6 +3,7 @@
   const ENDPOINT='https://papqrnqbfauwuipjwwdh.supabase.co/functions/v1/submit-inquiry';
 
   function toast(msg){
+    if(window.FBPages&&typeof FBPages.toast==='function')return FBPages.toast(msg);
     if(window.FB&&typeof FB.toast==='function')return FB.toast(msg);
     alert(msg);
   }
