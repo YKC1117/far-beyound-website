@@ -1,0 +1,43 @@
+name: Contact form E2E one-time verification
+
+on:
+  push:
+    branches:
+      - qa/contact-e2e-20260917
+
+permissions:
+  contents: read
+
+jobs:
+  contact-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify validation rejects incomplete payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint='https://papqrnqbfauwuipjwwdh.supabase.co/functions/v1/submit-inquiry'
+          code=$(curl --silent --show-error --output /tmp/invalid.json --write-out '%{http_code}' \
+            --request POST "$endpoint" \
+            --header 'Origin: https://ykc1117.github.io' \
+            --header 'Content-Type: application/json' \
+            --data '{"company":"","department":"","contact_name":"","phone":"","email":"bad"}')
+          cat /tmp/invalid.json
+          test "$code" = '422'
+          grep -q 'validation_failed' /tmp/invalid.json
+
+      - name: Submit one clearly marked test inquiry
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint='https://papqrnqbfauwuipjwwdh.supabase.co/functions/v1/submit-inquiry'
+          code=$(curl --silent --show-error --output /tmp/valid.json --write-out '%{http_code}' \
+            --request POST "$endpoint" \
+            --header 'Origin: https://ykc1117.github.io' \
+            --header 'Content-Type: application/json' \
+            --data '{"company":"萬里資訊網站 E2E 測試","department":"網站 QA","contact_name":"網站自動驗收","job_title":"TEST ONLY","phone":"06-2360139","extension":"","mobile":"","email":"company@far-beyound.com.tw","subject":"其他需求","budget":"","message":"[網站測試] 這是一筆聯絡表單端到端驗收資料，可忽略。","source_url":"https://ykc1117.github.io/far-beyound-website/contact.html?e2e=20260917"}')
+          cat /tmp/valid.json
+          test "$code" = '200'
+          grep -q '"ok":true' /tmp/valid.json
+          grep -q '"inquiry_id"' /tmp/valid.json
