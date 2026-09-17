@@ -27,32 +27,60 @@ def load_catalog() -> dict:
     return json.loads(match.group(1))
 
 
-def extract_specs(url: str) -> list[list[str]]:
+def page_lines(url: str) -> list[str]:
     response = requests.get(url, headers=HEADERS, timeout=22)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'html.parser')
-    lines = [norm(x) for x in soup.get_text('\n').splitlines]
-    lines = [x for x in lines if x]
+    return [line for line in (norm(x) for x in soup.get_text('\n').splitlines()) if line]
 
-    start = -1
-    for marker in ('規格', '產品規格'):
-        try:
-            idx = lines.index(marker)
-        except ValueError:
+
+def find_spec_start(lines: list[str], after: int = 0) -> int:
+    for i in range(after, len(lines)):
+        if lines[i] == '規格':
+            return i
+    for i in range(after, len(lines)):
+        if lines[i] == '產品規格':
+            return i
+    return -1
+
+
+def extract_intro(lines: list[str]) -> tuple[list[str], list[str]]:
+    intro_positions = [i for i, line in enumerate(lines) if line == '產品介紹']
+    if not intro_positions:
+        return [], []
+    start = intro_positions[-1] + 1
+    end = find_spec_start(lines, start)
+    if end < 0:
+        end = min(len(lines), start + 80)
+    description, highlights = [], []
+    for line in lines[start:end]:
+        if line in NOISE or line in STOP_MARKERS or line.startswith('Copyright ©'):
             continue
-        if idx > start:
-            start = idx
+        if line.startswith(('•', '●')):
+            text = norm(re.sub(r'^[•●]\s*', '', line))
+            if text:
+                highlights.append(text)
+        elif 3 <= len(line) <= 1200:
+            description.append(line)
+    dedup_desc = []
+    for line in description:
+        if line not in dedup_desc[-4:]:
+            dedup_desc.append(line)
+    dedup_high = list(dict.fromkeys(highlights))
+    return dedup_desc[:30], dedup_high[:20]
+
+
+def extract_specs(lines: list[str]) -> list[list[str]]:
+    start = find_spec_start(lines)
     if start < 0:
         return []
-
     section = []
-    for line in lines[start + 1:start + 140]:
+    for line in lines[start + 1:start + 180]:
         if line in STOP_MARKERS:
             break
         if line in NOISE or line.startswith('Copyright ©'):
             continue
         section.append(line)
-
     specs: list[list[str]] = []
     seen = set()
     i = 0
@@ -84,41 +112,54 @@ def extract_specs(url: str) -> list[list[str]]:
 def main() -> None:
     catalog = load_catalog()
     products = catalog.get('products') or []
-    results: dict[str, list[list[str]]] = {}
+    results = {}
 
     def fetch(product: dict):
         url = str(product.get('legacyUrl') or '')
         if not url:
-            return url, []
+            return url, {'specs': [], 'description': [], 'highlights': []}
         try:
-            return url, extract_specs(url)
+            lines = page_lines(url)
+            description, highlights = extract_intro(lines)
+            return url, {'specs': extract_specs(lines), 'description': description, 'highlights': highlights}
         except Exception as exc:
             print('WARN', url, type(exc).__name__, str(exc)[:120])
-            return url, []
+            return url, {'specs': [], 'description': [], 'highlights': []}
 
     with ThreadPoolExecutor(max_workers=6) as pool:
         futures = [pool.submit(fetch, product) for product in products]
         for future in as_completed(futures):
-            url, specs = future.result()
-            if url and specs:
-                results[url] = specs
+            url, result = future.result()
+            if url:
+                results[url] = result
 
-    enriched = 0
-    rows = 0
+    spec_products = spec_rows = intro_products = 0
     for product in products:
-        specs = results.get(str(product.get('legacyUrl') or ''))
+        result = results.get(str(product.get('legacyUrl') or ''), {})
+        specs = result.get('specs') or []
+        description = result.get('description') or []
+        highlights = result.get('highlights') or []
         if specs:
             product['specs'] = specs
-            enriched += 1
-            rows += len(specs)
+            spec_products += 1
+            spec_rows += len(specs)
+        if description:
+            product['description'] = description
+            product['intro'] = ' '.join(description[:3])[:900]
+            intro_products += 1
+        if highlights:
+            product['highlights'] = highlights
 
-    if enriched < 60:
-        raise RuntimeError(f'Only {enriched} product pages yielded specification rows; refusing incomplete enrichment')
+    if spec_products < 60:
+        raise RuntimeError(f'Only {spec_products} product pages yielded specification rows; refusing incomplete enrichment')
+    if intro_products < 60:
+        raise RuntimeError(f'Only {intro_products} product pages yielded official introductions; refusing incomplete enrichment')
 
     text = '// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBLegacyCatalog = ' + json.dumps(catalog, ensure_ascii=False, indent=2) + ';\n'
     CATALOG.write_text(text, encoding='utf-8')
-    print(f'OFFICIAL_SPEC_PRODUCTS={enriched}')
-    print(f'OFFICIAL_SPEC_ROWS={rows}')
+    print(f'OFFICIAL_SPEC_PRODUCTS={spec_products}')
+    print(f'OFFICIAL_SPEC_ROWS={spec_rows}')
+    print(f'OFFICIAL_INTRO_PRODUCTS={intro_products}')
 
 
 if __name__ == '__main__':
