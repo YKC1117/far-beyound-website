@@ -30,6 +30,7 @@
   }
 
   function styles(){
+    if(document.body.classList.contains('fb-approved-skin-20260916'))return;
     if(document.getElementById('fbPresentationPolish'))return;
     const st=document.createElement('style');st.id='fbPresentationPolish';st.textContent=`
       :root{--fb-ink:#17344a;--fb-muted:#687d8c;--fb-line:#dfe8ed;--fb-soft:#f5f8fa;--fb-accent:#087d96}
