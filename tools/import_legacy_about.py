@@ -11,22 +11,26 @@ from bs4 import BeautifulSoup
 URL='https://www.far-beyound.com.tw/about'
 OUT=Path('assets/js/legacy-about.js')
 HEADERS={'User-Agent':'Mozilla/5.0 Far-Beyound website migration/2.0'}
-SKIP={'關於我們','關於萬里','ABOUT US','首頁','產品資訊','系統方案','下載服務','成功案例','最新消息','聯絡我們','免費諮詢','萬里資訊股份有限公司','Far-beyound informational Co.','Follow us','所有其他商標均為各自所有者之財產'}
 
 def norm(v:str)->str:return re.sub(r'\s+',' ',v or '').strip()
 
 def main()->None:
     r=requests.get(URL,headers=HEADERS,timeout=25);r.raise_for_status();soup=BeautifulSoup(r.text,'html.parser')
-    paragraphs=[];bullets=[]
-    for el in soup.find_all(['p','li']):
-        if el.find_parent(['nav','header','footer']):continue
-        text=norm(el.get_text(' ',strip=True))
-        if not text or text in SKIP or text.startswith(('台北 02-','台南 06-','Copyright ©')):continue
-        if len(text)>2200:continue
-        if el.name=='li':bullets.append(text)
-        elif len(text)>=20:paragraphs.append(text)
-    paragraphs=list(dict.fromkeys(paragraphs));bullets=list(dict.fromkeys(bullets))
+    lines=[line for line in (norm(x) for x in soup.get_text('\n').splitlines()) if line]
+    starts=[i for i,line in enumerate(lines) if line=='ABOUT US']
+    start=starts[-1]+1 if starts else 0
+    end=next((i for i in range(start,len(lines)) if lines[i]=='萬里資訊股份有限公司'),len(lines))
+    body=[]
+    for line in lines[start:end]:
+        if line in {'關於我們','關於萬里','ABOUT US','完整、優質的産品系列：'}:continue
+        if line.startswith(('台北 02-','台南 06-','Copyright ©')):continue
+        if 8<=len(line)<=2200:body.append(line)
+    body=list(dict.fromkeys(body))
+    bullet_prefixes=('系統集成類産品：','機器設備類産品：','耗材類産品：','代工產品：')
+    bullets=[line for line in body if line.startswith(bullet_prefixes)]
+    paragraphs=[line for line in body if line not in bullets]
     if len(paragraphs)<4:raise RuntimeError(f'Only {len(paragraphs)} company profile paragraphs imported')
+    if len(bullets)<4:raise RuntimeError(f'Only {len(bullets)} company profile product groups imported')
     payload={'generatedAt':datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),'source':'official-site','paragraphs':paragraphs,'bullets':bullets}
     OUT.write_text('// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBLegacyAbout = '+json.dumps(payload,ensure_ascii=False,indent=2)+';\n',encoding='utf-8')
     print('OFFICIAL_ABOUT_PARAGRAPHS=',len(paragraphs));print('OFFICIAL_ABOUT_BULLETS=',len(bullets))
