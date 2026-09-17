@@ -14,6 +14,22 @@
       if(visual)visual.innerHTML=`<div class="official-product-photo"><img src="${esc(product.image)}" alt="${esc(product.name||'產品圖片')}"></div>`;
     }
 
+    const description=Array.isArray(product.description)?product.description.filter(Boolean):[];
+    const highlightBox=document.getElementById('productHighlights');
+    if(description.length&&highlightBox){
+      const block=highlightBox.closest('.detail-block');
+      const heading=block?.querySelector('h2');
+      const eyebrow=block?.querySelector('.eyebrow');
+      if(heading)heading.textContent='產品介紹';
+      if(eyebrow)eyebrow.textContent='PRODUCT INFORMATION';
+      highlightBox.classList.add('official-product-description');
+      highlightBox.innerHTML=description.map(line=>`<li>${esc(line)}</li>`).join('');
+      const highlights=Array.isArray(product.highlights)?product.highlights.filter(Boolean):[];
+      if(highlights.length){
+        highlightBox.insertAdjacentHTML('beforeend',`<li class="official-feature-heading">產品特色</li>${highlights.map(line=>`<li class="official-feature-item">${esc(line)}</li>`).join('')}`);
+      }
+    }
+
     const box=document.getElementById('productFiles');
     if(box){
       const files=Array.isArray(product.files)?product.files:[];
