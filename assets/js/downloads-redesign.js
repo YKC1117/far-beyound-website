@@ -6,7 +6,7 @@
   const DIRECT_FILE=/\.(?:zip|exe|msi|dmg|pkg|pdf|rar|7z|gz|tgz|tar)(?:$|[?#])/i;
   const SPECIAL_DIRECT=[/^https:\/\/fs\.tscprinters\.com\/(?:[^/]+\/)?dl\/\d+\/\d+(?:[?#]|$)/i,/^https:\/\/download\.anydesk\.com\//i];
   const verifiedDownloads=new Set();
-  const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+  const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const textOf=x=>`${x.category||''} ${x.name||''} ${x.note||''} ${x.brand||''}`.toLowerCase();
   function typeOf(x){const c=String(x.category||'').toLowerCase(),s=textOf(x);if(/驅動|driver|seagull/.test(c)||/\bdriver\b|printer driver|macos driver|linux driver/.test(s))return'drivers';if(/標籤編輯軟體|標籤軟體|label software/.test(c)||/bartender|zebradesigner|argobar|labeling software|designer/.test(s))return'software';if(/工具程式|utility|utilities|tool/.test(c)||/printer tool|font utility|console pc|configuration tool|diagnostic/.test(s))return'tools';if(/指令手冊|手冊|文件|manual|guide/.test(c)||/programming guide|command manual|reference guide|user guide|datasheet|型錄|技術文件|指令/.test(s))return'manuals';if(/遠端連線|microsoft|遠端|remote|anydesk|teamviewer/.test(s))return'remote';return'other'}
   function typeName(id){return TYPES.find(t=>t.id===id)?.name||'其他下載'}
