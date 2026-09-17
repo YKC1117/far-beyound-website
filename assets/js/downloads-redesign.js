@@ -25,7 +25,7 @@
   }
   function init(){
     if(!window.FBStore)return;
-    const data=FBStore.getData(),items=(data.downloads||[]).filter(x=>x.published!==false).slice(),brands=[...new Set(items.map(x=>x.brand).filter(Boolean))];
+    let data=FBStore.getData(),items=(data.downloads||[]).filter(x=>x.published!==false).slice(),brands=[...new Set(items.map(x=>x.brand).filter(Boolean))];
     const params=new URLSearchParams(location.search),requestedBrand=String(params.get('brand')||'').trim();
     let activeType='all',activeBrand=brands.includes(requestedBrand)?requestedBrand:'all',query='',filterStage=activeBrand==='all'?'type':'brand';
     const typeBox=document.getElementById('downloadTypeFilters'),brandBox=document.getElementById('downloadBrandFilters'),listBox=document.getElementById('downloadResults'),countBox=document.getElementById('downloadCount'),titleBox=document.getElementById('downloadResultsTitle'),descBox=document.getElementById('downloadResultsDesc'),search=document.getElementById('downloadSearch');
@@ -76,6 +76,13 @@
       else listBox.innerHTML=`<div class="download-card-list">${rows.map(card).join('')}</div>`;
     }
     function render(){renderFilters();renderList()}
+    function refreshData(){
+      data=FBStore.getData();
+      items=(data.downloads||[]).filter(x=>x.published!==false).slice();
+      brands=[...new Set(items.map(x=>x.brand).filter(Boolean))];
+      if(activeBrand!=='all'&&!brands.includes(activeBrand)){activeBrand='all';filterStage=activeType==='all'?'type':'brand'}
+      render();
+    }
     search.addEventListener('input',()=>{query=search.value;render()});
     listBox.addEventListener('click',async event=>{
       const link=event.target.closest('a[data-direct-download="1"]');
@@ -111,6 +118,7 @@
         clearTimeout(timeout);
       }
     });
+    window.addEventListener('farbeyound:datachange',()=>setTimeout(refreshData,0));
     render();
   }
   document.addEventListener('DOMContentLoaded',()=>setTimeout(init,30),{once:true});
