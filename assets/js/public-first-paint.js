@@ -5,9 +5,9 @@
   const style=document.createElement('style');
   style.id='fbPublicFirstPaintStyle';
   style.textContent=`
-    /* Keep the public page masked while shared JS builds the final shell. */
-    body:not([data-page="admin"]){transition:opacity .16s ease!important}
-    body:not([data-page="admin"]):not(.fb-public-stable){visibility:hidden!important;opacity:0!important}
+    /* Public pages must never be fully masked. Keep them visible while shared JS enhances the shell. */
+    body:not([data-page="admin"]){visibility:visible!important;opacity:1!important;transition:none!important}
+    body:not([data-page="admin"]):not(.fb-public-stable){visibility:visible!important;opacity:1!important}
     body.fb-public-stable{visibility:visible!important;opacity:1!important}
 
     /* First-paint geometry for the floating contact rail. */
