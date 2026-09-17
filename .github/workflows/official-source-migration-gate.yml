@@ -1,0 +1,63 @@
+name: Official source migration gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  official-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static official-source wiring checks
+        run: |
+          grep -q 'official-source-authority.js' products.html
+          grep -q 'official-source-authority.js' product.html
+          grep -q 'official-product-detail.js' product.html
+          grep -q 'legacy-downloads.js' downloads.html
+          grep -q 'download-merge.js' downloads.html
+          grep -q 'legacy-solutions.js' solutions.html
+          grep -q 'official-solutions-runtime.js' solutions.html
+          ! grep -q 'download-gateway.html?check=1' assets/js/downloads-redesign.js
+          ! grep -q 'fetch(url' assets/js/downloads-redesign.js
+          grep -q 'target="_blank"' assets/js/downloads-redesign.js
+      - name: Start local site
+        run: python3 -m http.server 4173 >/tmp/fb-http.log 2>&1 &
+      - name: Install Selenium
+        run: python -m pip install --disable-pip-version-check selenium
+      - name: Validate rendered official-source experience
+        run: |
+          python3 - <<'PY'
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          from selenium.webdriver.common.by import By
+          opts=Options();opts.add_argument('--headless=new');opts.add_argument('--no-sandbox');opts.add_argument('--disable-dev-shm-usage');opts.add_argument('--window-size=1440,1100')
+          driver=webdriver.Chrome(options=opts)
+          try:
+              driver.get('http://127.0.0.1:4173/products.html');time.sleep(1.4)
+              cards=driver.find_elements(By.CSS_SELECTOR,'.product-card')
+              assert len(cards)>=150, f'expected at least 150 official products, got {len(cards)}'
+              links=[x.get_attribute('href') for x in driver.find_elements(By.CSS_SELECTOR,'.product-card a[href*="product.html?id="]') if x.get_attribute('href')]
+              assert links,'no product detail links rendered'
+              driver.get(links[0]);time.sleep(1.2)
+              assert driver.find_elements(By.CSS_SELECTOR,'.official-product-photo img'),'official product image did not render on detail page'
+              assert '找不到' not in driver.find_element(By.TAG_NAME,'body').text
+              driver.get('http://127.0.0.1:4173/downloads.html');time.sleep(1.2)
+              buttons=driver.find_elements(By.CSS_SELECTOR,'.download-btn')
+              assert buttons,'no official download links rendered'
+              href=buttons[0].get_attribute('href') or ''
+              assert 'download-gateway.html?check=1' not in href, href
+              assert buttons[0].text.strip() in ('檔案下載','洽詢取得'),buttons[0].text
+              driver.get('http://127.0.0.1:4173/solutions.html');time.sleep(1.2)
+              details=driver.find_elements(By.CSS_SELECTOR,'.official-solution-detail')
+              assert len(details)==3, f'expected 3 imported official solution sections, got {len(details)}'
+              for detail in details:
+                  assert len(detail.text.strip())>120,'imported solution detail is unexpectedly short'
+              print('OFFICIAL_SOURCE_MIGRATION_GATE=PASS')
+          finally:
+              driver.quit()
+          PY
