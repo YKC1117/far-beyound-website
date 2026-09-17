@@ -23,9 +23,9 @@ jobs:
           grep -q 'official-solutions-runtime.js' solutions.html
           grep -q 'legacy-about.js' about.html
           grep -q 'official-about-runtime.js' about.html
-          ! grep -q 'download-gateway.html?check=1' assets/js/downloads-redesign.js
-          ! grep -q 'fetch(url' assets/js/downloads-redesign.js
-          grep -q 'target="_blank"' assets/js/downloads-redesign.js
+          grep -q 'functions/v1/download-file' assets/js/downloads-redesign.js
+          grep -q 'data-direct-download' assets/js/downloads-redesign.js
+          ! grep -q 'target="_blank"' assets/js/downloads-redesign.js
       - name: Start local site
         run: python3 -m http.server 4173 >/tmp/fb-http.log 2>&1 &
       - name: Install Selenium
@@ -51,10 +51,12 @@ jobs:
               assert '找不到' not in driver.find_element(By.TAG_NAME,'body').text
               driver.get('http://127.0.0.1:4173/downloads.html');time.sleep(1.2)
               buttons=driver.find_elements(By.CSS_SELECTOR,'.download-btn')
-              assert buttons,'no official download links rendered'
-              href=buttons[0].get_attribute('href') or ''
-              assert 'download-gateway.html?check=1' not in href, href
-              assert buttons[0].text.strip() in ('檔案下載','洽詢取得'),buttons[0].text
+              assert buttons,'no official download controls rendered'
+              labels={b.text.strip() for b in buttons}
+              assert labels.issubset({'直接下載','索取檔案'}),labels
+              direct=driver.find_elements(By.CSS_SELECTOR,'.download-btn[data-direct-download="1"]')
+              assert direct,'no in-site direct download items rendered from official download data'
+              assert all('supabase.co/functions/v1/download-file' in (x.get_attribute('href') or '') for x in direct),'direct downloads bypass the in-site gateway'
               driver.get('http://127.0.0.1:4173/solutions.html');time.sleep(1.2)
               details=driver.find_elements(By.CSS_SELECTOR,'.official-solution-detail')
               assert len(details)==3, f'expected 3 imported official solution sections, got {len(details)}'
