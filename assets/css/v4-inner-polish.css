@@ -17,7 +17,7 @@ body[data-page="product"] .detail-block:before{
   background:#d3e0e5;
 }
 body[data-page="product"] .detail-block:hover:before{background:var(--fb-skin-copper,#b96939)}
-body[data-page="product"] .detail-block h2{color:#15324d;letter-spacing:-.02em}
+body[data-page="product"] .detail-block h2{color:var(--fb-skin-text,#20333c);letter-spacing:-.02em}
 body[data-page="product"] .download-row{border-radius:0!important}
 body[data-page="product"] .product-support-card{border-radius:2px!important;background:#f7f9fa!important}
 body[data-page="product"] .product-support-actions a{border-radius:2px!important}
@@ -48,7 +48,7 @@ body[data-page="contact"] .location-mini:hover{
   transform:translateY(-1px);
 }
 body[data-page="contact"] .location-mini small{font-size:10px!important;letter-spacing:.11em!important;color:#96502a!important}
-body[data-page="contact"] .location-mini b{font-size:24px!important;color:#15324d!important;margin:5px 0 6px!important}
+body[data-page="contact"] .location-mini b{font-size:24px!important;color:var(--fb-skin-text,#20333c)!important;margin:5px 0 6px!important}
 body[data-page="contact"] .location-mini span{font-size:12px!important;line-height:1.7!important}
 body[data-page="contact"] .location-mini-action{
   display:inline-flex!important;
@@ -65,7 +65,7 @@ body[data-page="contact"] .location-mini.is-map-link{cursor:pointer}
 body[data-page="contact"] .location-mini.is-map-link:focus-visible{outline:2px solid var(--fb-skin-orange,#f28b4b);outline-offset:3px}
 
 body[data-page="contact"] .contact-grid{gap:48px!important;align-items:start}
-body[data-page="contact"] .contact-copy h2{color:#15324d!important;letter-spacing:-.025em!important}
+body[data-page="contact"] .contact-copy h2{color:var(--fb-skin-text,#20333c)!important;letter-spacing:-.025em!important}
 body[data-page="contact"] .contact-copy>p{line-height:1.85!important}
 body[data-page="contact"] .contact-cards{gap:7px!important;margin-top:24px!important}
 body[data-page="contact"] .contact-card{
