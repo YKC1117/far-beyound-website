@@ -2,8 +2,9 @@
   if(document.body.dataset.page!=='downloads'||window.__fbDownloadsRedesign)return;
   window.__fbDownloadsRedesign=true;
   const TYPES=[{id:'all',name:'全部類型'},{id:'drivers',name:'驅動程式'},{id:'software',name:'標籤軟體'},{id:'tools',name:'工具程式'},{id:'manuals',name:'手冊與文件'},{id:'remote',name:'遠端與系統'},{id:'other',name:'其他下載'}];
-  const ZEBRA_DRIVER_PAGE='https://www.zebra.com/us/en/support-downloads/printers/printer-drivers.html';
-  const SEAGULL_DRIVER_PAGE='https://admin.seagullscientific.com/resources/printer-drivers';
+  const DOWNLOAD_GATEWAY='https://papqrnqbfauwuipjwwdh.supabase.co/functions/v1/download-file';
+  const DIRECT_FILE=/\.(?:zip|exe|msi|dmg|pkg|pdf|rar|7z|gz|tgz|tar)(?:$|[?#])/i;
+  const SPECIAL_DIRECT=[/^https:\/\/fs\.tscprinters\.com\/(?:[^/]+\/)?dl\/\d+\/\d+(?:[?#]|$)/i,/^https:\/\/download\.anydesk\.com\//i];
   const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const textOf=x=>`${x.category||''} ${x.name||''} ${x.note||''} ${x.brand||''}`.toLowerCase();
   function typeOf(x){const c=String(x.category||'').toLowerCase(),s=textOf(x);if(/驅動|driver|seagull/.test(c)||/\bdriver\b|printer driver|macos driver|linux driver/.test(s))return'drivers';if(/標籤編輯軟體|標籤軟體|label software/.test(c)||/bartender|zebradesigner|argobar|labeling software|designer/.test(s))return'software';if(/工具程式|utility|utilities|tool/.test(c)||/printer tool|font utility|console pc|configuration tool|diagnostic/.test(s))return'tools';if(/指令手冊|手冊|文件|manual|guide/.test(c)||/programming guide|command manual|reference guide|user guide|datasheet|型錄|技術文件|指令/.test(s))return'manuals';if(/遠端連線|microsoft|遠端|remote|anydesk|teamviewer/.test(s))return'remote';return'other'}
@@ -11,16 +12,13 @@
   function safeDownload(item){
     const url=String(item.url||'').trim();
     if(!url)return {href:`contact.html?item=${encodeURIComponent(item.name||'下載資料')}`,action:'洽詢取得',external:false};
-    try{
-      const u=new URL(url);
-      const signed=u.searchParams.has('Policy')||u.searchParams.has('Signature')||u.searchParams.has('Key-Pair-Id')||u.searchParams.has('Expires');
-      const seagullDriver=/seagull|bartender/i.test(textOf(item));
-      if(signed&&/payloads\.zebra\.com$/i.test(u.hostname))return {href:ZEBRA_DRIVER_PAGE,action:'前往官方下載',external:true};
-      if(/cloudfront\.net$/i.test(u.hostname)&&seagullDriver)return {href:SEAGULL_DRIVER_PAGE,action:'前往官方下載',external:true};
-      return {href:url,action:'檔案下載',external:true};
-    }catch(_){
-      return {href:`contact.html?item=${encodeURIComponent(item.name||'下載資料')}`,action:'洽詢取得',external:false};
+    const signed=/[?&](?:Policy|Signature|Key-Pair-Id|Expires)=/i.test(url);
+    const direct=!signed&&(DIRECT_FILE.test(url)||SPECIAL_DIRECT.some(re=>re.test(url)));
+    if(direct){
+      const sp=new URLSearchParams({src:url,name:String(item.name||'download')});
+      return {href:`${DOWNLOAD_GATEWAY}?${sp.toString()}`,action:'直接下載',external:false};
     }
+    return {href:`contact.html?item=${encodeURIComponent((item.name||'下載資料')+' 檔案索取')}`,action:'洽詢取得',external:false};
   }
   function init(){
     if(!window.FBStore)return;
@@ -52,7 +50,7 @@
       typeBox.querySelector('[data-back-type]').onclick=()=>{activeType='all';activeBrand='all';filterStage='type';render()};
       typeBox.querySelectorAll('[data-brand]').forEach(b=>b.onclick=()=>{activeBrand=b.dataset.brand;render()});
     }
-    function card(x){const meta=[];if(x.version)meta.push(`版本 ${esc(x.version)}`);if(x.updated)meta.push(`更新 ${esc(x.updated)}`);if(x.size)meta.push(esc(x.size));const link=safeDownload(x);return `<article class="download-card"><div class="download-card-icon">DL</div><div class="download-card-main"><div class="download-card-tags"><span class="download-tag type">${esc(typeName(typeOf(x)))}</span><span class="download-tag">${esc(x.brand||'其他')}</span></div><h3>${esc(x.name||'下載資源')}</h3>${x.note?`<p>${esc(x.note)}</p>`:''}${meta.length?`<div class="download-meta">${meta.map(m=>`<span>${m}</span>`).join('')}</div>`:''}</div><a class="download-btn" href="${esc(link.href)}" ${link.external?'target="_blank" rel="noopener noreferrer"':''}>${link.action}</a></article>`}
+    function card(x){const meta=[];if(x.version)meta.push(`版本 ${esc(x.version)}`);if(x.updated)meta.push(`更新 ${esc(x.updated)}`);if(x.size)meta.push(esc(x.size));const link=safeDownload(x);return `<article class="download-card"><div class="download-card-icon">DL</div><div class="download-card-main"><div class="download-card-tags"><span class="download-tag type">${esc(typeName(typeOf(x)))}</span><span class="download-tag">${esc(x.brand||'其他')}</span></div><h3>${esc(x.name||'下載資源')}</h3>${x.note?`<p>${esc(x.note)}</p>`:''}${meta.length?`<div class="download-meta">${meta.map(m=>`<span>${m}</span>`).join('')}</div>`:''}</div><a class="download-btn" href="${esc(link.href)}">${link.action}</a></article>`}
     function group(name,rows){return `<section class="download-group"><div class="download-group-title"><h3>${esc(name)}</h3><span>${rows.length} 項</span></div><div class="download-card-list">${rows.map(card).join('')}</div></section>`}
     function renderList(){
       const rows=filtered();countBox.textContent=`共 ${rows.length} 項`;const typeLabel=activeType==='all'?'全部類型':typeName(activeType);titleBox.textContent=activeBrand==='all'?typeLabel:`${activeBrand}｜${typeLabel}`;
