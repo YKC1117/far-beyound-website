@@ -61,5 +61,6 @@ jobs:
             echo 'Official news archive already current.'
           else
             git commit -m 'Sync official news archive [skip ci]'
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
