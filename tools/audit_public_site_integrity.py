@@ -44,6 +44,17 @@ def local_target(page: Path, value: str) -> Path | None:
     return (ROOT / clean.lstrip('/')) if value.startswith('/') else (page.parent / clean)
 
 
+def require_text(path: str, needles: list[str], errors: list[str]) -> None:
+    target = ROOT / path
+    if not target.is_file():
+        errors.append(f'missing UX guard file: {path}')
+        return
+    text = target.read_text(encoding='utf-8')
+    for needle in needles:
+        if needle not in text:
+            errors.append(f'{path}: missing required UX guard: {needle}')
+
+
 def main() -> None:
     errors: list[str] = []
     checked_refs = 0
@@ -72,6 +83,25 @@ def main() -> None:
             checked_refs += 1
             if not target.exists():
                 errors.append(f'{rel}: missing local reference: {value}')
+
+    # Customer-facing UX guards: direct downloads must be probed before navigation,
+    # failed sources must degrade to an in-site file request, and unavailable products
+    # must not expose internal administration wording.
+    require_text(
+        'assets/js/downloads-redesign.js',
+        ['data-direct-download', 'probe=1', '索取檔案', 'download-file'],
+        errors,
+    )
+    visibility = ROOT / 'assets/js/public-product-visibility.js'
+    if visibility.is_file():
+        visibility_text = visibility.read_text(encoding='utf-8')
+        if '產品資料仍保留於管理後台' in visibility_text:
+            errors.append('public-product-visibility.js: internal admin wording exposed to customers')
+        for phrase in ['此產品目前暫不提供公開瀏覽', '聯絡我們']:
+            if phrase not in visibility_text:
+                errors.append(f'public-product-visibility.js: missing customer-safe unavailable state: {phrase}')
+    else:
+        errors.append('missing UX guard file: assets/js/public-product-visibility.js')
 
     js_errors: list[str] = []
     for path in sorted((ROOT / 'assets' / 'js').glob('*.js')):
@@ -106,6 +136,7 @@ def main() -> None:
     print(f'LOCAL_REFERENCES_CHECKED={checked_refs}')
     print(f'JS_SYNTAX_FILES={len(list((ROOT / "assets" / "js").glob("*.js")))}')
     print(f'CSS_FILES={len(list((ROOT / "assets" / "css").glob("*.css")))}')
+    print('PUBLIC_UX_GUARDS=PASS')
 
 
 if __name__ == '__main__':
