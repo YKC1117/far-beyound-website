@@ -16,6 +16,7 @@ SEEDS = [
     ('wms', 'WMS電子倉庫系統', '/system/3/6'),
     ('smt', 'SMT防錯料系統', '/system/4/7'),
 ]
+SKIP_EXACT = {'首頁', '產品資訊', '系統方案', '下載服務', '成功案例', '最新消息', '關於萬里', '聯絡我們', '免費諮詢', '回列表'}
 
 
 def norm(value: str) -> str:
@@ -31,35 +32,24 @@ def extract(item_id: str, title: str, path: str) -> dict:
     response = requests.get(url, headers=HEADERS, timeout=25)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'html.parser')
+    title_key = compact(title)
+    content = []
 
-    blocks = []
     for element in soup.find_all(['h1', 'h2', 'h3', 'h4', 'p', 'li']):
         if element.find_parent(['nav', 'header', 'footer']):
             continue
         text = norm(element.get_text(' ', strip=True))
-        if text:
-            blocks.append(text)
-
-    title_key = compact(title)
-    starts = [i for i, line in enumerate(blocks) if compact(line) == title_key]
-    if not starts:
-        raise RuntimeError(f'Could not locate solution title: {title}')
-    start = starts[-1]
-    end = next((i for i in range(start + 1, len(blocks)) if compact(blocks[i]) == '回列表'), len(blocks))
-
-    content = []
-    for line in blocks[start + 1:end]:
-        if compact(line) in {'系統方案', '免費諮詢', title_key}:
+        if not text or compact(text) == title_key or text in SKIP_EXACT:
             continue
-        if line.startswith(('台北 02-', '台南 06-', 'Copyright ©')):
+        if text.startswith(('台北 02-', '台南 06-', 'Copyright ©')):
             continue
-        if len(line) > 2200:
+        if len(text) > 2200:
             continue
-        content.append(line)
+        content.append(text)
 
     dedup = []
     for line in content:
-        if line in dedup[-3:]:
+        if line in dedup[-4:]:
             continue
         dedup.append(line)
     if len(''.join(dedup)) < 250:
