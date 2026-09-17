@@ -27,23 +27,34 @@ def extract(item_id: str, title: str, path: str) -> dict:
     response = requests.get(url, headers=HEADERS, timeout=25)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'html.parser')
-    lines = [norm(x) for x in soup.get_text('\n').splitlines()]
-    lines = [x for x in lines if x]
-    end = next((i for i, line in enumerate(lines) if line == '回列表'), len(lines))
-    starts = [i for i, line in enumerate(lines[:end]) if line == title]
+
+    blocks = []
+    for element in soup.find_all(['h1', 'h2', 'h3', 'h4', 'p', 'li']):
+        if element.find_parent(['nav', 'header', 'footer']):
+            continue
+        text = norm(element.get_text(' ', strip=True))
+        if text:
+            blocks.append(text)
+
+    starts = [i for i, line in enumerate(blocks) if line == title]
     if not starts:
         raise RuntimeError(f'Could not locate solution title: {title}')
     start = starts[-1]
+    end = next((i for i in range(start + 1, len(blocks)) if blocks[i] == '回列表'), len(blocks))
+
     content = []
-    for line in lines[start + 1:end]:
-        if line in {'系統方案', '免費諮詢'} or line == title:
+    for line in blocks[start + 1:end]:
+        if line in {'系統方案', '免費諮詢', title}:
             continue
-        if line.startswith('台北 02-') or line.startswith('台南 06-'):
+        if line.startswith(('台北 02-', '台南 06-', 'Copyright ©')):
+            continue
+        if len(line) > 2200:
             continue
         content.append(line)
+
     dedup = []
     for line in content:
-        if dedup and dedup[-1] == line:
+        if line in dedup[-3:]:
             continue
         dedup.append(line)
     if len(''.join(dedup)) < 250:
