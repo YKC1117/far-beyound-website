@@ -149,6 +149,32 @@ body[data-page="downloads"] .downloads-search::placeholder{
   font-family:"Noto Sans CJK TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif!important;
 }
 
+/* Approved-skin accent lock for inner pages that still carry legacy teal accents. */
+body.fb-approved-skin-20260916[data-page="cases"] .case-page-card .case-num,
+body.fb-approved-skin-20260916[data-page="locations"] .location-card .loc-type,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-card small{
+  color:#96502a!important;
+}
+body.fb-approved-skin-20260916[data-page="cases"] .case-page-card .case-tags span{
+  border-color:#d8c5b6!important;
+  background:#f3e5d9!important;
+  color:#8b4d2b!important;
+}
+body.fb-approved-skin-20260916[data-page="locations"] .location-card.primary{
+  box-shadow:inset 0 3px 0 var(--fb-skin-orange,#f28b4b)!important;
+}
+body.fb-approved-skin-20260916[data-page="news-detail"] .article-body .notice,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-note{
+  border-left-color:var(--fb-skin-orange,#f28b4b)!important;
+  background:#f3e5d9!important;
+}
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-list li:before,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .flow-step em,
+body.fb-approved-skin-20260916[data-page="solutions"] .system-panel-item em,
+body.fb-approved-skin-20260916[data-page="solutions"] .solution-nav a svg{
+  color:var(--fb-skin-orange,#f28b4b)!important;
+}
+
 @media(max-width:680px){
   body[data-page="contact"] .location-mini{padding:18px!important}
   body[data-page="contact"] .location-mini b{font-size:21px!important}
