@@ -1,6 +1,5 @@
-// Migrated from the current official Far-beyound website about page.
+// Migrated copy of the current official Far-beyound company profile. No runtime dependency on the legacy host.
 window.FBLegacyAbout={
-  source:'https://www.far-beyound.com.tw/about',
   paragraphs:[
     '萬里資訊股份有限公司設立於1992年5月1號，初期以提供條碼產品相關應用為主要經營導向，提供客戶各大廠牌條碼標籤機、條碼掃描器、編輯軟體、RFID、耗材等方面的技術支援，相關的應用遍及包含電子，製造，食品，百貨零售，成衣製造及醫療業等。',
     '同時也提供軟體專業系統開發與提供生產管理系統化解決方案的軟件公司，協助客戶導入於各種環境需求之解決方案，有專業的系統研發和執行團隊，致力於提高工廠生產效率，為企業生產提供專業服務方案，在任何情況下不斷貨、不錯誤、不停線，提供客戶最忠誠的支援，確保客戶不因標籤造成任何損失。',
