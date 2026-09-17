@@ -40,5 +40,6 @@ jobs:
             echo 'Catalog already current.'
           else
             git commit -m 'Sync products from current company website [skip ci]'
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
