@@ -34,7 +34,6 @@ def extract(item_id: str, title: str, path: str) -> dict:
     soup = BeautifulSoup(response.text, 'html.parser')
     title_key = compact(title)
     content = []
-
     for element in soup.find_all(['h1', 'h2', 'h3', 'h4', 'p', 'li']):
         if element.find_parent(['nav', 'header', 'footer']):
             continue
@@ -46,7 +45,6 @@ def extract(item_id: str, title: str, path: str) -> dict:
         if len(text) > 2200:
             continue
         content.append(text)
-
     dedup = []
     for line in content:
         if line in dedup[-4:]:
@@ -61,7 +59,7 @@ def main() -> None:
     items = [extract(*seed) for seed in SEEDS]
     payload = {
         'generatedAt': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-        'source': BASE,
+        'source': 'official-site',
         'items': items,
     }
     OUT.write_text('// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBLegacySolutions = ' + json.dumps(payload, ensure_ascii=False, indent=2) + ';\n', encoding='utf-8')
