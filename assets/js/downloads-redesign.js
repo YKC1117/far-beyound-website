@@ -6,6 +6,18 @@
   const textOf=x=>`${x.category||''} ${x.name||''} ${x.note||''} ${x.brand||''}`.toLowerCase();
   function typeOf(x){const c=String(x.category||'').toLowerCase(),s=textOf(x);if(/驅動|driver|seagull/.test(c)||/\bdriver\b|printer driver|macos driver|linux driver/.test(s))return'drivers';if(/標籤編輯軟體|標籤軟體|label software/.test(c)||/bartender|zebradesigner|argobar|labeling software|designer/.test(s))return'software';if(/工具程式|utility|utilities|tool/.test(c)||/printer tool|font utility|console pc|configuration tool|diagnostic/.test(s))return'tools';if(/指令手冊|手冊|文件|manual|guide/.test(c)||/programming guide|command manual|reference guide|user guide|datasheet|型錄|技術文件|指令/.test(s))return'manuals';if(/遠端連線|microsoft|遠端|remote|anydesk|teamviewer/.test(s))return'remote';return'other'}
   function typeName(id){return TYPES.find(t=>t.id===id)?.name||'其他下載'}
+  function safeDownload(item){
+    const url=String(item.url||'').trim(),source=String(item.sourcePage||'').trim();
+    if(!url)return {href:`contact.html?item=${encodeURIComponent(item.name||'下載資料')}`,action:'洽詢取得',external:false};
+    let fragile=false;
+    try{
+      const u=new URL(url);
+      const signed=u.searchParams.has('Policy')||u.searchParams.has('Signature')||u.searchParams.has('Key-Pair-Id')||u.searchParams.has('Expires');
+      fragile=signed&&/payloads\.zebra\.com$/i.test(u.hostname);
+    }catch(_){fragile=true}
+    if(fragile&&source)return {href:source,action:'前往官方下載',external:true};
+    return {href:url,action:'檔案下載',external:true};
+  }
   function init(){
     if(!window.FBStore)return;
     const data=FBStore.getData(),items=(data.downloads||[]).filter(x=>x.published!==false).slice(),brands=[...new Set(items.map(x=>x.brand).filter(Boolean))];
@@ -36,7 +48,7 @@
       typeBox.querySelector('[data-back-type]').onclick=()=>{activeType='all';activeBrand='all';filterStage='type';render()};
       typeBox.querySelectorAll('[data-brand]').forEach(b=>b.onclick=()=>{activeBrand=b.dataset.brand;render()});
     }
-    function card(x){const meta=[];if(x.version)meta.push(`版本 ${esc(x.version)}`);if(x.updated)meta.push(`更新 ${esc(x.updated)}`);if(x.size)meta.push(esc(x.size));const href=x.url?esc(x.url):`contact.html?item=${encodeURIComponent(x.name||'下載資料')}`,action=x.url?'檔案下載':'洽詢取得';return `<article class="download-card"><div class="download-card-icon">DL</div><div class="download-card-main"><div class="download-card-tags"><span class="download-tag type">${esc(typeName(typeOf(x)))}</span><span class="download-tag">${esc(x.brand||'其他')}</span></div><h3>${esc(x.name||'下載資源')}</h3>${x.note?`<p>${esc(x.note)}</p>`:''}${meta.length?`<div class="download-meta">${meta.map(m=>`<span>${m}</span>`).join('')}</div>`:''}</div><a class="download-btn" href="${href}" ${x.url?'target="_blank" rel="noopener noreferrer"':''}>${action}</a></article>`}
+    function card(x){const meta=[];if(x.version)meta.push(`版本 ${esc(x.version)}`);if(x.updated)meta.push(`更新 ${esc(x.updated)}`);if(x.size)meta.push(esc(x.size));const link=safeDownload(x);return `<article class="download-card"><div class="download-card-icon">DL</div><div class="download-card-main"><div class="download-card-tags"><span class="download-tag type">${esc(typeName(typeOf(x)))}</span><span class="download-tag">${esc(x.brand||'其他')}</span></div><h3>${esc(x.name||'下載資源')}</h3>${x.note?`<p>${esc(x.note)}</p>`:''}${meta.length?`<div class="download-meta">${meta.map(m=>`<span>${m}</span>`).join('')}</div>`:''}</div><a class="download-btn" href="${esc(link.href)}" ${link.external?'target="_blank" rel="noopener noreferrer"':''}>${link.action}</a></article>`}
     function group(name,rows){return `<section class="download-group"><div class="download-group-title"><h3>${esc(name)}</h3><span>${rows.length} 項</span></div><div class="download-card-list">${rows.map(card).join('')}</div></section>`}
     function renderList(){
       const rows=filtered();countBox.textContent=`共 ${rows.length} 項`;const typeLabel=activeType==='all'?'全部類型':typeName(activeType);titleBox.textContent=activeBrand==='all'?typeLabel:`${activeBrand}｜${typeLabel}`;
