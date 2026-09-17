@@ -1,7 +1,7 @@
 // Generated from the current official Far-beyound website. Do not hand-edit.
 window.FBLegacySolutions = {
-  "generatedAt": "2026-09-17T03:05:34Z",
-  "source": "https://www.far-beyound.com.tw",
+  "generatedAt": "2026-09-17T03:08:55Z",
+  "source": "official-site",
   "items": [
     {
       "id": "sfis",
