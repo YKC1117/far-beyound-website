@@ -182,7 +182,11 @@ body.fb-approved-skin-20260916[data-page="about"] .about-fact b,
 body.fb-approved-skin-20260916[data-page="about"] .scope-card b,
 body.fb-approved-skin-20260916[data-page="locations"] .location-card h2,
 body.fb-approved-skin-20260916[data-page="locations"] .location-card dd,
-body.fb-approved-skin-20260916[data-page="news-detail"] .article-head h1{
+body.fb-approved-skin-20260916[data-page="news-detail"] .article-head h1,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-card h2,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .flow-step b,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-note h2,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .compare td:first-child{
   color:var(--fb-skin-text,#20333c)!important;
 }
 body.fb-approved-skin-20260916[data-page="cases"] .case-page-card h3,
@@ -191,7 +195,12 @@ body.fb-approved-skin-20260916[data-page="about"] .about-fact span,
 body.fb-approved-skin-20260916[data-page="about"] .scope-card p,
 body.fb-approved-skin-20260916[data-page="locations"] .location-card dt,
 body.fb-approved-skin-20260916[data-page="news-detail"] .article-meta,
-body.fb-approved-skin-20260916[data-page="news-detail"] #articleLead{
+body.fb-approved-skin-20260916[data-page="news-detail"] #articleLead,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-card p,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-list li,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .flow-step span,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-note p,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .compare th{
   color:var(--fb-skin-muted,#526873)!important;
 }
 
