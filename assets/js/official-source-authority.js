@@ -38,6 +38,7 @@
       product.status=source.status||product.status;
       product.device=source.device||product.device;
       product.intro=source.intro||product.intro;
+      if(Array.isArray(source.description)&&source.description.length)product.description=clone(source.description);
       if(Array.isArray(source.highlights)&&source.highlights.length)product.highlights=clone(source.highlights);
       if(hasUsefulSpecs(source.specs))product.specs=clone(source.specs);
       if(source.image)product.image=source.image;
