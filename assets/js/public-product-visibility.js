@@ -43,14 +43,14 @@
       const u=new URL(a.href,location.href),brand=u.searchParams.get('brand')||'all';if(brand==='all'){if(a.style.display)a.style.display='';return}
       const has=(d.products||[]).some(p=>p.published!==false&&p.brand===brand&&(f.category==='all'||p.category===f.category));const next=has?'':'none';if(a.style.display!==next)a.style.display=next;
     });
-    const grid=$('#productGrid');if(grid){const visible=$$('.product-card',grid).filter(x=>getComputedStyle(x).display!=='none');let empty=$('#publishedProductEmpty',grid);if(!visible.length&&!empty){empty=document.createElement('div');empty.id='publishedProductEmpty';empty.className='empty-state wide';empty.innerHTML='<b>目前沒有公開展示的產品</b><span>可切換其他分類或品牌查看。</span>';grid.appendChild(empty)}else if(visible.length&&empty)empty.remove()}
+    const grid=$('#productGrid');if(grid){const visible=$$('.product-card',grid).filter(x=>getComputedStyle(x).display!=='none');let empty=$('#publishedProductEmpty',grid);if(!visible.length&&!empty){empty=document.createElement('div');empty.id='publishedProductEmpty';empty.className='empty-state wide';empty.innerHTML='<b>目前沒有公開展示的產品</b><span>可切換其他分類或品牌查看，或直接聯絡我們協助確認。</span>';grid.appendChild(empty)}else if(visible.length&&empty)empty.remove()}
   }
   function applyProductPage(){
     if(document.body.dataset.page!=='product')return;
     const id=new URLSearchParams(location.search).get('id')||'';if(!id||!hiddenIds().has(id))return;
     const main=$('main');if(!main||main.dataset.unpublishedHandled)return;main.dataset.unpublishedHandled='1';
-    main.innerHTML='<section class="section"><div class="container"><div class="empty-state wide" style="padding:48px 24px"><b>此產品目前未公開</b><span>產品資料仍保留於管理後台，前台暫時不提供瀏覽。</span><a class="btn btn-primary" href="products.html" style="margin-top:18px">返回產品資訊</a></div></div></section>';
-    document.title='產品目前未公開｜萬里資訊';
+    main.innerHTML='<section class="section"><div class="container"><div class="empty-state wide" style="padding:48px 24px"><b>此產品目前暫不提供公開瀏覽</b><span>如需確認產品規格、替代機型或供貨資訊，萬里資訊可協助您進一步確認。</span><div class="product-actions" style="margin-top:18px"><a class="btn btn-primary" href="products.html">返回產品資訊</a><a class="btn btn-secondary" href="contact.html?item=%E7%94%A2%E5%93%81%E8%B3%87%E8%A8%8A%E8%A9%A2%E5%95%8F">聯絡我們</a></div></div></div></section>';
+    document.title='產品資訊｜萬里資訊';
   }
   function run(){if(!window.FBStore)return false;applyCards();applyProductsPage();applyProductPage();return true}
   let scheduled=false;
