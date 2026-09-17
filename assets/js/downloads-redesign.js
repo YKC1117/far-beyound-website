@@ -88,9 +88,11 @@
       link.dataset.busy='1';
       link.setAttribute('aria-disabled','true');
       link.textContent='確認檔案中…';
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),10000);
       try{
         const probeUrl=`${href}${href.includes('?')?'&':'?'}probe=1`;
-        const response=await fetch(probeUrl,{method:'GET',headers:{Accept:'application/json'}});
+        const response=await fetch(probeUrl,{method:'GET',headers:{Accept:'application/json'},signal:controller.signal});
         if(!response.ok)throw new Error('download_probe_failed');
         const result=await response.json().catch(()=>null);
         if(!result?.ok)throw new Error('download_probe_failed');
@@ -105,6 +107,8 @@
         link.href=fallback;
         link.textContent='索取檔案';
         window.FBPages?.toast?.('此檔案目前無法直接下載，已切換為檔案索取，可由萬里資訊協助提供。');
+      }finally{
+        clearTimeout(timeout);
       }
     });
     render();
