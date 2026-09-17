@@ -21,6 +21,8 @@ jobs:
           grep -q 'download-merge.js' downloads.html
           grep -q 'legacy-solutions.js' solutions.html
           grep -q 'official-solutions-runtime.js' solutions.html
+          grep -q 'legacy-about.js' about.html
+          grep -q 'official-about-runtime.js' about.html
           ! grep -q 'download-gateway.html?check=1' assets/js/downloads-redesign.js
           ! grep -q 'fetch(url' assets/js/downloads-redesign.js
           grep -q 'target="_blank"' assets/js/downloads-redesign.js
@@ -41,7 +43,8 @@ jobs:
               driver.get('http://127.0.0.1:4173/products.html');time.sleep(1.4)
               cards=driver.find_elements(By.CSS_SELECTOR,'.product-card')
               assert len(cards)>=150, f'expected at least 150 official products, got {len(cards)}'
-              links=[x.get_attribute('href') for x in driver.find_elements(By.CSS_SELECTOR,'.product-card a[href*="product.html?id="]') if x.get_attribute('href')]
+              link_nodes=driver.find_elements(By.CSS_SELECTOR,'.product-card[href*="product.html?id="], .product-card a[href*="product.html?id="]')
+              links=[x.get_attribute('href') for x in link_nodes if x.get_attribute('href')]
               assert links,'no product detail links rendered'
               driver.get(links[0]);time.sleep(1.2)
               assert driver.find_elements(By.CSS_SELECTOR,'.official-product-photo img'),'official product image did not render on detail page'
@@ -57,6 +60,9 @@ jobs:
               assert len(details)==3, f'expected 3 imported official solution sections, got {len(details)}'
               for detail in details:
                   assert len(detail.text.strip())>120,'imported solution detail is unexpectedly short'
+              driver.get('http://127.0.0.1:4173/about.html');time.sleep(1.0)
+              about=driver.find_element(By.CSS_SELECTOR,'.about-page-grid').text
+              assert '1992年5月1號' in about and '完整、優質的產品系列' in about,'official about content did not render'
               print('OFFICIAL_SOURCE_MIGRATION_GATE=PASS')
           finally:
               driver.quit()
