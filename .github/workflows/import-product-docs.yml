@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Install parser dependencies
         run: python -m pip install --disable-pip-version-check requests beautifulsoup4 >/dev/null
       - name: Import document and social links
@@ -34,17 +36,12 @@ jobs:
           from datetime import datetime, timezone
           import json, re, requests
           from bs4 import BeautifulSoup
-
-          source_path=Path('assets/js/legacy-catalog.js')
-          raw=source_path.read_text(encoding='utf-8')
+          source_path=Path('assets/js/legacy-catalog.js');raw=source_path.read_text(encoding='utf-8')
           match=re.search(r'window\.FBLegacyCatalog\s*=\s*(\{.*\})\s*;?\s*$',raw,re.S)
           if not match: raise SystemExit('Could not parse official catalog')
-          catalog=json.loads(match.group(1)); products=catalog.get('products',[])
-          root=catalog.get('source','https://www.far-beyound.com.tw').rstrip('/')
-          now=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-          HEADERS={'User-Agent':'Mozilla/5.0 Far-Beyound website migration/2.0'}
+          catalog=json.loads(match.group(1));products=catalog.get('products',[]);root=catalog.get('source','https://www.far-beyound.com.tw').rstrip('/')
+          now=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ');HEADERS={'User-Agent':'Mozilla/5.0 Far-Beyound website migration/2.0'}
           KEYS=('型錄','使用手冊','手冊下載','快速參考','快速指南','規格書','操作手冊','說明書')
-
           def normalize_label(text):
               t=' '.join(text.split())
               if '型錄' in t:return '產品型錄'
@@ -53,13 +50,11 @@ jobs:
               if '規格書' in t:return '產品規格書'
               if '說明書' in t:return '說明書'
               return t.replace('下載','').strip() or '技術文件'
-
           def fetch_product(p):
               url=p.get('legacyUrl') or ''
               if not url:return url,[]
               try:
-                  r=requests.get(url,headers=HEADERS,timeout=18);r.raise_for_status();soup=BeautifulSoup(r.text,'html.parser')
-                  rows=[];seen=set()
+                  r=requests.get(url,headers=HEADERS,timeout=18);r.raise_for_status();soup=BeautifulSoup(r.text,'html.parser');rows=[];seen=set()
                   for a in soup.find_all('a',href=True):
                       text=' '.join(a.stripped_strings)
                       if not text or not any(k in text for k in KEYS):continue
@@ -69,16 +64,13 @@ jobs:
                       if sig in seen:continue
                       seen.add(sig);rows.append({'label':normalize_label(text),'type':'PDF' if '.pdf' in href.lower() else '文件','url':href})
                   return url,rows
-              except Exception as exc:
-                  print('WARN',url,type(exc).__name__,str(exc)[:120]);return url,[]
-
+              except Exception as exc:print('WARN',url,type(exc).__name__,str(exc)[:120]);return url,[]
           docs={}
           with ThreadPoolExecutor(max_workers=6) as pool:
               futures=[pool.submit(fetch_product,p) for p in products]
               for future in as_completed(futures):
                   url,rows=future.result()
                   if url and rows:docs[url]=rows
-
           youtube=''
           try:
               r=requests.get(root+'/',headers=HEADERS,timeout=18);r.raise_for_status();html=r.text;soup=BeautifulSoup(html,'html.parser');candidates=[]
@@ -90,7 +82,6 @@ jobs:
               if candidates:
                   candidates=list(dict.fromkeys(candidates));candidates.sort(key=lambda u:(0 if any(x in u for x in ('/channel/','/@','/user/','/c/')) else 1,len(u)));youtube=candidates[0]
           except Exception as exc:print('WARN homepage',type(exc).__name__,str(exc)[:120])
-
           Path('assets/js/product-docs.js').write_text('// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBProductDocs = '+json.dumps({'generatedAt':now,'source':root,'items':dict(sorted(docs.items()))},ensure_ascii=False,indent=2)+';\n',encoding='utf-8')
           Path('assets/js/site-social.js').write_text('// Generated from the current official Far-beyound website. Do not hand-edit.\nwindow.FBSocialLinks = '+json.dumps({'generatedAt':now,'youtube':youtube},ensure_ascii=False,indent=2)+';\n',encoding='utf-8')
           print('PRODUCTS',len(products));print('PRODUCT_PAGES_WITH_DOCUMENTS',len(docs));print('DOCUMENT_LINKS',sum(len(v) for v in docs.values()))
@@ -102,4 +93,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add assets/js/product-docs.js assets/js/site-social.js
           git commit -m 'Import official product document links [skip ci]'
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
