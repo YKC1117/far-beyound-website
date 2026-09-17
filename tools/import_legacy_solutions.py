@@ -22,6 +22,10 @@ def norm(value: str) -> str:
     return re.sub(r'\s+', ' ', value or '').strip()
 
 
+def compact(value: str) -> str:
+    return re.sub(r'\s+', '', value or '')
+
+
 def extract(item_id: str, title: str, path: str) -> dict:
     url = BASE + path
     response = requests.get(url, headers=HEADERS, timeout=25)
@@ -36,15 +40,16 @@ def extract(item_id: str, title: str, path: str) -> dict:
         if text:
             blocks.append(text)
 
-    starts = [i for i, line in enumerate(blocks) if line == title]
+    title_key = compact(title)
+    starts = [i for i, line in enumerate(blocks) if compact(line) == title_key]
     if not starts:
         raise RuntimeError(f'Could not locate solution title: {title}')
     start = starts[-1]
-    end = next((i for i in range(start + 1, len(blocks)) if blocks[i] == '回列表'), len(blocks))
+    end = next((i for i in range(start + 1, len(blocks)) if compact(blocks[i]) == '回列表'), len(blocks))
 
     content = []
     for line in blocks[start + 1:end]:
-        if line in {'系統方案', '免費諮詢', title}:
+        if compact(line) in {'系統方案', '免費諮詢', title_key}:
             continue
         if line.startswith(('台北 02-', '台南 06-', 'Copyright ©')):
             continue
