@@ -175,6 +175,35 @@ body.fb-approved-skin-20260916[data-page="solutions"] .solution-nav a svg{
   color:var(--fb-skin-orange,#f28b4b)!important;
 }
 
+/* Lock legacy inner-page typography to the approved ink/muted palette. */
+body.fb-approved-skin-20260916[data-page="cases"] .case-page-card h2,
+body.fb-approved-skin-20260916[data-page="about"] .about-page-grid h2,
+body.fb-approved-skin-20260916[data-page="about"] .about-fact b,
+body.fb-approved-skin-20260916[data-page="about"] .scope-card b,
+body.fb-approved-skin-20260916[data-page="locations"] .location-card h2,
+body.fb-approved-skin-20260916[data-page="locations"] .location-card dd,
+body.fb-approved-skin-20260916[data-page="news-detail"] .article-head h1,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-card h2,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .flow-step b,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-note h2,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .compare td:first-child{
+  color:var(--fb-skin-text,#20333c)!important;
+}
+body.fb-approved-skin-20260916[data-page="cases"] .case-page-card h3,
+body.fb-approved-skin-20260916[data-page="about"] .about-page-grid p,
+body.fb-approved-skin-20260916[data-page="about"] .about-fact span,
+body.fb-approved-skin-20260916[data-page="about"] .scope-card p,
+body.fb-approved-skin-20260916[data-page="locations"] .location-card dt,
+body.fb-approved-skin-20260916[data-page="news-detail"] .article-meta,
+body.fb-approved-skin-20260916[data-page="news-detail"] #articleLead,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-card p,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-list li,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .flow-step span,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .guide-note p,
+body.fb-approved-skin-20260916[data-page="preview-guide"] .compare th{
+  color:var(--fb-skin-muted,#526873)!important;
+}
+
 /* Final approved visual authority: remove residual legacy cyan without changing layout or behavior. */
 body.fb-approved-skin-20260916 .page-hero::after,
 body.fb-approved-skin-20260916 .downloads-hero::after,
