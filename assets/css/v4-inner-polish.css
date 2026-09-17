@@ -137,6 +137,18 @@ body[data-page="downloads"] .download-item{border-radius:2px!important;transitio
 body[data-page="downloads"] .download-item:hover{border-color:#c79266!important;background:#faf8f5!important}
 body[data-page="downloads"] .download-brand{border-radius:2px!important}
 
+/* CI/Linux form controls can otherwise select a Latin-only primary font for placeholders. */
+body[data-page="products"] .v5-catalog-search,
+body[data-page="downloads"] .v5-catalog-search,
+body[data-page="downloads"] .downloads-search{
+  font-family:"Noto Sans CJK TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif!important;
+}
+body[data-page="products"] .v5-catalog-search::placeholder,
+body[data-page="downloads"] .v5-catalog-search::placeholder,
+body[data-page="downloads"] .downloads-search::placeholder{
+  font-family:"Noto Sans CJK TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif!important;
+}
+
 @media(max-width:680px){
   body[data-page="contact"] .location-mini{padding:18px!important}
   body[data-page="contact"] .location-mini b{font-size:21px!important}
