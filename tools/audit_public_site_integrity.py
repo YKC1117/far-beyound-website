@@ -86,7 +86,7 @@ def main() -> None:
 
     # Customer-facing UX guards: direct downloads must be probed before navigation,
     # failed sources must degrade to an in-site file request, and unavailable products
-    # must not expose internal administration wording.
+    # or inquiry messages must not expose internal administration wording.
     require_text(
         'assets/js/downloads-redesign.js',
         ['data-direct-download', 'probe=1', '索取檔案', 'download-file'],
@@ -102,6 +102,18 @@ def main() -> None:
                 errors.append(f'public-product-visibility.js: missing customer-safe unavailable state: {phrase}')
     else:
         errors.append('missing UX guard file: assets/js/public-product-visibility.js')
+
+    contact_submit = ROOT / 'assets/js/contact-submit.js'
+    if contact_submit.is_file():
+        contact_text = contact_submit.read_text(encoding='utf-8')
+        for internal_phrase in ['後台資料庫', '管理後台']:
+            if internal_phrase in contact_text:
+                errors.append(f'contact-submit.js: internal wording exposed to customers: {internal_phrase}')
+        for phrase in ['資料已成功送出', '需求已完成留存']:
+            if phrase not in contact_text:
+                errors.append(f'contact-submit.js: missing customer-safe inquiry state: {phrase}')
+    else:
+        errors.append('missing UX guard file: assets/js/contact-submit.js')
 
     js_errors: list[str] = []
     for path in sorted((ROOT / 'assets' / 'js').glob('*.js')):
