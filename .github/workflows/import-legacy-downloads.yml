@@ -1,4 +1,4 @@
-name: Import legacy official downloads
+name: Import official downloads
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: legacy-download-import
+  group: official-download-import-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
           python-version: '3.12'
       - name: Install importer dependencies
         run: pip install --disable-pip-version-check requests beautifulsoup4
-      - name: Crawl current official download pages
+      - name: Crawl current company download pages
         run: python tools/import_legacy_downloads.py
       - name: Commit generated download links
         shell: bash
@@ -39,7 +39,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'Download data already current.'
           else
-            git commit -m 'Sync downloads from current official website'
-            git pull --rebase origin main
-            git push origin main
+            git commit -m 'Sync downloads from current company website [skip ci]'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
