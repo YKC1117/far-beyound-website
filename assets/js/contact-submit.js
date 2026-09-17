@@ -15,6 +15,14 @@
     box.classList.add('show');
     box.dataset.state=ok?'success':'error';
   }
+  function normalizeLegacyStatus(){
+    const box=statusBox();
+    if(!box)return;
+    const text=String(box.textContent||'');
+    if(text.includes('資料庫')||text.includes('管理後台')||text.includes('後台資料')){
+      showStatus('詢問資料已完成留存，我們仍可接續協助處理您的需求。');
+    }
+  }
 
   async function submit(form){
     if(!form.checkValidity()){
@@ -70,4 +78,5 @@
     ev.stopImmediatePropagation();
     submit(form);
   },true);
+  document.addEventListener('DOMContentLoaded',normalizeLegacyStatus,{once:true});
 })();
