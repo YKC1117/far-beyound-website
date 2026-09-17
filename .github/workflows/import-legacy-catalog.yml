@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'tools/import_legacy_catalog.py'
+      - 'tools/enrich_official_specs.py'
       - '.github/workflows/import-legacy-catalog.yml'
   workflow_dispatch:
 
@@ -30,6 +31,8 @@ jobs:
         run: pip install --disable-pip-version-check requests beautifulsoup4
       - name: Crawl current company website
         run: python tools/import_legacy_catalog.py
+      - name: Extract full product specification sections
+        run: python tools/enrich_official_specs.py
       - name: Commit catalog and mirrored product images
         shell: bash
         run: |
