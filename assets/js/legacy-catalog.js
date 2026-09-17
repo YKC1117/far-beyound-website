@@ -1,6 +1,6 @@
 // Generated from the current official Far-beyound website. Do not hand-edit.
 window.FBLegacyCatalog = {
-  "generatedAt": "2026-09-17T03:08:54Z",
+  "generatedAt": "2026-09-17T03:24:19Z",
   "source": "https://www.far-beyound.com.tw",
   "brandOrder": {
     "printers": [
