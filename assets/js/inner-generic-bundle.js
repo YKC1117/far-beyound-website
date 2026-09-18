@@ -1317,3 +1317,11 @@
   document.addEventListener('DOMContentLoaded',()=>observer.observe(document.body,{childList:true,subtree:true}),{once:true});
 })();
 
+
+/* Load shared aux controls after DOMContentLoaded; HTML markers suppress old per-file injections. */
+(function(){
+  const current=document.currentScript;
+  const build=(()=>{try{return new URL(current?.src||'',location.href).searchParams.get('v')||'20260918-1010'}catch(_){return'20260918-1010'}})();
+  const load=()=>{if(document.querySelector('script[data-inner-aux-bundle]'))return;const s=document.createElement('script');s.src='assets/js/inner-aux-bundle.js?v='+encodeURIComponent(build);s.setAttribute('data-inner-aux-bundle','1');document.body.appendChild(s)};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});else load();
+})();
