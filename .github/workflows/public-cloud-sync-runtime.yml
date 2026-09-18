@@ -1,0 +1,111 @@
+name: Public cloud sync runtime gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*.html'
+      - 'assets/js/site-social.js'
+      - 'assets/js/cloud-sync.js'
+      - '.github/workflows/public-cloud-sync-runtime.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '*.html'
+      - 'assets/js/site-social.js'
+      - 'assets/js/cloud-sync.js'
+      - '.github/workflows/public-cloud-sync-runtime.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-cloud-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8080 >/tmp/fb-cloud-sync.log 2>&1 &
+          sleep 2
+
+      - name: Verify public Cloud Sync runtime
+        run: |
+          pip install --disable-pip-version-check selenium >/dev/null
+          python3 - <<'PY'
+          from pathlib import Path
+          from selenium import webdriver
+          from selenium.webdriver.support.ui import WebDriverWait
+
+          pages = [
+              'index.html',
+              'products.html',
+              'product.html?id=zebra-zt411-zt421',
+              'downloads.html',
+              'solutions.html',
+              'cases.html',
+              'news.html',
+              'news-detail.html?slug=travel-2026',
+              'contact.html',
+              'about.html',
+              'locations.html',
+              'preview-guide.html',
+              '404.html',
+          ]
+
+          options = webdriver.ChromeOptions()
+          options.add_argument('--headless=new')
+          options.add_argument('--no-sandbox')
+          options.add_argument('--disable-gpu')
+          options.add_argument('--window-size=1280,900')
+
+          driver = webdriver.Chrome(options=options)
+          wait = WebDriverWait(driver, 12)
+          failures = []
+
+          try:
+              for page in pages:
+                  url = f'http://127.0.0.1:8080/{page}'
+                  driver.get(url)
+
+                  try:
+                      wait.until(lambda d: d.execute_script(
+                          "return !!document.querySelector('script[src*=\"assets/js/cloud-sync.js\"]')"
+                      ))
+                      wait.until(lambda d: d.execute_script(
+                          "return !!(window.FBCloudSync && typeof window.FBCloudSync.pull === 'function' && typeof window.FBCloudSync.publish === 'function')"
+                      ))
+
+                      result = driver.execute_script("""
+                        const script = document.querySelector('script[src*="assets/js/cloud-sync.js"]');
+                        return {
+                          page: document.body?.dataset?.page || '',
+                          src: script?.getAttribute('src') || '',
+                          hasStore: !!window.FBStore,
+                          hasSync: !!window.FBCloudSync,
+                          hasPull: typeof window.FBCloudSync?.pull === 'function',
+                          hasPublish: typeof window.FBCloudSync?.publish === 'function'
+                        };
+                      """)
+
+                      if not result.get('src'):
+                          failures.append(f'{page}: cloud-sync script missing')
+                      if not result.get('hasStore'):
+                          failures.append(f'{page}: FBStore missing')
+                      if not result.get('hasSync') or not result.get('hasPull') or not result.get('hasPublish'):
+                          failures.append(f'{page}: FBCloudSync runtime incomplete')
+
+                      print(f"CLOUD_SYNC_OK {page} -> {result.get('src')}")
+                  except Exception as exc:
+                      failures.append(f'{page}: runtime verification failed: {type(exc).__name__}: {exc}')
+
+          finally:
+              driver.quit()
+
+          if failures:
+              print('\n'.join(failures))
+              raise SystemExit(1)
+
+          print(f'PUBLIC_CLOUD_SYNC_PAGES_OK={len(pages)}')
+          PY
