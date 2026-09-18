@@ -615,7 +615,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .hero.v2-home-hero .hero-trust span{position:relative}
 .hero.v2-home-hero .hero-trust span:before{content:"";display:inline-block;width:4px;height:4px;margin:0 7px 2px 0;background:#8ba0b1}
 
-.v2-stage-main,.v2-stage-side>a{transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;background:#fff!important}
+.v2-stage-main,.v2-stage-side>a{transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;background:transparent!important}
 .v2-stage-main{box-shadow:var(--v4-shadow)!important;border-color:#d4dde4!important}
 .v2-stage-side>a{box-shadow:0 5px 18px rgba(17,43,67,.045)!important}
 .v2-stage-main img,.v2-stage-side img{transition:transform .28s ease,filter .28s ease}
@@ -1303,8 +1303,8 @@ body[data-page="home"] .v5-credibility{display:none}
 body[data-page="home"] .v2-hero-products{position:relative;padding-bottom:44px}
 body[data-page="home"] .hero-rotate-card,body[data-page="home"] .hero-rotate-side{transition:opacity .32s ease,transform .32s ease,border-color .18s ease,box-shadow .18s ease}
 body[data-page="home"] .hero-rotate-card.is-entering,body[data-page="home"] .hero-rotate-side.is-entering{animation:fbHeroIn .34s ease both}
-body[data-page="home"] .hero-rotate-side{display:flex!important;flex-direction:column;overflow:hidden;background:#fff;border:1px solid #d8e1e7;min-height:209px;color:#17324d;text-decoration:none}
-body[data-page="home"] .hero-rotate-side img{width:100%;height:142px;object-fit:contain;background:#fff;padding:10px}
+body[data-page="home"] .hero-rotate-side{display:flex!important;flex-direction:column;overflow:hidden;background:transparent;border:1px solid #d8e1e7;min-height:209px;color:#17324d;text-decoration:none}
+body[data-page="home"] .hero-rotate-side img{width:100%;height:142px;object-fit:contain;background:transparent;padding:10px}
 body[data-page="home"] .hero-rotate-side span{display:flex;flex-direction:column;justify-content:center;min-height:66px;padding:9px 14px 10px;border-top:1px solid #e3e9ed;font-size:12px;font-weight:800;line-height:1.35}
 body[data-page="home"] .hero-rotate-side small{display:block;margin-bottom:3px;color:#718492;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 body[data-page="home"] .hero-rotate-side:hover{border-color:#aabdc8;box-shadow:0 9px 24px rgba(17,43,67,.08)}
