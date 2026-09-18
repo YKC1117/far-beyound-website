@@ -1784,3 +1784,11 @@ html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side > span s
     padding: 8px 10px 9px !important;
   }
 }
+
+
+@media (min-width: 1200px) {
+  html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products {
+    grid-template-columns: minmax(0,1fr) 184px !important;
+    gap: 18px !important;
+  }
+}
