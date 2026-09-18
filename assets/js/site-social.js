@@ -36,12 +36,41 @@ window.FBSocialLinks=window.FBSocialLinks||{youtube:'https://www.youtube.com/@Fa
     document.head.appendChild(node);
   }
 
+  function loadHomeAux(){
+    /* 首頁已直接載入 home-display-control / site-content-control，不重複注入。 */
+    load(asset('assets/js/cloud-sync.js'),'social-cloud-sync');
+    load(asset('assets/js/site-seo.js'),'site-seo');
+    load(asset('assets/js/public-release-polish.js'),'public-release-polish');
+    load(asset('assets/js/brand-home-guard.js'),'brand-home-guard');
+    load(asset('assets/js/quick-contact-normalize.js'),'quick-contact-normalize');
+    load(asset('assets/js/quick-contact-authority.js'),'quick-contact-authority');
+    load(asset('assets/js/solution-coverage.js'),'solution-coverage');
+  }
+
+  function scheduleHomeAux(){
+    const run=()=>loadHomeAux();
+    if(document.readyState==='complete'){
+      if('requestIdleCallback'in window)requestIdleCallback(run,{timeout:1200});
+      else setTimeout(run,250);
+    }else{
+      window.addEventListener('load',()=>{
+        if('requestIdleCallback'in window)requestIdleCallback(run,{timeout:1200});
+        else setTimeout(run,250);
+      },{once:true});
+    }
+  }
+
   function run(){
     sync();
 
     const page=document.body?.dataset?.page||'';
 
-    /* 全站共用功能 */
+    if(page==='home'){
+      scheduleHomeAux();
+      return;
+    }
+
+    /* 內頁維持既有共用功能與載入時序 */
     load(asset('assets/js/cloud-sync.js'),'social-cloud-sync');
     load(asset('assets/js/site-content-control.js'),'social-content');
     load(asset('assets/js/site-seo.js'),'site-seo');
@@ -51,19 +80,16 @@ window.FBSocialLinks=window.FBSocialLinks||{youtube:'https://www.youtube.com/@Fa
     load(asset('assets/js/quick-contact-normalize.js'),'quick-contact-normalize');
     load(asset('assets/js/quick-contact-authority.js'),'quick-contact-authority');
 
-    /* 只有有內頁 Hero 設定的頁面才載入 */
     if(['products','downloads','solutions','cases','news','about','locations','contact'].includes(page)){
       load(asset('assets/js/page-settings-control.js'),'social-pages');
     }
 
-    /* 歷史消息資料只在消息頁使用，避免首頁額外解析整份 archive */
     if(page==='news'||page==='news-detail'){
       load(asset('assets/js/legacy-news.js'),'legacy-news');
       load(asset('assets/js/news-archive-runtime.js'),'news-archive-runtime');
     }
 
-    /* 方案補齊只在首頁與方案頁需要 */
-    if(page==='home'||page==='solutions'){
+    if(page==='solutions'){
       load(asset('assets/js/solution-coverage.js'),'solution-coverage');
     }
 
