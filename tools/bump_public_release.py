@@ -5,7 +5,8 @@ VERSION = "20260918-1010"
 PATTERNS = [
     # 所有公開頁本地 JavaScript 使用同一個 release version，避免跨頁混用舊快取。
     (re.compile(r'(assets/js/[^"\']+\.js)(?:\?v=[^"\']+)?'), rf'\1?v={VERSION}'),
-    (re.compile(r'assets/css/downloads-redesign\.css\?v=[^"\']+'), f'assets/css/downloads-redesign.css?v={VERSION}'),
+    # 所有本地 CSS 使用同一個 release version，避免樣式快取跨版本混用。
+    (re.compile(r'(assets/css/[^"\']+\.css)(?:\?v=[^"\']+)?'), rf'\1?v={VERSION}'),
 ]
 
 changed = []
