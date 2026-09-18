@@ -1660,3 +1660,76 @@ html body.fb-approved-skin-20260916 .footer-location-head small {
     padding: 52px 0 !important;
   }
 }
+
+
+/* ==========================================================================
+   Product image presentation restoration
+   Restore the pre-skin media behavior: neutral photo boards + multiply blend.
+   This keeps white-background legacy product photos visually integrated with
+   the approved dark skin without changing image files or product data.
+   ========================================================================== */
+
+/* Home hero / carousel: the old layout relied on a light product board. */
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-card,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side > a,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side {
+  background: #e3e9e7 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main:hover,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-card:hover,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side > a:hover,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side:hover {
+  background: #edf1ef !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main img,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-card img,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side img,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side img {
+  background: transparent !important;
+  mix-blend-mode: multiply;
+}
+
+/* Keep labels readable now that the photo boards are light again. */
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-label {
+  color: #66736f !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side span,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side span {
+  color: #26312e !important;
+  border-top-color: #cbd4d1 !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side small {
+  color: #7d5b45 !important;
+}
+
+/* Legacy/photo runtime used by product cards and older home hero variants. */
+body.fb-approved-skin-20260916 .real-product-media,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .real-product-media,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .home-photo-main,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .home-photo-tile {
+  background: transparent !important;
+}
+
+body.fb-approved-skin-20260916 .real-product-media img,
+body.fb-approved-skin-20260916 .product-card-visual img,
+body.fb-approved-skin-20260916 .detail-visual img,
+body.fb-approved-skin-20260916 .product-detail-visual img,
+html body.fb-approved-skin-20260916[data-page="home"] .home-photo-main img,
+html body.fb-approved-skin-20260916[data-page="home"] .home-photo-tile img {
+  background: transparent !important;
+  mix-blend-mode: multiply;
+}
+
+/* One consistent neutral photo surface throughout the public site. */
+body.fb-approved-skin-20260916 .product-card-visual,
+body.fb-approved-skin-20260916 .detail-visual,
+body.fb-approved-skin-20260916 .product-detail-visual,
+html body.fb-approved-skin-20260916[data-page="home"] .home-photo-main,
+html body.fb-approved-skin-20260916[data-page="home"] .home-photo-tile {
+  background: #e3e9e7 !important;
+}
