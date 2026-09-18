@@ -1660,3 +1660,15 @@ html body.fb-approved-skin-20260916 .footer-location-head small {
     padding: 52px 0 !important;
   }
 }
+
+
+/* 2026-09-18｜首頁產品圖顯示修正
+   核准皮膚採深色透明產品舞台；覆蓋舊版 hero carousel 對 img 強制白底的規則。
+   保留原產品圖片本體與原本 multiply 去白底顯示策略。 */
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main img,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side img,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-card img,
+html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side img {
+  background: transparent !important;
+  mix-blend-mode: multiply !important;
+}
