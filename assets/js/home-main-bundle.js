@@ -220,7 +220,7 @@
 
 /* ===== assets/js/pages.js ===== */
 (function(){
-  const { $, $$, icon, deviceVisual, escapeHtml, qs, formatDate } = FB;
+  const { $, $, icon, deviceVisual, escapeHtml, qs, formatDate } = FB;
 
   const e = v => escapeHtml(v == null ? '' : String(v));
   const enc = v => encodeURIComponent(v == null ? '' : String(v));
@@ -267,7 +267,7 @@
   }
 
   function product(){
-    const d=FBStore.getData(); const p=d.products.find(x=>x.id===qs('id'))||d.products[0]; const c=d.categories.find(x=>x.id===p.category);
+    const d=FBStore.getData(); const id=qs('id'); const p=window.FBFindProduct?FBFindProduct(d.products,id):d.products.find(x=>x.id===id); if(!p)return; const c=d.categories.find(x=>x.id===p.category);
     document.title=`${String(p.name||'')}｜萬里資訊`;
     $('#productBreadcrumb').innerHTML=`<a href="index.html">首頁</a><span>/</span><a href="products.html">產品資訊</a><span>/</span><a href="products.html?category=${enc(c?.id||'')}">${e(c?.name||'')}</a><span>/</span><b>${e(p.name)}</b>`;
     $('#productHero').innerHTML=`<div class="product-detail-visual">${deviceVisual(p.device,p.brand,p.family)}</div><div class="product-detail-copy"><div class="product-meta"><span>${e(p.brand)}</span><span>${e(p.type)}</span><span class="status-dot">${e(p.status)}</span></div><h1>${e(p.name)}</h1><h2>${e(p.subtitle)}</h2><p>${e(p.intro)}</p><div class="product-actions"><a class="btn btn-primary" href="contact.html?item=${enc(p.name)}">洽詢此產品</a>${p.files.length?`<a class="btn btn-secondary" href="#downloads">文件下載</a>`:''}</div></div>`;
@@ -283,12 +283,12 @@
     const d=FBStore.getData(); const brands=[...new Set(d.downloads.map(x=>x.brand))]; let active=qs('brand')||brands[0]||'';
     $('#downloadBrands').innerHTML=brands.map(b=>`<button class="download-brand ${active===b?'active':''}" data-brand="${e(b)}">${e(b)}</button>`).join('');
     function draw(){
-      $$('.download-brand').forEach(b=>b.classList.toggle('active',b.dataset.brand===active));
+      $('.download-brand').forEach(b=>b.classList.toggle('active',b.dataset.brand===active));
       const rows=d.downloads.filter(x=>x.brand===active);
       $('#downloadTitle').textContent=active;
       $('#downloadList').innerHTML=rows.map(x=>`<div class="download-item"><span class="download-icon">${icon('download')}</span><div class="download-main"><span class="tag">${e(x.category)}</span><h3>${e(x.name)}</h3><p>${e(x.note)}</p><div class="download-meta"><span>版本 ${e(x.version)}</span><span>更新 ${e(x.updated)}</span><span>${e(x.size)}</span></div></div><a class="btn btn-secondary btn-sm" href="contact.html?item=${enc(x.name||'下載資料')}">洽詢取得</a></div>`).join('');
     }
-    $$('.download-brand').forEach(b=>b.addEventListener('click',()=>{active=b.dataset.brand;draw()})); draw();
+    $('.download-brand').forEach(b=>b.addEventListener('click',()=>{active=b.dataset.brand;draw()})); draw();
   }
 
   function solutions(){
@@ -301,7 +301,7 @@
     const d=FBStore.getData(); const types=['全部',...new Set(d.news.map(n=>n.type))]; let active='全部';
     $('#newsFilters').innerHTML=types.map(t=>`<button class="filter-chip ${t===active?'active':''}" data-type="${e(t)}">${e(t)}</button>`).join('');
     function draw(){const list=d.news.filter(n=>active==='全部'||n.type===active);$('#newsList').innerHTML=list.map((n,i)=>`<article class="news-card"><div class="news-card-date"><b>${e(String(n.date||'').slice(8))}</b><span>${e(String(n.date||'').slice(0,7).replace('-',' / '))}</span></div><div><div><span class="tag">${e(n.type)}</span>${i===0&&active==='全部'?'<span class="tag tag-new">NEW</span>':''}</div><h2>${e(n.title)}</h2><p>${e(n.excerpt)}</p><a class="text-link" href="${newsHref(n)}">閱讀內容 ${icon('arrow')}</a></div></article>`).join('')}
-    $$('#newsFilters button').forEach(b=>b.onclick=()=>{active=b.dataset.type;$$('#newsFilters button').forEach(x=>x.classList.toggle('active',x===b));draw()});draw();
+    $('#newsFilters button').forEach(b=>b.onclick=()=>{active=b.dataset.type;$('#newsFilters button').forEach(x=>x.classList.toggle('active',x===b));draw()});draw();
   }
 
   function contact(){
@@ -325,7 +325,7 @@
     $('#contactForm').addEventListener('submit',ev=>{
       ev.preventDefault();
       const form=ev.currentTarget;
-      const required=$$('#contactForm [required]'); const bad=required.find(x=>!x.value.trim());
+      const required=$('#contactForm [required]'); const bad=required.find(x=>!x.value.trim());
       if(bad){bad.focus();toast('請先完成必填欄位');return}
       const fd=new FormData(form);
       if(String(fd.get('website')||'').trim())return;
@@ -364,8 +364,8 @@
       $('#adminStats').innerHTML=`<div class="stat-card"><small>產品</small><b>${d.products.length}</b><span>PRODUCTS</span></div><div class="stat-card"><small>分類</small><b>${d.categories.length}</b><span>CATEGORIES</span></div><div class="stat-card"><small>下載項目</small><b>${d.downloads.length}</b><span>DOWNLOADS</span></div><div class="stat-card"><small>最新消息</small><b>${d.news.length}</b><span>NEWS</span></div>`;
       $('#adminProductRows').innerHTML=d.products.map(p=>`<tr><td><span class="admin-brand">${e(p.brand)}</span></td><td><b>${e(p.name)}</b><small>${e(p.subtitle)}</small></td><td>${e(d.categories.find(c=>c.id===p.category)?.name||p.category)}</td><td><span class="status-badge">${e(p.status)}</span></td><td><button class="icon-text edit-product" data-id="${e(p.id)}">編輯</button><button class="icon-text danger delete-product" data-id="${e(p.id)}">刪除</button></td></tr>`).join('');
       $('#adminCategory').innerHTML=d.categories.map(c=>`<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
-      $$('.edit-product').forEach(b=>b.onclick=()=>startEdit(b.dataset.id));
-      $$('.delete-product').forEach(b=>b.onclick=()=>deleteProduct(b.dataset.id));
+      $('.edit-product').forEach(b=>b.onclick=()=>startEdit(b.dataset.id));
+      $('.delete-product').forEach(b=>b.onclick=()=>deleteProduct(b.dataset.id));
     }
     function startEdit(id){editing=id; const p=d.products.find(x=>x.id===id); if(!p)return; fields.forEach(f=>{const el=$(`#admin_${f}`); if(el)el.value=p[f]||''}); $('#adminCategory').value=p.category; $('#adminFeatured').checked=!!p.featured; $('#formTitle').textContent='編輯產品'; $('#adminFormPanel').classList.add('open'); $('#admin_name').focus();}
     function newProduct(){editing=null; $('#productAdminForm').reset(); $('#admin_id').value=`product-${Date.now()}`; $('#admin_status').value='販售中'; $('#formTitle').textContent='新增產品'; $('#adminFormPanel').classList.add('open'); $('#admin_name').focus();}
@@ -391,6 +391,13 @@
 /* ===== assets/js/media-patch.js ===== */
 (function(){
   const LOGO='assets/images/brand/far-beyound-logo.png';
+  const PRODUCT_ID_ALIASES={
+    'honeywell-xenon-1900-1902':'honeywell-xenon-1900-c-1902-c',
+    'argox-cx3140-pro':'argox-cx-3140-pro',
+    'godex-g500-g530':'godex-g500-plus-g530-plus'
+  };
+  const publicProductId=id=>PRODUCT_ID_ALIASES[String(id||'')]||String(id||'');
+  window.FBPublicProductId=publicProductId;
   const IMAGES={
     'zebra-zt610-zt620':'assets/images/products/zebra-zt610-zt620.jpg?v=20260918-1455',
     'zebra-zt411-zt421':'assets/images/products/zebra-zt411-zt421.png?v=20260918-1455',
@@ -472,12 +479,12 @@
   }
   function productPhoto(src,alt,brand=''){return `<div class="real-product-media"><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer"><span>${esc(brand)}</span></div>`}
   function fallbackVisual(p){return window.FB?.deviceVisual?FB.deviceVisual(p.device,esc(p.brand),esc(p.family)):''}
-  function homeProductCard(p){const src=IMAGES[p.id];return `<a class="product-card" href="product.html?id=${encodeURIComponent(p.id)}"><div class="product-card-visual">${src?productPhoto(src,p.name,p.brand):fallbackVisual(p)}</div><div class="product-card-body"><div class="product-meta"><span>${esc(p.brand)}</span><span>${esc(p.type)}</span></div><h3>${esc(p.name)}</h3><p>${esc(p.subtitle)}</p><div class="card-link">查看產品 ${FB.icon('arrow')}</div></div></a>`}
+  function homeProductCard(p){const src=IMAGES[p.id];const publicId=publicProductId(p.id);return `<a class="product-card" href="product.html?id=${encodeURIComponent(publicId)}"><div class="product-card-visual">${src?productPhoto(src,p.name,p.brand):fallbackVisual(p)}</div><div class="product-card-body"><div class="product-meta"><span>${esc(p.brand)}</span><span>${esc(p.type)}</span></div><h3>${esc(p.name)}</h3><p>${esc(p.subtitle)}</p><div class="card-link">查看產品 ${FB.icon('arrow')}</div></div></a>`}
 
   function injectStyle(){
     if(document.getElementById('fbMediaPatchStyle'))return;
     const st=document.createElement('style');st.id='fbMediaPatchStyle';st.textContent=`
-.brand-mark{background:#fff!important;border:1px solid #e1e7ed!important;overflow:hidden!important;padding:3px!important;box-shadow:0 8px 22px rgba(15,23,42,.12)!important}.brand-mark i{display:none!important}.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;border-radius:9px}.real-product-media{position:relative;width:100%;height:100%;display:grid;place-items:center;background:linear-gradient(145deg,#fff,#f4f7f9);overflow:hidden}.real-product-media img{width:88%;height:88%;object-fit:contain;transition:transform .22s ease;mix-blend-mode:multiply}.product-card:hover .real-product-media img{transform:scale(1.045)}.real-product-media span{position:absolute;left:14px;bottom:12px;background:rgba(7,24,45,.9);color:white;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.08em}.product-detail-visual .real-product-media img{width:92%;height:92%}.home-photo-showcase{height:100%;min-height:390px;display:grid;grid-template-columns:1.25fr .75fr;gap:12px;padding:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:24px;box-shadow:0 26px 70px rgba(0,0,0,.24);backdrop-filter:blur(12px)}.home-photo-main,.home-photo-side{min-width:0}.home-photo-main{position:relative;border-radius:18px;overflow:hidden;background:white;display:grid;place-items:center}.home-photo-main img{width:94%;height:94%;object-fit:contain}.home-photo-main .cap{position:absolute;left:18px;right:18px;bottom:16px;padding:12px 14px;border-radius:13px;background:rgba(7,24,45,.88);color:white}.home-photo-main .cap small{display:block;color:#9fe6df;font-weight:800;letter-spacing:.08em}.home-photo-main .cap b{display:block;font-size:18px;margin-top:2px}.home-photo-side{display:grid;grid-template-rows:1fr 1fr;gap:12px}.home-photo-tile{position:relative;border-radius:18px;overflow:hidden;background:white;display:grid;place-items:center}.home-photo-tile img{width:90%;height:86%;object-fit:contain}.home-photo-tile b{position:absolute;left:10px;bottom:9px;background:rgba(7,24,45,.86);color:#fff;padding:5px 8px;border-radius:8px;font-size:10px}.brand-showcase{padding:34px 0;background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.brand-showcase .brand-list{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.brand-badge{min-height:72px;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc;display:grid;place-items:center;text-align:center;font-size:17px;font-weight:900;color:#26384d;letter-spacing:.02em}.about-band{padding:70px 0;background:linear-gradient(135deg,#07182d,#0d3151);color:#fff}.about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}.about-grid h2{font-size:38px;margin:7px 0 14px}.about-grid p{color:#bdd0e3;margin:0}.about-points{display:grid;grid-template-columns:1fr 1fr;gap:12px}.about-point{padding:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);border-radius:15px}.about-point b{display:block;font-size:20px}.about-point span{display:block;color:#9fb6cd;font-size:12px;margin-top:4px}.location-mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:22px 0 0}.location-mini{background:white;border:1px solid var(--line);border-radius:16px;padding:20px}.location-mini small{display:block;color:var(--teal);font-weight:900;letter-spacing:.08em}.location-mini b{display:block;font-size:22px;margin:4px 0}.location-mini span{display:block;color:var(--muted);font-size:13px}.official-note{font-size:11px;color:#8493a3;margin-top:10px}@media(max-width:900px){.brand-showcase .brand-list{grid-template-columns:repeat(3,1fr)}.about-grid{grid-template-columns:1fr}}@media(max-width:680px){.home-photo-showcase{min-height:330px;grid-template-columns:1fr}.home-photo-side{display:none}.location-mini-grid{grid-template-columns:1fr}.real-product-media img{width:92%;height:92%}.brand-showcase .brand-list{grid-template-columns:repeat(2,1fr)}.about-points{grid-template-columns:1fr}.about-grid h2{font-size:31px}}`;
+.brand-mark{background:#fff!important;border:1px solid #e1e7ed!important;overflow:hidden!important;padding:3px!important;box-shadow:0 8px 22px rgba(15,23,42,.12)!important}.brand-mark i{display:none!important}.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;border-radius:9px}.real-product-media{position:relative;width:100%;height:100%;display:grid;place-items:center;background:transparent;overflow:hidden}.real-product-media img{width:88%;height:88%;object-fit:contain;transition:transform .22s ease;mix-blend-mode:multiply}.product-card:hover .real-product-media img{transform:scale(1.045)}.real-product-media span{position:absolute;left:14px;bottom:12px;background:rgba(7,24,45,.9);color:white;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.08em}.product-detail-visual .real-product-media img{width:92%;height:92%}.home-photo-showcase{height:100%;min-height:390px;display:grid;grid-template-columns:1.25fr .75fr;gap:12px;padding:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:24px;box-shadow:0 26px 70px rgba(0,0,0,.24);backdrop-filter:blur(12px)}.home-photo-main,.home-photo-side{min-width:0}.home-photo-main{position:relative;border-radius:18px;overflow:hidden;background:white;display:grid;place-items:center}.home-photo-main img{width:94%;height:94%;object-fit:contain}.home-photo-main .cap{position:absolute;left:18px;right:18px;bottom:16px;padding:12px 14px;border-radius:13px;background:rgba(7,24,45,.88);color:white}.home-photo-main .cap small{display:block;color:#9fe6df;font-weight:800;letter-spacing:.08em}.home-photo-main .cap b{display:block;font-size:18px;margin-top:2px}.home-photo-side{display:grid;grid-template-rows:1fr 1fr;gap:12px}.home-photo-tile{position:relative;border-radius:18px;overflow:hidden;background:white;display:grid;place-items:center}.home-photo-tile img{width:90%;height:86%;object-fit:contain}.home-photo-tile b{position:absolute;left:10px;bottom:9px;background:rgba(7,24,45,.86);color:#fff;padding:5px 8px;border-radius:8px;font-size:10px}.brand-showcase{padding:34px 0;background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.brand-showcase .brand-list{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.brand-badge{min-height:72px;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc;display:grid;place-items:center;text-align:center;font-size:17px;font-weight:900;color:#26384d;letter-spacing:.02em}.about-band{padding:70px 0;background:linear-gradient(135deg,#07182d,#0d3151);color:#fff}.about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}.about-grid h2{font-size:38px;margin:7px 0 14px}.about-grid p{color:#bdd0e3;margin:0}.about-points{display:grid;grid-template-columns:1fr 1fr;gap:12px}.about-point{padding:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);border-radius:15px}.about-point b{display:block;font-size:20px}.about-point span{display:block;color:#9fb6cd;font-size:12px;margin-top:4px}.location-mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:22px 0 0}.location-mini{background:white;border:1px solid var(--line);border-radius:16px;padding:20px}.location-mini small{display:block;color:var(--teal);font-weight:900;letter-spacing:.08em}.location-mini b{display:block;font-size:22px;margin:4px 0}.location-mini span{display:block;color:var(--muted);font-size:13px}.official-note{font-size:11px;color:#8493a3;margin-top:10px}@media(max-width:900px){.brand-showcase .brand-list{grid-template-columns:repeat(3,1fr)}.about-grid{grid-template-columns:1fr}}@media(max-width:680px){.home-photo-showcase{min-height:330px;grid-template-columns:1fr}.home-photo-side{display:none}.location-mini-grid{grid-template-columns:1fr}.real-product-media img{width:92%;height:92%}.brand-showcase .brand-list{grid-template-columns:repeat(2,1fr)}.about-points{grid-template-columns:1fr}.about-grid h2{font-size:31px}}`;
     document.head.appendChild(st);
   }
   function patchLogo(){document.querySelectorAll('.brand-mark').forEach(el=>{el.innerHTML=`<img src="${LOGO}" alt="" referrerpolicy="no-referrer">`;el.setAttribute('title','萬里資訊')})}
