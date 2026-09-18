@@ -1,18 +1,7 @@
 (function () {
   const KEY = 'farbeyoundSiteDataV1';
 
-  // Keep the public shell hidden for one short settling window. Shared header/footer,
-  // data-driven navigation and page modules all initialize immediately after DOM ready;
-  // revealing after the first layout cycle prevents the browser from showing an
-  // intermediate navigation state.
-  const prepaint = document.createElement('style');
-  prepaint.id = 'fbPublicPrepaint';
-  prepaint.textContent = 'body{visibility:hidden!important}body.fb-public-ready{visibility:visible!important}';
-  document.head.appendChild(prepaint);
-  function reveal(){ document.body?.classList.add('fb-public-ready'); }
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(reveal,180),{once:true});
-  window.addEventListener('load',()=>setTimeout(reveal,60),{once:true});
-  setTimeout(reveal,2500);
+  // 公開頁直接顯示首屏，不再以 JavaScript 隱藏整個 body 等待初始化。
 
   const defaultData = {
     site: { companyZh:'萬里資訊股份有限公司',companyEn:'FAR-BEYOUND INFORMATION CO.',phones:[{label:'台北',value:'02-82217759'},{label:'台南',value:'06-2360139'}],fax:'02-82217238',email:'company@far-beyound.com.tw',line:'@453haosc',address:'新北市中和區中山路二段351號10樓之1' },
