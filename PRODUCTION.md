@@ -18,6 +18,19 @@
 
 因此正式上線不要求先改成 PHP／MySQL。若公司未來因既有 IT 規範必須改 MySQL，可以在正式穩定上線後另開第二階段，不應放進 7 天切站的 critical path。
 
+## 1.1 公開資料同步流程
+
+目前公開內容的同步鏈如下：
+
+1. 後台透過 `FBStore` 編輯資料；localStorage 僅作為瀏覽器端快取／fallback。
+2. `cloud-sync.js` 將發布內容送至 Supabase Edge Function `site-state`。
+3. Edge Function 寫入 Supabase 共用資料並回傳 `updated_at` 版本。
+4. 公開頁載入時會向 `site-state` 取得最新資料。
+5. 非後台公開頁每 30 秒再次檢查一次共用資料；只有資料實際不同時才套用更新。
+6. 雲端同步失敗時不清除既有前端資料，避免短暫網路或服務異常造成空白站。
+
+因此 localStorage 是前端快取與 fallback，不是目前正式內容同步的唯一資料來源。
+
 ## 2. 正式前端環境最低需求
 
 - 支援 HTTPS。
