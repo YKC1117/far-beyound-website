@@ -12,7 +12,10 @@ PUBLIC_PAGES = [
     'index.html', 'locations.html', 'news-detail.html', 'news.html',
     'preview-guide.html', 'product.html', 'products.html', 'solutions.html',
 ]
-SKIN = 'assets/css/approved-skin-20260916.css?v=20260916'
+BUMP_TEXT = (ROOT / 'tools' / 'bump_public_release.py').read_text(encoding='utf-8')
+VERSION_MATCH = re.search(r'VERSION\s*=\s*["\']([^"\']+)', BUMP_TEXT)
+RELEASE_VERSION = VERSION_MATCH.group(1) if VERSION_MATCH else ''
+SKIN = f'assets/css/approved-skin-20260916.css?v={RELEASE_VERSION}'
 SKIN_CLASS = 'fb-approved-skin-20260916'
 
 
