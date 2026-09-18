@@ -298,16 +298,16 @@
 (function(){
   const LOGO='assets/images/brand/far-beyound-logo.png';
   const IMAGES={
-    'zebra-zt610-zt620':'assets/images/products/zebra-zt610-zt620.jpg?v=20260918-1455',
-    'zebra-zt411-zt421':'assets/images/products/zebra-zt411-zt421.png?v=20260918-1455',
-    'zebra-ds4678-xd':'assets/images/products/zebra-ds4678-xd.jpg?v=20260918-1455',
-    'honeywell-xenon-1900-1902':'assets/images/products/honeywell-xenon-1900-1902.png?v=20260918-1455',
-    'tsc-mh241-mh341-mh641':'assets/images/products/tsc-mh241-mh341-mh641.png?v=20260918-1455',
-    'tsc-tx610':'assets/images/products/tsc-tx610.png?v=20260918-1455',
-    'argox-cx3140-pro':'assets/images/products/argox-cx3140-pro.jpg?v=20260918-1455',
-    'godex-g500-g530':'assets/images/products/godex-g500-g530.png?v=20260918-1455',
-    'godex-gx4200i-gx4300i-gx4600i':'assets/images/products/godex-gx4200i-gx4300i-gx4600i.jpg?v=20260918-1455',
-    'fastech-ft-yx510':'assets/images/products/fastech-ft-yx510.jpg?v=20260918-1455'
+    'zebra-zt610-zt620':'assets/images/catalog/legacy-zebra-zt610-zt620-6a9556fd.jpg?v=20260918-1556',
+    'zebra-zt411-zt421':'assets/images/catalog/legacy-zebra-zt411-zt421-34ca7835.png?v=20260918-1556',
+    'zebra-ds4678-xd':'assets/images/catalog/legacy-zebra-ds4678-xd-2216cfe9.jpg?v=20260918-1556',
+    'honeywell-xenon-1900-1902':'assets/images/catalog/legacy-honeywell-xenon-1900-c-1902-c-39ed1d2d.png?v=20260918-1556',
+    'tsc-mh241-mh341-mh641':'assets/images/catalog/legacy-tsc-mh241-mh341-mh641-68a5b5ca.png?v=20260918-1556',
+    'tsc-tx610':'assets/images/catalog/legacy-tsc-tx610-e515578d.png?v=20260918-1556',
+    'argox-cx3140-pro':'assets/images/catalog/legacy-argox-cx-3140-pro-ebc6595b.jpg?v=20260918-1556',
+    'godex-g500-g530':'assets/images/catalog/legacy-godex-g500-g530-a5c29dcc.png?v=20260918-1556',
+    'godex-gx4200i-gx4300i-gx4600i':'assets/images/catalog/legacy-godex-gx4200i-gx4300i-gx4600i-96bc4121.png?v=20260918-1556',
+    'fastech-ft-yx510':'assets/images/catalog/legacy-fastech-ft-yx510-def5dda9.png?v=20260918-1556'
   };
 
   const HOME_ORDER=['zebra-zt610-zt620','zebra-ds4678-xd','zebra-zt411-zt421','honeywell-xenon-1900-1902','argox-cx3140-pro','tsc-mh241-mh341-mh641','tsc-tx610','godex-gx4200i-gx4300i-gx4600i','godex-g500-g530','fastech-ft-yx510'];
@@ -387,8 +387,8 @@
     document.head.appendChild(st);
   }
   function patchLogo(){document.querySelectorAll('.brand-mark').forEach(el=>{el.innerHTML=`<img src="${LOGO}" alt="" referrerpolicy="no-referrer">`;el.setAttribute('title','萬里資訊')})}
-  function patchCards(){document.querySelectorAll('.product-card').forEach(card=>{const title=card.querySelector('h3')?.textContent||'';const id=imageIdForTitle(title),src=id&&IMAGES[id];const holder=card.querySelector('.product-card-visual');if(src&&holder){const brand=card.querySelector('.product-meta span')?.textContent||'';holder.innerHTML=productPhoto(src,title,brand)}})}
-  function patchProductDetail(){const id=new URLSearchParams(location.search).get('id');const src=id&&IMAGES[id],holder=document.querySelector('.product-detail-visual');if(src&&holder){const title=document.querySelector('.product-detail-copy h1')?.textContent||id;const brand=document.querySelector('.product-meta span')?.textContent||'';holder.innerHTML=productPhoto(src,title,brand)}}
+  function patchCards(){if(document.body.dataset.page!=='home')return;document.querySelectorAll('.product-card').forEach(card=>{const title=card.querySelector('h3')?.textContent||'';const id=imageIdForTitle(title),src=id&&IMAGES[id];const holder=card.querySelector('.product-card-visual');if(src&&holder){const brand=card.querySelector('.product-meta span')?.textContent||'';holder.innerHTML=productPhoto(src,title,brand)}})}
+  function patchProductDetail(){if(document.body.dataset.page!=='product')return;const id=new URLSearchParams(location.search).get('id');const product=window.FBStore?.getData?.().products?.find(p=>String(p.id)===String(id));if(product?.image)return;const src=id&&IMAGES[id],holder=document.querySelector('.product-detail-visual');if(src&&holder){const title=document.querySelector('.product-detail-copy h1')?.textContent||id;const brand=document.querySelector('.product-meta span')?.textContent||'';holder.innerHTML=productPhoto(src,title,brand)}}
   function patchHomeHero(){if(document.body.dataset.page!=='home')return;const box=document.querySelector('.hero-console');if(!box)return;box.innerHTML=`<div class="home-photo-showcase"><div class="home-photo-main"><img src="${IMAGES['zebra-zt610-zt620']}" alt="Zebra ZT610 / ZT620 工業型條碼列印機" referrerpolicy="no-referrer"><div class="cap"><small>INDUSTRIAL LABELING</small><b>Zebra ZT600 系列</b></div></div><div class="home-photo-side"><div class="home-photo-tile"><img src="${IMAGES['zebra-ds4678-xd']}" alt="Zebra DS4678-XD" referrerpolicy="no-referrer"><b>條碼掃描</b></div><div class="home-photo-tile"><img src="${IMAGES['tsc-mh241-mh341-mh641']}" alt="TSC MH241 系列" referrerpolicy="no-referrer"><b>工業列印</b></div></div></div>`}
   function patchHomeProducts(){if(document.body.dataset.page!=='home')return;const grid=document.getElementById('homeProducts');if(!grid)return;const d=FBStore.getData();const list=HOME_ORDER.map(id=>d.products.find(p=>p.id===id)).filter(Boolean);grid.innerHTML=list.map(homeProductCard).join('')}
   function injectBrandShowcase(){if(document.body.dataset.page!=='home'||document.getElementById('brandShowcase'))return;const productSection=document.getElementById('homeProducts')?.closest('.section');if(!productSection)return;const sec=document.createElement('section');sec.id='brandShowcase';sec.className='brand-showcase';sec.innerHTML=`<div class="container"><div class="section-head"><div><span class="eyebrow">BRAND INFORMATION</span><h2>合作品牌</h2></div><p>涵蓋條碼列印、掃描、行動設備與周邊應用的多品牌產品線。</p></div><div class="brand-list">${['Zebra','TSC','Argox','GoDEX','Honeywell','TOSHIBA','SATO','Datalogic','NUMA','Fastech'].map(x=>`<div class="brand-badge">${x}</div>`).join('')}</div></div>`;productSection.after(sec)}
