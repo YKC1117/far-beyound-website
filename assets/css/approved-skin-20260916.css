@@ -1554,7 +1554,7 @@ html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .real-pr
 html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .home-photo-main,
 html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .home-photo-tile {
   border-radius: 0 !important;
-  background: rgba(255,255,255,.96) !important;
+  background: transparent !important;
 }
 
 html body.fb-approved-skin-20260916[data-page="home"] .v5-credibility {
@@ -1674,16 +1674,16 @@ html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side img {
 }
 
 
-/* 2026-09-18｜首頁 Hero 商品展示底板統一
-   目的：統一透明圖、白底圖與不同裁切比例的視覺承載；
-   僅調整 Hero 商品展示，不修改圖片來源、產品資料或輪播邏輯。 */
+/* 2026-09-18｜首頁 Hero 商品透明舞台
+   商品圖直接融入深色 Hero，不再使用淺灰／白色矩形底板；
+   保留產品圖片、文字資訊帶、輪播與 RWD 邏輯。 */
 html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main,
 html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-card,
 html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side > a,
 html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side {
   overflow: hidden !important;
-  border-color: rgba(255,255,255,.26) !important;
-  background: #eef0ed !important;
+  border-color: rgba(255,255,255,.20) !important;
+  background: transparent !important;
 }
 
 html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main:hover,
@@ -1691,7 +1691,7 @@ html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-card:hover,
 html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-side > a:hover,
 html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side:hover {
   border-color: rgba(242,139,75,.72) !important;
-  background: #f3f4f1 !important;
+  background: rgba(255,255,255,.045) !important;
 }
 
 html body.fb-approved-skin-20260916[data-page="home"] .v2-stage-main img,
@@ -1792,3 +1792,21 @@ html body.fb-approved-skin-20260916[data-page="home"] .hero-rotate-side > span s
     gap: 18px !important;
   }
 }
+
+/* 2026-09-18｜首頁商品圖白框防回歸
+   最後 authority：所有首頁商品圖片內層不得自行鋪白底。 */
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .real-product-media,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .official-product-photo,
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products .device-visual,
+html body.fb-approved-skin-20260916[data-page="home"] .product-card-visual .real-product-media,
+html body.fb-approved-skin-20260916[data-page="home"] .product-card-visual .official-product-photo,
+html body.fb-approved-skin-20260916[data-page="home"] .product-card-visual .device-visual {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body.fb-approved-skin-20260916[data-page="home"] .v2-hero-products img,
+html body.fb-approved-skin-20260916[data-page="home"] .product-card-visual img {
+  background: transparent !important;
+}
+
