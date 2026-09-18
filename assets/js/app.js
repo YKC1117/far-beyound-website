@@ -1,5 +1,9 @@
 (function () {
   const $ = (s, p=document) => p.querySelector(s);
+  const PUBLIC_BUILD = (() => {
+    try { return new URL(document.currentScript?.src || '', location.href).searchParams.get('v') || '20260918-0915'; }
+    catch (_) { return '20260918-0915'; }
+  })();
   const $$ = (s, p=document) => [...p.querySelectorAll(s)];
 
   const icons = {
@@ -168,8 +172,8 @@
   function ensureSearchCatalog() {
     if(window.FBLegacyCatalog&&window.__fbLegacyCatalogMerge) return Promise.resolve();
     if(searchCatalogPromise) return searchCatalogPromise;
-    searchCatalogPromise=loadSearchScript('assets/js/legacy-catalog.js?v=20260918-0915','searchCatalog')
-      .then(()=>loadSearchScript('assets/js/catalog-merge.js?v=20260918-0915','searchCatalogMerge'))
+    searchCatalogPromise=loadSearchScript(`assets/js/legacy-catalog.js?v=${encodeURIComponent(PUBLIC_BUILD)}`,'searchCatalog')
+      .then(()=>loadSearchScript(`assets/js/catalog-merge.js?v=${encodeURIComponent(PUBLIC_BUILD)}`,'searchCatalogMerge'))
       .catch(err=>{
         searchCatalogPromise=null;
         console.error('[site-search] catalog lazy-load failed',err);
