@@ -8,6 +8,16 @@
   const FASTECH_FALLBACK={labels:'label',printing:'label-printing',software:'label-software',parts:'printer-parts',rfid:'rfid',mobile:'mobile',printers:'printer',scanners:'scanner'};
   const CURATED_IDS=new Set(['software-bartender','software-codesoft','urovo-dt66-ct48c-dt50-dt40-rt40s']);
   const VERIFIED_PATH_IDS={
+    '/product/1/5/11/6':'zebra-zt610-zt620',
+    '/product/2/7/14/160':'zebra-ds4678-xd',
+    '/product/1/5/12/5':'zebra-zt411-zt421',
+    '/product/2/9/42/50':'honeywell-xenon-1900-1902',
+    '/product/1/6/32/157':'argox-cx3140-pro',
+    '/product/1/22/63/111':'tsc-mh241-mh341-mh641',
+    '/product/1/22/33/19':'tsc-tx610',
+    '/product/1/23/34/118':'godex-gx4200i-gx4300i-gx4600i',
+    '/product/1/23/35/156':'godex-g500-g530',
+    '/product/2/90/91/175':'fastech-ft-yx510',
     '/product/1/22/33/181':'tsc-da210-da220',
     '/product/1/22/93/180':'tsc-alpha-3r-alpha-30r-alpha-30l-alpha-30lhc'
   };
