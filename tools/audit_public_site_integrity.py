@@ -126,6 +126,31 @@ def main() -> None:
     if js_errors:
         errors.append('JavaScript syntax errors: ' + ', '.join(js_errors))
 
+    # Product-route integrity: every homepage/static product href must resolve
+    # after the same public catalog merge used by product.html.
+    route_audit = subprocess.run(
+        ['node', str(ROOT / 'tools' / 'audit_product_routes.js')],
+        capture_output=True,
+        text=True,
+    )
+    if route_audit.returncode:
+        detail = (route_audit.stdout + '\n' + route_audit.stderr).strip()
+        errors.append('product route audit failed: ' + detail)
+
+    # Keep the source media patch and every shipped bundle in sync.
+    media_guard = '.product-card-visual .real-product-media{background:transparent}'
+    media_img_guard = '.product-card-visual .real-product-media img{width:82%;height:82%}'
+    for media_path in [
+        'assets/js/media-patch.js',
+        'assets/js/home-main-bundle.js',
+        'assets/js/inner-pre-bundle.js',
+        'assets/js/products-pre-bundle.js',
+        'assets/js/product-pre-bundle.js',
+        'assets/js/inner-generic-bundle.js',
+        'assets/js/solutions-bundle.js',
+    ]:
+        require_text(media_path, [media_guard, media_img_guard], errors)
+
     css_missing: list[str] = []
     for path in sorted((ROOT / 'assets' / 'css').glob('*.css')):
         text = path.read_text(encoding='utf-8', errors='ignore')

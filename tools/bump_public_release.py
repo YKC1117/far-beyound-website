@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 
-VERSION = "20260918-1556"
+VERSION = "20260918-1600"
 PATTERNS = [
     # 所有公開頁本地 JavaScript 使用同一個 release version，避免跨頁混用舊快取。
     (re.compile(r'(assets/js/[^"\']+\.js)(?:\?v=[^"\']+)?'), rf'\1?v={VERSION}'),

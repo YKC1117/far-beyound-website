@@ -88,6 +88,21 @@
     const used=new Set();
     items.forEach(p=>{
       if(CURATED_IDS.has(String(p.id||''))){used.add(p.id);return;}
+
+      // 已人工整理過的 curatedId 是公開網址 authority。
+      // 只要存在，就不得再被 legacy 名稱重新產生 slug，
+      // 否則首頁/商品卡 href 會與 product.html 最終資料 ID 斷鏈。
+      const curated=normalizeModelSlug(String(p.curatedId||'').trim());
+      if(curated&&!used.has(curated)){
+        p.slug=curated;
+        used.add(curated);
+        if(p.legacyUrl){
+          if(!p.sourceId)p.sourceId=p.id;
+          p.id=curated;
+        }
+        return;
+      }
+
       const base=normalizeModelSlug(String(p.publicId||'').trim()||publicSlugBase(p));
       let slug=base;
       if(used.has(slug)) slug=normalizeModelSlug(`${base}-${CATEGORY_SLUG[p.category]||asciiSlug(p.category)||'product'}`);
