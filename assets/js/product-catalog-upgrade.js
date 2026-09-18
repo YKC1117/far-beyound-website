@@ -2,7 +2,7 @@
   if(!window.FBStore || window.__fbProductCatalogUpgrade)return;
   window.__fbProductCatalogUpgrade=true;
 
-  const aliases={'legacy-bartender-5382ba34':'software-bartender','legacy-codesoft-71391e24':'software-codesoft','urovo-enterprise-mobile':'urovo-dt66-ct48c-dt50-dt40-rt40s'};
+  const aliases={'legacy-bartender-5382ba34':'software-bartender','legacy-codesoft-71391e24':'software-codesoft','urovo-enterprise-mobile':'urovo-dt66-ct48c-dt50-dt40-rt40s','honeywell-xenon-1900-c-1902-c':'honeywell-xenon-1900-1902','argox-cx-3140-pro':'argox-cx3140-pro','godex-g500-plus-g530-plus':'godex-g500-g530'};
   const requestedId=new URLSearchParams(location.search).get('id');
   if(aliases[requestedId]){
     const u=new URL(location.href);u.searchParams.set('id',aliases[requestedId]);history.replaceState(null,'',u.pathname+u.search+u.hash);
