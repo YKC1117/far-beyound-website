@@ -26,10 +26,11 @@
     document.head.appendChild(s);
   }
   function applyCards(){
-    const hidden=hiddenIds();
-    $$('a[href*="product.html?id="]').forEach(a=>{
+    const products=current().products||[];
+    $('a[href*="product.html?id="]').forEach(a=>{
       const id=idFromHref(a.getAttribute('href')||'');if(!id)return;
-      const off=hidden.has(id);
+      const product=window.FBFindProduct?FBFindProduct(products,id):products.find(p=>String(p.id)===String(id));
+      const off=product?.published===false;
       const card=a.closest('.product-card')||a.closest('.hero-rotate-card')||a.closest('.hero-rotate-side')||a;
       if(card){const next=off?'none':'';if(card.style.display!==next)card.style.display=next}
     });
@@ -47,7 +48,7 @@
   }
   function applyProductPage(){
     if(document.body.dataset.page!=='product')return;
-    const id=new URLSearchParams(location.search).get('id')||'';if(!id||!hiddenIds().has(id))return;
+    const id=new URLSearchParams(location.search).get('id')||'';if(!id)return;const products=current().products||[];const product=window.FBFindProduct?FBFindProduct(products,id):products.find(p=>String(p.id)===String(id));if(!product||product.published!==false)return;
     const main=$('main');if(!main||main.dataset.unpublishedHandled)return;main.dataset.unpublishedHandled='1';
     main.innerHTML='<section class="section"><div class="container"><div class="empty-state wide" style="padding:48px 24px"><b>此產品目前暫不提供公開瀏覽</b><span>如需確認產品規格、替代機型或供貨資訊，萬里資訊可協助您進一步確認。</span><div class="product-actions" style="margin-top:18px"><a class="btn btn-primary" href="products.html">返回產品資訊</a><a class="btn btn-secondary" href="contact.html?item=%E7%94%A2%E5%93%81%E8%B3%87%E8%A8%8A%E8%A9%A2%E5%95%8F">聯絡我們</a></div></div></div></section>';
     document.title='產品資訊｜萬里資訊';
