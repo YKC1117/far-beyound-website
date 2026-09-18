@@ -532,7 +532,7 @@ body[data-page="home"] .cta-band{margin-top:0!important}
 .page-hero h1{margin-bottom:7px!important}.page-hero p{max-width:720px!important}
 
 /* Clean official product photographs mirrored from legacy site */
-.official-product-photo{position:relative;width:100%;height:100%;display:grid;place-items:center;background:#fff;overflow:hidden}
+.official-product-photo{position:relative;width:100%;height:100%;display:grid;place-items:center;background:transparent;overflow:hidden}
 .official-product-photo img{width:90%;height:88%;object-fit:contain;mix-blend-mode:multiply}
 .official-product-photo span{position:absolute;left:11px;bottom:10px;padding:3px 7px;border:1px solid #d9e0e5;background:rgba(255,255,255,.94);color:#526474;font-size:8px;font-weight:700;letter-spacing:.06em}
 .product-detail-visual .official-product-photo img{width:92%;height:92%}
