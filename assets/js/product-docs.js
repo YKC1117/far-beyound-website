@@ -1,6 +1,6 @@
 // Generated from the current official Far-beyound website. Do not hand-edit.
 window.FBProductDocs = {
-  "generatedAt": "2026-09-17T03:24:15Z",
+  "generatedAt": "2026-09-18T07:04:19Z",
   "source": "https://www.far-beyound.com.tw",
   "items": {
     "https://www.far-beyound.com.tw/product/1/22/33/115": [
