@@ -153,8 +153,8 @@ def main() -> None:
 
     # Homepage product-image surface must stay transparent. This guards against
     # older bundle/source rules reintroducing the visible white rectangle.
-    home_bundle = read('assets/css/home-bundle.css')
-    approved_skin = read('assets/css/approved-skin-20260916.css')
+    home_bundle = (ROOT / 'assets/css/home-bundle.css').read_text(encoding='utf-8')
+    approved_skin = (ROOT / 'assets/css/approved-skin-20260916.css').read_text(encoding='utf-8')
     forbidden_home_surfaces = [
         '.v2-stage-main,.v2-stage-side>a{transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;background:#fff!important}',
         'body[data-page="home"] .hero-rotate-side img{width:100%;height:142px;object-fit:contain;background:#fff;padding:10px}',
