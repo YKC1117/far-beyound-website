@@ -1,4 +1,4 @@
-/* HOME MAIN BUNDLE — existing production scripts concatenated in current execution order. */
+/* HOME MAIN BUNDLE — existing production scripts concatenated in current execution order. site-social remains direct for release-gate visibility. */
 
 /* ===== assets/js/app.js ===== */
 (function () {
@@ -957,96 +957,6 @@ function apply(){if(!window.FBStore)return false;const c=cfg();if(c.seoTitle)doc
 function boot(){if(apply())return;setTimeout(boot,80)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 window.addEventListener('farbeyound:datachange',apply)})();
-
-/* ===== assets/js/site-social.js ===== */
-window.FBSocialLinks=window.FBSocialLinks||{youtube:'https://www.youtube.com/@FastechTaiwan'};
-(function(){
-  'use strict';
-
-  const PUBLIC_BUILD=(()=>{
-    try{return new URL(document.currentScript?.src||'',location.href).searchParams.get('v')||'20260918-0945'}
-    catch(_){return'20260918-0945'}
-  })();
-  const asset=path=>`${path}?v=${encodeURIComponent(PUBLIC_BUILD)}`;
-
-  function sync(){
-    const d=window.FBStore?.getData?.(),site=d?.site||{};
-    if(site.youtube)window.FBSocialLinks.youtube=site.youtube;
-    if(site.line)window.FBSocialLinks.line=site.line;
-  }
-
-  function load(src,key){
-    const base=src.split('?')[0];
-    if(
-      document.querySelector(`script[data-${key}]`)||
-      document.querySelector(`script[src^="${base}"]`)||
-      document.querySelector(`link[data-${key}]`)||
-      document.querySelector(`link[href^="${base}"]`)
-    )return;
-
-    const isCss=src.endsWith('.css');
-    const node=document.createElement(isCss?'link':'script');
-    if(isCss){
-      node.rel='stylesheet';
-      node.href=src;
-    }else{
-      node.src=src;
-      node.defer=true;
-    }
-    node.setAttribute(`data-${key}`,'1');
-    document.head.appendChild(node);
-  }
-
-  function run(){
-    sync();
-
-    const page=document.body?.dataset?.page||'';
-
-    /* 全站共用功能 */
-    load(asset('assets/js/cloud-sync.js'),'social-cloud-sync');
-    load(asset('assets/js/site-content-control.js'),'social-content');
-    load(asset('assets/js/site-seo.js'),'site-seo');
-    load(asset('assets/js/site-display-control.js'),'social-display');
-    load(asset('assets/js/public-release-polish.js'),'public-release-polish');
-    load(asset('assets/js/brand-home-guard.js'),'brand-home-guard');
-    load(asset('assets/js/quick-contact-normalize.js'),'quick-contact-normalize');
-    load(asset('assets/js/quick-contact-authority.js'),'quick-contact-authority');
-
-    /* 只有有內頁 Hero 設定的頁面才載入 */
-    if(['products','downloads','solutions','cases','news','about','locations','contact'].includes(page)){
-      load(asset('assets/js/page-settings-control.js'),'social-pages');
-    }
-
-    /* 歷史消息資料只在消息頁使用，避免首頁額外解析整份 archive */
-    if(page==='news'||page==='news-detail'){
-      load(asset('assets/js/legacy-news.js'),'legacy-news');
-      load(asset('assets/js/news-archive-runtime.js'),'news-archive-runtime');
-    }
-
-    /* 方案補齊只在首頁與方案頁需要 */
-    if(page==='home'||page==='solutions'){
-      load(asset('assets/js/solution-coverage.js'),'solution-coverage');
-    }
-
-    if(page==='cases'){
-      load(asset('assets/js/case-category-runtime.js'),'case-category-runtime');
-    }
-
-    if(page==='product'){
-      load(asset('assets/js/product-route-guard.js'),'product-route-guard');
-    }
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',run,{once:true});
-  }else{
-    run();
-  }
-
-  window.addEventListener('load',()=>setTimeout(sync,120),{once:true});
-  window.addEventListener('farbeyound:datachange',()=>setTimeout(sync,60));
-})();
-
 
 /* ===== assets/js/contact-youtube-upgrade.js ===== */
 (function(){if(window.__fbContactYoutubeUpgrade)return;window.__fbContactYoutubeUpgrade=true;function data(){const d=window.FBStore?.getData?.()||{},site=d.site||{};return{phones:Array.isArray(site.phones)?site.phones:[],youtube:String(site.youtube||window.FBSocialLinks?.youtube||'').trim()}}function tel(v){return String(v||'').replace(/[^0-9+]/g,'')}function loadMobileExperience(){if(document.querySelector('link[data-mobile-experience]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/mobile-experience.css?v=20260911b';l.dataset.mobileExperience='1';document.head.appendChild(l)}function addStyle(){if(document.getElementById('fbContactYoutubeUpgradeStyle'))return;const s=document.createElement('style');s.id='fbContactYoutubeUpgradeStyle';s.textContent='.footer-media-link{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12);text-decoration:none;color:inherit}.footer-media-copy{display:flex;align-items:center;gap:12px;min-width:0}.footer-media-icon{width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.24);border-radius:50%}.footer-media-icon svg{width:19px;height:19px;fill:currentColor}.footer-media-copy small{display:block;font-size:10px;letter-spacing:.12em;opacity:.68;margin-bottom:3px}.footer-media-copy b{display:block;font-size:13px}.footer-media-arrow{font-size:12px;font-weight:700;white-space:nowrap;opacity:.78}@media(max-width:680px){.footer-media-link{padding:16px 0}.footer-media-arrow{font-size:11px}}';document.head.appendChild(s)}function upgradeMobilePhone(){const old=document.querySelector('[data-mobile-phone]'),panel=document.querySelector('.mobile-contact-phone');if(!old||!panel||old.dataset.clickPanelReady==='1')return;const btn=old.cloneNode(true);btn.dataset.clickPanelReady='1';old.replaceWith(btn);const label=btn.querySelector('span');if(label)label.textContent='電話';btn.setAttribute('aria-label','電話聯絡');panel.id='mobilePhonePanel';panel.innerHTML='';data().phones.forEach(p=>{const a=document.createElement('a');a.href='tel:'+tel(p.value);const s=document.createElement('span'),b=document.createElement('b');s.textContent=(p.label||'')+'辦公室';b.textContent=p.value||'';a.append(s,b);panel.appendChild(a)});btn.setAttribute('aria-controls',panel.id);btn.setAttribute('aria-expanded','false');const close=()=>{panel.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const open=!panel.classList.contains('is-open');close();if(open){panel.classList.add('is-open');btn.setAttribute('aria-expanded','true')}});panel.addEventListener('click',e=>e.stopPropagation());document.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape')close()})}function addYoutubeFooter(){const url=data().youtube,old=document.querySelector('.footer-media-wrap');if(!url){old?.remove();return}if(old){const a=old.querySelector('a');if(a)a.href=url;return}const footer=document.querySelector('footer'),target=footer?.querySelector('.footer-bottom')||footer?.lastElementChild;if(!footer||!target)return;const wrap=document.createElement('div');wrap.className='container footer-media-wrap';const a=document.createElement('a');a.className='footer-media-link';a.href=url;a.target='_blank';a.rel='noopener';a.setAttribute('aria-label','萬里資訊 YouTube 頻道（另開新視窗）');a.innerHTML='<span class="footer-media-copy"><span class="footer-media-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.2 7.1a2.8 2.8 0 0 0-2-2C17.4 4.6 12 4.6 12 4.6s-5.4 0-7.2.5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2.3 12a29 29 0 0 0 .5 4.9 2.8 2.8 0 0 0 2 2c1.8.5 7.2.5 7.2.5s5.4 0 7.2-.5a2.8 2.8 0 0 0 2-2 29 29 0 0 0 .5-4.9 29 29 0 0 0-.5-4.9ZM10 15.2V8.8l5.5 3.2L10 15.2Z"/></svg></span><span><small>VIDEO CHANNEL</small><b>萬里資訊 YouTube</b></span></span><span class="footer-media-arrow">前往影音頻道 →</span>';wrap.appendChild(a);target.parentNode.insertBefore(wrap,target)}function run(){loadMobileExperience();addStyle();upgradeMobilePhone();addYoutubeFooter()}document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,160);setTimeout(run,700)});if(document.readyState!=='loading')setTimeout(run,0);window.addEventListener('farbeyound:datachange',()=>setTimeout(run,120))})();
