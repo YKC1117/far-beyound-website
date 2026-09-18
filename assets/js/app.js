@@ -1,5 +1,9 @@
 (function () {
   const $ = (s, p=document) => p.querySelector(s);
+  const PUBLIC_BUILD = (() => {
+    try { return new URL(document.currentScript?.src || '', location.href).searchParams.get('v') || '20260918-0915'; }
+    catch (_) { return '20260918-0915'; }
+  })();
   const $$ = (s, p=document) => [...p.querySelectorAll(s)];
 
   const icons = {
@@ -150,19 +154,55 @@
     }, {passive:true});
   }
 
-  function renderSearch(q) {
+  let searchCatalogPromise=null;
+
+  function loadSearchScript(src, marker) {
+    const base=src.split('?')[0];
+    if(document.querySelector(`script[src^="${base}"]`)) return Promise.resolve();
+    return new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src=src;
+      script.dataset[marker]='1';
+      script.onload=resolve;
+      script.onerror=()=>reject(new Error(`Failed to load ${base}`));
+      document.head.appendChild(script);
+    });
+  }
+
+  function ensureSearchCatalog() {
+    if(window.FBLegacyCatalog&&window.__fbLegacyCatalogMerge) return Promise.resolve();
+    if(searchCatalogPromise) return searchCatalogPromise;
+    searchCatalogPromise=loadSearchScript(`assets/js/legacy-catalog.js?v=${encodeURIComponent(PUBLIC_BUILD)}`,'searchCatalog')
+      .then(()=>loadSearchScript(`assets/js/catalog-merge.js?v=${encodeURIComponent(PUBLIC_BUILD)}`,'searchCatalogMerge'))
+      .catch(err=>{
+        searchCatalogPromise=null;
+        console.error('[site-search] catalog lazy-load failed',err);
+      });
+    return searchCatalogPromise;
+  }
+
+  async function renderSearch(q) {
     const box = $('#siteSearchResults'); if(!box) return;
     q=q.trim().toLowerCase();
     if(!q){box.innerHTML='<div class="search-hint">輸入型號、品牌、產品類型或系統名稱。</div>';return}
+
+    /* 完整產品目錄只在使用者實際搜尋時才載入，避免每個公開頁先解析大型舊目錄。 */
+    if(!window.FBLegacyCatalog){
+      box.innerHTML='<div class="search-hint">正在載入完整產品目錄…</div>';
+      await ensureSearchCatalog();
+      const input=$('#siteSearchInput');
+      if(input&&input.value.trim().toLowerCase()!==q) return;
+    }
+
     const d=FBStore.getData();
     const products=d.products.filter(p=>[p.name,p.brand,p.family,p.subtitle,p.type,p.intro].join(' ').toLowerCase().includes(q)).slice(0,6);
     const solutions=d.solutions.filter(s=>[s.name,s.en,s.desc].join(' ').toLowerCase().includes(q)).slice(0,3);
     const news=d.news.filter(n=>[n.title,n.type,n.excerpt].join(' ').toLowerCase().includes(q)).slice(0,3);
     if(!products.length&&!solutions.length&&!news.length){box.innerHTML=`<div class="empty-state"><b>找不到「${escapeHtml(q)}」</b><span>可以改用品牌、型號或產品類別搜尋。</span></div>`;return}
     box.innerHTML = [
-      ...products.map(p=>`<a class="search-result" href="product.html?id=${encodeURIComponent(p.id)}"><span class="result-icon">${icon(p.device||'box')}</span><span><small>產品 · ${p.brand}</small><b>${p.name}</b></span>${icon('chevron')}</a>`),
-      ...solutions.map(s=>`<a class="search-result" href="solutions.html#${s.id}"><span class="result-icon">${icon(s.icon)}</span><span><small>系統方案</small><b>${s.name}</b></span>${icon('chevron')}</a>`),
-      ...news.map(n=>`<a class="search-result" href="news.html"><span class="result-icon">${icon('software')}</span><span><small>${n.type} · ${n.date}</small><b>${n.title}</b></span>${icon('chevron')}</a>`)
+      ...products.map(p=>`<a class="search-result" href="product.html?id=${encodeURIComponent(p.id)}"><span class="result-icon">${icon(p.device||'box')}</span><span><small>產品 · ${escapeHtml(p.brand)}</small><b>${escapeHtml(p.name)}</b></span>${icon('chevron')}</a>`),
+      ...solutions.map(s=>`<a class="search-result" href="solutions.html#${encodeURIComponent(s.id)}"><span class="result-icon">${icon(s.icon)}</span><span><small>系統方案</small><b>${escapeHtml(s.name)}</b></span>${icon('chevron')}</a>`),
+      ...news.map(n=>`<a class="search-result" href="news.html"><span class="result-icon">${icon('software')}</span><span><small>${escapeHtml(n.type)} · ${escapeHtml(n.date)}</small><b>${escapeHtml(n.title)}</b></span>${icon('chevron')}</a>`)
     ].join('');
   }
 
