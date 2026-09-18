@@ -210,7 +210,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/zh_tw/documentation/unrestricted/guide/product/zt610-zt620-ug-colortouch-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt610-zt620-6a9556fd.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt610-zt620-6a9556fd.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/11/6",
       "description": [
         "Zebra ZT600 系列 工業型條碼列印機",
@@ -380,7 +380,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/zh_tw/documentation/unrestricted/guide/product/zt510-ug-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt510-2232dcd8.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt510-2232dcd8.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/11/7",
       "description": [
         "Zebra ZT510",
@@ -545,7 +545,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/industrial/xi4/xi4-qrg-zh-tw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-220xi4-cfea33a0.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-220xi4-cfea33a0.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/11/1",
       "description": [
         "Zebra 220Xi4",
@@ -717,7 +717,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/industrial/zt400/zt411-zt421-sg-ww.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt411-zt421-34ca7835.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt411-zt421-34ca7835.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/12/5",
       "description": [
         "Zebra ZT400",
@@ -882,7 +882,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/industrial/zt200/zt231-qsg-zhcn.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt231-aa996919.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt231-aa996919.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/12/112",
       "description": [
         "Zebra ZT200 系列 商業型條碼列印機",
@@ -1045,7 +1045,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/industrial/zt200/zt111-qsg-en.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt111-0a27bd78.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt111-0a27bd78.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/12/121",
       "description": [
         "Zebra ZT100",
@@ -1185,7 +1185,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/industrial/zt200/zt200-qrg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt210-zt220-zt230-7716e602.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt210-zt220-zt230-7716e602.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/12/12",
       "description": [
         "2022/6 停產；2027/01",
@@ -1345,7 +1345,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/zh_cn/documentation/unrestricted/guide/product/zd621t-qsg-zhcn.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zd621-ab6d4a37.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zd621-ab6d4a37.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/13/9",
       "description": [
         "Zebra ZD621 桌上型條碼列印機",
@@ -1510,7 +1510,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/zh_cn/documentation/unrestricted/guide/product/zd421t-qsg-zhcn.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zd421-6756e2c4.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zd421-6756e2c4.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/13/10",
       "description": [
         "Zebra ZD421",
@@ -1675,7 +1675,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/desktop/zd888t/zd888t-sg-zhcn.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zd888ta-39cfdc40.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zd888ta-39cfdc40.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/13/92",
       "description": [
         "Zebra ZD888TA 桌上型條碼列印機",
@@ -1839,7 +1839,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/desktop/zd220t/zd200t-ug-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zd220-zd230-f3f2fd8d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zd220-zd230-f3f2fd8d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/13/114",
       "description": [
         "敝公司無販售此機型，推薦替代型號",
@@ -2004,7 +2004,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/desktop/legacy/gx420t/gx420t-gx430t-qsg-en.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-gx420-gx430-bffe61ff.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-gx420-gx430-bffe61ff.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/13/18",
       "description": [
         "2021/12 停產；2025/02 停止服務與支援",
@@ -2149,7 +2149,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/desktop/legacy/gk420t/gk420t-ug-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-gk420-b6812912.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-gk420-b6812912.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/13/4",
       "description": [
         "2021/12 停產；2025/02 停止服務與支援",
@@ -2288,7 +2288,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/mobile/zr658/zr658-zr668-ug-zh-cn.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zr658-zr668-2950ba2b.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zr658-zr668-2950ba2b.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/26/3",
       "description": [
         "Zebra ZR600 系列 攜帶型條碼列印機",
@@ -2440,7 +2440,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/mobile/zq500/P1106523-06ZHTWa_zq500-ug-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zq511-zq521-ae6db31c.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zq511-zq521-ae6db31c.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/26/64",
       "description": [
         "Zebra ZQ500 系列 攜帶型條碼列印機",
@@ -2585,7 +2585,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/mobile/legacy/qln/qlnseries-qsg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-qln420-36177afb.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-qln420-36177afb.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/5/26/20",
       "description": [
         "Zebra QLn420 攜帶型條碼列印機",
@@ -2747,7 +2747,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.argox.com/docfile/usermanual/IX4_Pro_QIG.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-ix4-200-pro-ix4-240-pro-ix4-250-pro-eca31b4c.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-ix4-200-pro-ix4-240-pro-ix4-250-pro-eca31b4c.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/15/113",
       "description": [
         "Argox iX4 Pro 系列 工業型條碼列印機",
@@ -2902,7 +2902,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.argox.com/docfile/usermanual/IX4_Pro_QIG.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-ix4-350-pro-a1167d83.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-ix4-350-pro-a1167d83.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/15/11",
       "description": [
         "Argox iX4 Pro 系列 工業型條碼列印機",
@@ -3051,7 +3051,7 @@ window.FBLegacyCatalog = {
           "url": "https://doc.argox.com/usermanual/P4-series-QIG-49-P4201-003.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-p4-250-pro-p4-350-pro-p4-650-pro-9175d9c9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-p4-250-pro-p4-350-pro-p4-650-pro-9175d9c9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/14",
       "description": [
         "Argox P4 系列 桌上型條碼列印機",
@@ -3217,7 +3217,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.argox.com/docfile/usermanual/CP-EX_Pro_CX_Pro_series_QIG_49-C2101-101.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-cx-3140-pro-ebc6595b.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-cx-3140-pro-ebc6595b.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/157",
       "description": [
         "Argox CX 系列 桌上型標籤條碼列印機",
@@ -3367,7 +3367,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.argox.com/docfile/usermanual/CP-EX_Pro_CX_Pro_series_QIG_49-C2101-101.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-cx-2140-pro-5d160199.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-cx-2140-pro-5d160199.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/159",
       "description": [
         "Argox CX 系列 桌上型標籤條碼列印機",
@@ -3545,7 +3545,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.argox.com/docfile/usermanual/OS-214EX_Pro_QIG_49-21403-071.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-os-214ex-pro-6a8fb83e.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-os-214ex-pro-6a8fb83e.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/182",
       "description": [
         "Argox OS-214EX Pro 桌上型條碼列印機",
@@ -3702,7 +3702,7 @@ window.FBLegacyCatalog = {
           "url": "https://doc.argox.com/usermanual/CP-2140EX-CX-series-QIG-49-C2101-063.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-cp-2140ex-cp-3140ex-258f780b.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-cp-2140ex-cp-3140ex-258f780b.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/17",
       "description": [
         "Argox CP 系列 桌上型條碼列印機",
@@ -3855,7 +3855,7 @@ window.FBLegacyCatalog = {
           "url": "https://doc.argox.com/usermanual/CP-Series-User-Manual_TW_20180903.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-cp-3140l-25a7e6b9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-cp-3140l-25a7e6b9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/16",
       "description": [
         "已停產/ 接續型號",
@@ -4013,7 +4013,7 @@ window.FBLegacyCatalog = {
           "url": "https://doc.argox.com/usermanual/OX-Series-Quick-guide_20161012.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-cp-2140m-d4272c84.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-cp-2140m-d4272c84.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/15",
       "description": [
         "已停產/ 接續型號",
@@ -4161,7 +4161,7 @@ window.FBLegacyCatalog = {
           "url": "https://doc.argox.com/usermanual/OS-series-QIG-49-21403-026.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-argox-os-214plus-2b4d689b.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-os-214plus-2b4d689b.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/6/32/13",
       "description": [
         "已停產/ 接續型號",
@@ -4310,7 +4310,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/39-1600001-10lf_mh241_usg.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-mh241-mh341-mh641-68a5b5ca.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-mh241-mh341-mh641-68a5b5ca.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/63/111",
       "description": [
         "TSC MH241 系列 工業型條碼",
@@ -4496,7 +4496,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/39-0600001-20lf_mh_usg.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-mh640-eaf2ee36.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-mh640-eaf2ee36.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/63/106",
       "description": [
         "TSC MH640 工業型條碼列印機",
@@ -4658,7 +4658,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/39-0680001-10lf_mb240t_usg.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-mb240t-mb340t-e60caeb4.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-mb240t-mb340t-e60caeb4.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/63/105",
       "description": [
         "TSC MB240",
@@ -4820,7 +4820,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/RS-9/_9-0530001-00lf-tx200-qig-japanese.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-tx610-e515578d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-tx610-e515578d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/33/19",
       "description": [
         "TSC TX610 桌上型條碼列印機 為 TSC TX600升級版",
@@ -4982,7 +4982,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/39-0650001-40lf_te_usg_en_tc_sc_ru_ar_id.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-te210-te310-153daea9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-te210-te310-153daea9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/33/98",
       "description": [
         "TSC TE200 系列 桌上型條碼列印機",
@@ -5134,7 +5134,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/39-0650001-40lf_te_usg_en_tc_sc_ru_ar_id.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-te200-te300-aad31eb3.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-te200-te300-aad31eb3.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/33/115",
       "description": [
         "TSC TE200 系列 桌上型條碼列印機",
@@ -5282,7 +5282,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/39-2250001-20lf_th240_usg.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-th240-th340-631b02e6.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-th240-th340-631b02e6.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/33/184",
       "description": [
         "TSC TH240/TH340 桌上型條碼列印機",
@@ -5432,7 +5432,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/31-1580004-00_da210_user-manual_tc_e.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-da-da-56dff63a.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-da-da-56dff63a.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/33/181",
       "description": [
         "close",
@@ -5587,7 +5587,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/RS-9/_9-0000112-50lf-ttp-247-usg.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-ttp-247-ttp-345-59f97ea0.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-ttp-247-ttp-345-59f97ea0.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/33/23",
       "description": [
         "近期已停產",
@@ -5756,7 +5756,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/19DfMRujpf1mvRIpBd9Zfnf2AbwOHkvNI/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-ttp-244-pro-3108c1ae.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-ttp-244-pro-3108c1ae.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/33/93",
       "description": [
         "TSC TTP 系列 桌上型條碼列印機",
@@ -5870,7 +5870,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/31-0710006-00_alpha-30l_40l-_user-manual_tc.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-tsc-alpha-40l-20cbd068.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-alpha-40l-20cbd068.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/93/179",
       "description": [
         "堅固可靠的攜帶型印表機可隨時隨地滿足您標籤列印的需求。",
@@ -6013,7 +6013,7 @@ window.FBLegacyCatalog = {
           "url": "https://fs.tscprinters.com/system/files/39-0480001-20lf_alpha-3r_usg.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-alpha-3-d2a08ccb.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-alpha-3-d2a08ccb.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/22/93/180",
       "description": [
         "Alpha系列3英吋攜帶型印表機",
@@ -6186,7 +6186,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/5MOjpBRiHVEGEDNY1eNFYg.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-gx4200i-gx4300i-gx4600i-96bc4121.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-gx4200i-gx4300i-gx4600i-96bc4121.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/34/118",
       "description": [
         "Godex GX4000i 系列",
@@ -6342,7 +6342,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/0hBDO9ijwV,iq4V7c959Wg.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-zx420i-zx430i-521a3ae9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-zx420i-zx430i-521a3ae9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/34/117",
       "description": [
         "Godex ZX420i+/ZX430i+",
@@ -6501,7 +6501,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/E5zz,VdyHAeol,ketwxg9w.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-zx1200i-zx1300i-zx1600i-7e7ba901.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-zx1200i-zx1300i-zx1600i-7e7ba901.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/34/108",
       "description": [
         "Godex ZX1200i+/ZX1300i+/ZX1600i+ 工業型條碼列印機",
@@ -6677,7 +6677,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/TwQIV,5RcWFZmqkH9vQwnA.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-ez2250i-ez2350i-7d980310.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-ez2250i-ez2350i-7d980310.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/34/27",
       "description": [
         "Godex EZ2250i/EZ2350i",
@@ -6853,7 +6853,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/dg7JzhBXVXF4qarW,xkEeQ.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-ez6250i-ez6350i-a4551686.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-ez6250i-ez6350i-a4551686.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/34/28",
       "description": [
         "Godex EZ6250i/EZ6350i 工業型條碼列印機",
@@ -7022,7 +7022,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/gmfhiKxGvMWce5Gu9bATIg.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-ge300-ge330-6a4b99a9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-ge300-ge330-6a4b99a9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/119",
       "description": [
         "GoDEX GE300 系列 桌上型條碼列印機",
@@ -7166,7 +7166,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/FuL7SE,pqNN1M5tdbu6uYg.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-ez120-ac50781f.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-ez120-ac50781f.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/22",
       "description": [
         "GoDEX EZ120 桌上型條碼列印機",
@@ -7303,7 +7303,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/bVlQLDirfGvffCzQPeTAZQ.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-g500-g530-a5c29dcc.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-g500-g530-a5c29dcc.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/156",
       "description": [
         "GoDEX G500+ 系列 桌上型條碼列印機",
@@ -7471,7 +7471,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/POcxDWB0,8T7Gi0n4u_WKw.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-rt700i-rt730i-33d63f4d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-rt700i-rt730i-33d63f4d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/120",
       "description": [
         "GoDEX RT700i+ 系列 桌上型條碼列印機",
@@ -7648,7 +7648,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/pavYVqIXoTFF7dFkDjZmAQ.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-rt863i-fd7fb74d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-rt863i-fd7fb74d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/103",
       "description": [
         "GoDEX RT863i+",
@@ -7837,7 +7837,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/7VbwLzXNxEDsuhBUBZv7pA.preview?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-dt2x-740cb84c.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-dt2x-740cb84c.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/183",
       "description": [
         "極簡輕巧設計，高速加值感動",
@@ -7980,7 +7980,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/pz3Z_MwiGPajc4MJuK26cg.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-g500-g530-a0a56f2a.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-g500-g530-a0a56f2a.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/29",
       "description": [
         "GoDEX G500 系列 桌上型條碼列印機",
@@ -8136,7 +8136,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/FuL7SE,pqNN1M5tdbu6uYg.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-ez520-ez530-2fecf2de.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-ez520-ez530-2fecf2de.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/23/35/25",
       "description": [
         "GoDEX EZ500 系列 桌上型條碼列印機",
@@ -8280,7 +8280,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1BOFrAupRj9lYgWe6Co5tfKjLjowcN2q2/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-toshiba-ba410t-84c16fcf.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-toshiba-ba410t-84c16fcf.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/24/36/31",
       "description": [
         "Toshiba BA400 系列 工業型條碼列印機",
@@ -8427,7 +8427,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1Up_c55PtCr-NknjU_wg1OGveoe7GOoJx/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-toshiba-b-ex4t1-859ea0ee.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-toshiba-b-ex4t1-859ea0ee.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/24/36/32",
       "description": [
         "Toshiba B-EX4T1 工業型條碼列印機",
@@ -8579,7 +8579,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1sT4AhjSA1u5NcW95a-PE7K8bdlDb4Nq_/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-toshiba-b-ex4t2-a4a0e319.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-toshiba-b-ex4t2-a4a0e319.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/24/36/33",
       "description": [
         "Toshiba B-EX4T2 工業型條碼列印機",
@@ -8727,7 +8727,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.toshibatec.com/ovs-support/bcs/om/B-EX4T3/EX4T3_OM_ZH-CN_0210.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-toshiba-b-ex4t3-beb1b888.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-toshiba-b-ex4t3-beb1b888.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/24/36/34",
       "description": [
         "Toshiba B-EX4T3 工業型條碼列印機",
@@ -8885,7 +8885,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1QI7RPtJEj7s5lLYGz9BfFzAMfa2B9-jn/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-toshiba-b-ex6t-385cbd3d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-toshiba-b-ex6t-385cbd3d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/24/36/35",
       "description": [
         "Toshiba B-EX6T 工業型條碼列印機",
@@ -8941,7 +8941,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1jg8N_JuFuCoyKtRmjlMWzcuIm6Lb7B6M/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-toshiba-sa4tm-839793c0.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-toshiba-sa4tm-839793c0.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/24/36/36",
       "description": [
         "Toshiba SA4TM 工業型條碼列印機",
@@ -9082,7 +9082,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.toshibatec.com/ovs-support/bcs/om/BA420T/BA420T_OM_ZH-TW_0000.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-toshiba-ba420t-7325140a.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-toshiba-ba420t-7325140a.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/24/55/65",
       "description": [
         "Toshiba BA400 系列 工業型條碼列印機",
@@ -9220,7 +9220,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.manual.sato-global.com/printer/cl-sxr/en/main/index.html"
         }
       ],
-      "image": "assets/images/catalog/legacy-sato-cl4-sxr-e2b5d23a.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-sato-cl4-sxr-e2b5d23a.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/28/37/185"
     },
     {
@@ -9345,7 +9345,7 @@ window.FBLegacyCatalog = {
           "url": "https://satoasiapacific.com/wp-content/uploads/2020/01/CL4NXPlus_QuickGuide_CHSCHT_01.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-sato-cl4nx-plus-a15e9539.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-sato-cl4nx-plus-a15e9539.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/28/37/37",
       "description": [
         "SATO CL4NX Plus工業型條碼列印機",
@@ -9496,7 +9496,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1gZLrP1EeC3RqEdI3XRR0b1OJPWIq7EcL/view?usp=drive_link"
         }
       ],
-      "image": "assets/images/catalog/legacy-honeywell-px940-0b350fdd.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-honeywell-px940-0b350fdd.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/29/38/163",
       "description": [
         "Honeywell PX940 工業型條碼列印機",
@@ -9641,7 +9641,7 @@ window.FBLegacyCatalog = {
           "url": "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/ppr/en-au/public/products/printers/industrial/pm65/documents/sps-ppr-pm45-65-tc-qs.pdf?download=false"
         }
       ],
-      "image": "assets/images/catalog/legacy-honeywell-pm45-9c52c8fa.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-honeywell-pm45-9c52c8fa.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/29/38/161",
       "description": [
         "Honeywell PM45 工業型條碼列印機",
@@ -9787,7 +9787,7 @@ window.FBLegacyCatalog = {
           "url": "http://www.zhaoqianht.com/shuomingshu/Honeywell/PX240S%20%E7%B3%BB%E5%88%97%E5%B7%A5%E4%B8%9A%E7%BA%A7%E6%A0%87%E7%AD%BE%E6%89%93%E5%8D%B0%E6%9C%BA%E7%94%A8%E6%88%B7%E6%8C%87%E5%8D%97.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-honeywell-px240s-317dddeb.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-honeywell-px240s-317dddeb.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/29/38/155",
       "description": [
         "Honeywell PX240S 系列 工業型條碼列印機",
@@ -9937,7 +9937,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1U_IWsEh6wXJBc77BWzFAh1gtMZwsIZEi/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-h-4212x-h-4310x-h-4606x-caed1e82.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-h-4212x-h-4310x-h-4606x-caed1e82.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/29/38/43",
       "description": [
         "2021/10停產，若有零件維修需求請來信詢問。",
@@ -10094,7 +10094,7 @@ window.FBLegacyCatalog = {
           "url": "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/ppr/zh-cn/public/products/printers/industrial/h-class/documents/sps-ppr-92-2429-01.pdf?download=false"
         }
       ],
-      "image": "assets/images/catalog/legacy-h-4212-h-4310-h-4408-h-4606-ceb979b6.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-h-4212-h-4310-h-4408-h-4606-ceb979b6.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/29/38/42",
       "description": [
         "2021/10停產，若有零件維修需求請來信詢問。",
@@ -10248,7 +10248,7 @@ window.FBLegacyCatalog = {
           "url": "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/ppr/zh-cn/public/products/printers/industrial/i-class-mk-ii/documents/sps-ppr-92-2577-01.pdf?download=false"
         }
       ],
-      "image": "assets/images/catalog/legacy-i-4212e-i-4310e-i-4606e-adc4c3a5.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-i-4212e-i-4310e-i-4606e-adc4c3a5.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/29/38/44",
       "description": [
         "2022/05停產，若有零件維修需求請來信詢問。",
@@ -10396,7 +10396,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1K0nxmcp3xQPBAKFa9czssE2EIOQiLuHS/view?usp=drive_link"
         }
       ],
-      "image": "assets/images/catalog/legacy-m-4206-m-4210-m-4308-78050bd3.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-m-4206-m-4210-m-4308-78050bd3.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/1/29/38/70",
       "description": [
         "2022/01停產，若有零件維修需求請來信詢問。",
@@ -10556,7 +10556,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1p1BTDImST1STbjXVrPPVcSPiiBMagBwr/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-fastech-ft-yx510-def5dda9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-fastech-ft-yx510-def5dda9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/90/91/175",
       "description": [
         "Fastech FT-YX510",
@@ -10761,7 +10761,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/zh_tw/documentation/unrestricted/guide/product/ds4678-qrg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds4678-xd-2216cfe9.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds4678-xd-2216cfe9.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/14/160",
       "description": [
         "Zebra DS4678-XD 通用型條碼掃描器",
@@ -10950,7 +10950,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/zh_cn/documentation/unrestricted/guide/product/ds4608xd-supplement-zhcn.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds4608-xd-1658a796.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds4608-xd-1658a796.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/14/41",
       "description": [
         "Zebra DS4608-XD 通用型條碼掃描器",
@@ -11171,7 +11171,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/en/documentation/unrestricted/guide/product/ds8108-hc-qsg-en.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds8108-ds8178-1d6642e2.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds8108-ds8178-1d6642e2.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/14/40",
       "description": [
         "Zebra DS8108/DS8178 通用型條碼掃描器",
@@ -11368,7 +11368,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/general/ds4800/ds4608-qsg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds4608-3b8fbcae.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds4608-3b8fbcae.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/14/109"
     },
     {
@@ -11545,7 +11545,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/support-dam/zh_tw/documentation/unrestricted/guide/product/ds2208-qsg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds2208-ds2278-9028fd50.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds2208-ds2278-9028fd50.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/14/38",
       "description": [
         "Zebra DS2200 系列 通用型條碼掃描器",
@@ -11706,7 +11706,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/general/l12208/li2208-qsg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-li2208-56487074.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-li2208-56487074.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/14/53",
       "description": [
         "Zebra LI2208 通用型條碼掃描器",
@@ -11907,7 +11907,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/ultra-rugged/ds3608/ds3608-qsg-tc.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds3608-sr-ds3678-sr-3bbde40a.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds3608-sr-ds3678-sr-3bbde40a.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/62/97",
       "description": [
         "Zebra DS3608-SR/DS3678-SR",
@@ -12112,7 +12112,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/ultra-rugged/ds3608/ds3608-qsg-tc.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds3608-hp-ds3678-hp-61720eaf.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds3608-hp-ds3678-hp-61720eaf.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/62/99",
       "description": [
         "Zebra DS3608-HP/DS3678-HP",
@@ -12313,7 +12313,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/ultra-rugged/ds3608/ds3608-qsg-tc.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds3608-hd-ds3678-hd-e354abee.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds3608-hd-ds3678-hd-e354abee.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/62/100",
       "description": [
         "Zebra DS3608-HD/DS3678-HD",
@@ -12510,7 +12510,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/ultra-rugged/ds3608/ds3608-qsg-tc.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds3608-dp-ds3678-dp-30fb8c66.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds3608-dp-ds3678-dp-30fb8c66.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/62/101",
       "description": [
         "Zebra DS3608-DP/DS3678-DP",
@@ -12711,7 +12711,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/ultra-rugged/ds3608/ds3608-qsg-tc.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds3608-er-ds3678-er-8cd34be9.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds3608-er-ds3678-er-8cd34be9.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/62/102",
       "description": [
         "Zebra DS3608-ER/DS3678-ER",
@@ -12864,7 +12864,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/barcode-scanners/fixed-mount/ds457/ds457-XX20004ZZWW-qrg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-ds457-sr-ds457-hd-ds457-dl-ds457-dp-6bee56f3.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-ds457-sr-ds457-hd-ds457-dl-ds457-dp-6bee56f3.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/7/61/154",
       "description": [
         "Zebra DS457 固定式條碼掃描器",
@@ -13033,7 +13033,7 @@ window.FBLegacyCatalog = {
           "url": "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/ppr/zh-cn/localized/user-guides/sps-ppr-1952-52bf-tc-qs.pdf?download=false"
         }
       ],
-      "image": "assets/images/catalog/legacy-honeywell-xenon-xp-1950g-1952g-20f0f855.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-honeywell-xenon-xp-1950g-1952g-20f0f855.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/9/42/49",
       "description": [
         "Honeywell Xenon XP 1950 系列",
@@ -13210,7 +13210,7 @@ window.FBLegacyCatalog = {
           "url": "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/ppr/zh-cn/localized/user-guides/sps-ppr-1950-tc-qs.pdf?download=false"
         }
       ],
-      "image": "assets/images/catalog/legacy-honeywell-xenon-1900-c-1902-c-39ed1d2d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-honeywell-xenon-1900-c-1902-c-39ed1d2d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/9/42/50",
       "description": [
         "Honeywell Xenon 1900 系列",
@@ -13373,7 +13373,7 @@ window.FBLegacyCatalog = {
           "url": "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/ppr/en-au/public/products/barcode-scanners/general-purpose-handheld/hh490/hh490-en-qs.pdf?download=false"
         }
       ],
-      "image": "assets/images/catalog/legacy-honeywell-hh490-b0f21e81.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-honeywell-hh490-b0f21e81.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/9/42/164",
       "description": [
         "Honeywell HH490 高性能二維影像",
@@ -13537,7 +13537,7 @@ window.FBLegacyCatalog = {
           "url": "https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/ppr/en-au/public/products/barcode-scanners/general-purpose-handheld/1470g/documents/sps-ppr-vg1470-en-qs.pdf?download=false"
         }
       ],
-      "image": "assets/images/catalog/legacy-honeywell-voyager-xp-1470g-4cd47f83.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-honeywell-voyager-xp-1470g-4cd47f83.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/9/42/165",
       "description": [
         "Honeywell",
@@ -13667,7 +13667,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1t0y7cQ6EJ9MTKwbr3Aj-dqj9bZDB2HAR/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-vuquest-3320g-be296cba.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-vuquest-3320g-be296cba.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/9/45/52",
       "description": [
         "Honeywell Vuquest™ 3320g",
@@ -13796,7 +13796,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/15W_7aIqphIPjyMY3_A6gAMULopchsaRK/view?usp=drive_link"
         }
       ],
-      "image": "assets/images/catalog/legacy-numa-bd-6530-38939baf.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-numa-bd-6530-38939baf.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/72/73/134",
       "description": [
         "BD-6530 對所有線性條碼和二維碼都具有強大的掃描性能。它提供快速可靠的掃描性能。它符合人體工程學設計，並提供多種接口，通過更換電纜來改變接口。BD-6530 是通用有線掃描儀的超值產品。它非常適合用於零售、文檔/計費流程和銀行/金融環境、醫療保健、醫療行業。",
@@ -13915,7 +13915,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/17_Dk-PTiUyAuAjfK3nQ4iqc0KBTcNJtw/view?usp=drive_link"
         }
       ],
-      "image": "assets/images/catalog/legacy-numa-bd-6530bt-12c7d1bd.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-numa-bd-6530bt-12c7d1bd.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/72/74/135",
       "description": [
         "BD6530BT是一款",
@@ -13953,7 +13953,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-datalogic-gryphon-gd4430-dpm-cbecddff.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-datalogic-gryphon-gd4430-dpm-cbecddff.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/30/43/166"
     },
     {
@@ -14097,7 +14097,7 @@ window.FBLegacyCatalog = {
           "url": "https://cdn.datalogic.com/Download?iddwnfile=30210"
         }
       ],
-      "image": "assets/images/catalog/legacy-datalogic-quickscan-qd2400-b1fe0c2c.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-datalogic-quickscan-qd2400-b1fe0c2c.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/2/30/43/51",
       "description": [
         "DATALOGIC",
@@ -14257,7 +14257,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/industrial/zt600/zt600-ug-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt610-zt620-rfid-e82e7ccc.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt610-zt620-rfid-e82e7ccc.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/3/10/51/91",
       "description": [
         "Zebra ZT600 系列 RFID 條碼列印機",
@@ -14430,7 +14430,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/printers/industrial/zt400/zt411-zt421-ug-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zt411-421-rfid-297e78a2.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zt411-421-rfid-297e78a2.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/3/10/51/56",
       "description": [
         "Zebra ZT400",
@@ -14585,7 +14585,7 @@ window.FBLegacyCatalog = {
           "url": "https://drive.google.com/file/d/1Nw0gT4FZolRZNrDsdkYvrdTf3sBa0Bz6/view?usp=sharing"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-zd621-rfid-687ff3d8.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-zd621-rfid-687ff3d8.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/3/10/51/130",
       "description": [
         "Zebra ZD600",
@@ -14758,7 +14758,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/mobile-computers/tc21_tc26/tc21-tc26-qsg-zhtw.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-tc21-tc26-70aaa656.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-tc21-tc26-70aaa656.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/4/58/59/104",
       "description": [
         "Zebra TC21/TC26 觸控式行動電腦",
@@ -14835,7 +14835,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/manuals/mobile-computers/mc3300x/mc3300x-qsg-en.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-mc3300x-4943e686.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-mc3300x-4943e686.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/4/58/59/133",
       "description": [
         "Zebra MC3300x",
@@ -14899,7 +14899,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-83-f2a6a40c.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-83-f2a6a40c.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/83",
       "description": [
         "銅版標籤貼紙",
@@ -14960,7 +14960,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-107-d2f58a0b.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-107-d2f58a0b.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/107",
       "description": [
         "各種顏色的銅版紙染色、消銀龍染色...等"
@@ -15000,7 +15000,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-73-143de69f.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-73-143de69f.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/73",
       "description": [
         "反銀龍",
@@ -15059,7 +15059,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-74-4c9abd30.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-74-4c9abd30.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/74",
       "description": [
         "霧面亮面珠光紙",
@@ -15114,7 +15114,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-81-635e8fff.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-81-635e8fff.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/81",
       "description": [
         "白色特多龍",
@@ -15147,7 +15147,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-80-8a8a38d9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-80-8a8a38d9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/80",
       "description": [
         "熱感紙",
@@ -15184,7 +15184,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-78-384e8e2d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-78-384e8e2d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/78",
       "description": [
         "透明麗龍貼紙屬於PVC材質",
@@ -15226,7 +15226,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-76-64877a50.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-76-64877a50.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/76",
       "description": [
         "紙質較厚,一般會使用於賣場貨架標示(ex:家樂福……);服飾業產品說明標示",
@@ -15260,7 +15260,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-hifi-0a4c72f0.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-hifi-0a4c72f0.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/77",
       "description": [
         "標籤面材經特殊處理,故適用於高密度條碼之列印,",
@@ -15295,7 +15295,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-71-78d3b5c9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-71-78d3b5c9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/71",
       "description": [
         "當標籤被移除時,因外力影響,標籤即會遭到破壞而呈現出碎裂的狀態,目前,多應用於需防偽及高價值產品上!",
@@ -15329,7 +15329,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-79-5278c32d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-79-5278c32d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/79",
       "description": [
         "布標主要用途：由於布標的耐水洗的特性，所以多應用於服裝行業、鞋類、箱包、床上用品、帽、玩具等",
@@ -15367,7 +15367,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-17-0-75-956fb1da.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-17-0-75-956fb1da.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/17/0/75",
       "description": [
         "防偽標籤, 防偽貼紙多半用於高價值產品, 其功能有防止偽造，或產品保固，早期都用於電子產品，電子廠會在產品貼紙上印上序號或警示內容，",
@@ -15408,7 +15408,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-pi-50-ec1e93c3.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-pi-50-ec1e93c3.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/92/0/177",
       "description": [
         "聚醯亞胺標籤，專為印刷電路板或其他電子零件需要字元或條碼標識而設計的標籤，",
@@ -15462,7 +15462,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-pi-25-dc1d5722.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-pi-25-dc1d5722.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/92/0/176",
       "description": [
         "聚醯亞胺標籤，專為印刷電路板或其他電子零件需要字元或條碼標識而設計的標籤，",
@@ -15509,7 +15509,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-pi-50-359bf1c7.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-pi-50-359bf1c7.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/92/0/178",
       "description": [
         "聚醯亞胺標籤，專為印刷電路板或其他電子零件需要字元或條碼標識而設計的標籤，",
@@ -15552,7 +15552,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-48-0-84-258dd3b3.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-48-0-84-258dd3b3.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/48/0/84",
       "description": [
         "全樹脂碳帶(抗刮耐磨擦碳帶)",
@@ -15587,7 +15587,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-48-0-85-8d3a7655.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-48-0-85-8d3a7655.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/48/0/85",
       "description": [
         "半臘半樹脂碳带-抗刮碳帶",
@@ -15620,7 +15620,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-48-0-86-1fe3e0be.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-48-0-86-1fe3e0be.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/48/0/86",
       "description": [
         "全蠟碳帶(一般碳帶)",
@@ -15653,7 +15653,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-16-48-0-87-22482486.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-16-48-0-87-22482486.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/16/48/0/87",
       "description": [
         "碳帶不只有黑色，也有許多人常用的白色碳帶",
@@ -15686,7 +15686,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-20-46-0-66-6c343be5.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-20-46-0-66-6c343be5.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/20/46/0/66",
       "description": [
         "二維條碼",
@@ -15744,7 +15744,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-20-46-0-67-63463750.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-20-46-0-67-63463750.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/20/46/0/67",
       "description": [
         "紡織成衣業水洗標、吊牌、成衣條碼標籤貼紙代工代印",
@@ -15803,7 +15803,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-20-46-0-82-49c403d1.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-20-46-0-82-49c403d1.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/20/46/0/82",
       "description": [
         "流通物流業條碼代工代印",
@@ -15848,7 +15848,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-20-46-0-88-e5a7a593.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-20-46-0-88-e5a7a593.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/20/46/0/88",
       "description": [
         "產品成分標籤貼紙代工代印",
@@ -15901,7 +15901,7 @@ window.FBLegacyCatalog = {
           "url": "https://seagull-documentation.s3-us-west-2.amazonaws.com/getting-started-manuals/11-2/GSMCht.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-bartender-5382ba34.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-bartender-5382ba34.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/19/0/0/89",
       "description": [
         "Bartender 30天試用版下載"
@@ -15933,7 +15933,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-codesoft-71391e24.jpg?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-codesoft-71391e24.jpg?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/19/0/0/90"
     },
     {
@@ -15962,7 +15962,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-zebra-eda62539.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-eda62539.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/66/71/126",
       "description": [
         "Zebra 工業型/商業型/桌上型條碼列印機",
@@ -16002,7 +16002,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-zebra-18e5b39f.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-18e5b39f.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/66/71/124",
       "description": [
         "Zebra 工業型/商業型/桌上型條碼列印機",
@@ -16042,7 +16042,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-zebra-1dd30d0f.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-1dd30d0f.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/66/71/125",
       "description": [
         "Zebra 工業型/商業型/桌上型條碼列印機",
@@ -16088,7 +16088,7 @@ window.FBLegacyCatalog = {
           "url": "https://www.zebra.com/content/dam/zebra_dam/en/guide/configuration-and-accessories/print-head-guide-accessories-en-us.pdf"
         }
       ],
-      "image": "assets/images/catalog/legacy-zebra-116d1983.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-116d1983.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/66/71/127",
       "description": [
         "Zebra 各種型號機型擴充卡，歡迎諮詢，如：",
@@ -16127,7 +16127,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-zebra-356c2200.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-356c2200.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/66/71/128",
       "description": [
         "Zebra 工業型條碼列印機",
@@ -16162,7 +16162,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-zebra-209a47fa.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-209a47fa.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/66/71/129",
       "description": [
         "Zebra 工業型條碼列印機",
@@ -16197,7 +16197,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-zebra-rfid-996fad77.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-zebra-rfid-996fad77.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/66/71/131",
       "description": [
         "Zebra 各種型號機型RFID模組，新舊機型RFID歡迎諮詢。",
@@ -16230,7 +16230,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-argox-09e0a991.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-09e0a991.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/68/76/136",
       "description": [
         "Argox 工業型/桌上型條碼列印機",
@@ -16265,7 +16265,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-argox-c667b46d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-c667b46d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/68/76/137",
       "description": [
         "Argox 工業型/桌上型條碼列印機",
@@ -16300,7 +16300,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-argox-78849acf.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-78849acf.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/68/76/138",
       "description": [
         "Argox 工業型/桌上型條碼列印機",
@@ -16335,7 +16335,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-argox-e4233dd0.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-e4233dd0.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/68/76/139",
       "description": [
         "Argox 工業型/桌上型條碼列印機",
@@ -16370,7 +16370,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-argox-127cd097.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-127cd097.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/68/76/140",
       "description": [
         "Argox 工業型/桌上型條碼列印機",
@@ -16405,7 +16405,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-argox-851da90f.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-851da90f.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/68/76/141",
       "description": [
         "Argox 桌上型條碼列印機",
@@ -16440,7 +16440,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-argox-d5a23485.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-argox-d5a23485.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/68/76/142",
       "description": [
         "Argox 工業型/桌上型條碼列印機",
@@ -16475,7 +16475,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-tsc-a49ad222.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-a49ad222.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/67/77/143",
       "description": [
         "TSC 工業型/桌上型條碼列印機",
@@ -16510,7 +16510,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-tsc-d5c1b7ac.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-d5c1b7ac.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/67/77/144",
       "description": [
         "TSC 工業型/桌上型條碼列印機",
@@ -16545,7 +16545,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-tsc-18b6b158.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-18b6b158.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/67/77/145",
       "description": [
         "TSC 工業型/桌上型條碼列印機",
@@ -16580,7 +16580,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-tsc-95a7377a.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-95a7377a.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/67/77/146",
       "description": [
         "TSC 工業型/桌上型條碼列印機",
@@ -16615,7 +16615,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-tsc-3331ce6b.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-3331ce6b.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/67/77/147",
       "description": [
         "TSC 桌上型條碼列印機",
@@ -16650,7 +16650,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-tsc-7f282950.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-tsc-7f282950.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/67/77/148",
       "description": [
         "TSC 桌上型條碼列印機",
@@ -16685,7 +16685,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-godex-411d9eb2.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-411d9eb2.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/69/78/149",
       "description": [
         "GoDEX 工業型/桌上型條碼列印機",
@@ -16720,7 +16720,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-godex-71a3b50d.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-71a3b50d.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/69/78/150",
       "description": [
         "GoDEX 工業型/桌上型條碼列印機",
@@ -16755,7 +16755,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-godex-d4db01c7.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-d4db01c7.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/69/78/151",
       "description": [
         "GoDEX 工業型/桌上型條碼列印機",
@@ -16790,7 +16790,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-godex-923f47e8.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-923f47e8.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/69/78/152",
       "description": [
         "GoDEX 桌上型條碼列印機",
@@ -16825,7 +16825,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-godex-8658ed1b.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-8658ed1b.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/69/78/153",
       "description": [
         "GoDEX 桌上型條碼列印機",
@@ -16908,7 +16908,7 @@ window.FBLegacyCatalog = {
           "url": "https://godex.s3-accelerate.amazonaws.com/p8xlYhyLOvb1cqOg5AEdag.file?v01"
         }
       ],
-      "image": "assets/images/catalog/legacy-godex-t10-t20-f4195aaa.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-godex-t10-t20-f4195aaa.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/69/78/169",
       "description": [
         "雙向捲紙器提供最靈活的使用彈性",
@@ -16945,7 +16945,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-sato-447d6d22.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-sato-447d6d22.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/85/88/171",
       "description": [
         "※注意：各型號的印字頭並不相容，詢價時請仔細核對條碼列印機的型號及解析度。"
@@ -16977,7 +16977,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-sato-4f75c36a.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-sato-4f75c36a.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/85/88/172",
       "description": [
         "※注意：各型號的滾軸並不相容，詢價時請仔細核對條碼列印機的型號及解析度。"
@@ -17009,7 +17009,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-sato-cf84c3ff.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-sato-cf84c3ff.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/85/88/173",
       "description": [
         "※注意：各型號的擴充卡並不相容，詢價時請仔細核對條碼列印機的型號及解析度。"
@@ -17041,7 +17041,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-sato-b5f1eae9.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-sato-b5f1eae9.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/85/88/174",
       "description": [
         "※注意：各型號的剝離器與回捲器並不相容，不是用每台設備，詢價時請仔細核對條碼列印機的型號。"
@@ -17078,7 +17078,7 @@ window.FBLegacyCatalog = {
         ]
       ],
       "files": [],
-      "image": "assets/images/catalog/legacy-product-65-83-84-170-de63206c.png?v=20260918-1454",
+      "image": "assets/images/catalog/legacy-product-65-83-84-170-de63206c.png?v=20260918-1455",
       "legacyUrl": "https://www.far-beyound.com.tw/product/65/83/84/170",
       "description": [
         "桌上型系列標籤機適用",
