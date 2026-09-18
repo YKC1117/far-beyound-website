@@ -46,7 +46,7 @@
   }
 
   function product(){
-    const d=FBStore.getData(); const p=d.products.find(x=>x.id===qs('id'))||d.products[0]; const c=d.categories.find(x=>x.id===p.category);
+    const d=FBStore.getData(); const id=qs('id'); const p=window.FBFindProduct?FBFindProduct(d.products,id):d.products.find(x=>x.id===id); if(!p)return; const c=d.categories.find(x=>x.id===p.category);
     document.title=`${String(p.name||'')}｜萬里資訊`;
     $('#productBreadcrumb').innerHTML=`<a href="index.html">首頁</a><span>/</span><a href="products.html">產品資訊</a><span>/</span><a href="products.html?category=${enc(c?.id||'')}">${e(c?.name||'')}</a><span>/</span><b>${e(p.name)}</b>`;
     $('#productHero').innerHTML=`<div class="product-detail-visual">${deviceVisual(p.device,p.brand,p.family)}</div><div class="product-detail-copy"><div class="product-meta"><span>${e(p.brand)}</span><span>${e(p.type)}</span><span class="status-dot">${e(p.status)}</span></div><h1>${e(p.name)}</h1><h2>${e(p.subtitle)}</h2><p>${e(p.intro)}</p><div class="product-actions"><a class="btn btn-primary" href="contact.html?item=${enc(p.name)}">洽詢此產品</a>${p.files.length?`<a class="btn btn-secondary" href="#downloads">文件下載</a>`:''}</div></div>`;
