@@ -151,6 +151,29 @@ def main() -> None:
     ]:
         require_text(media_path, [media_guard, media_img_guard], errors)
 
+    # Homepage product-image surface must stay transparent. This guards against
+    # older bundle/source rules reintroducing the visible white rectangle.
+    home_bundle = (ROOT / 'assets/css/home-bundle.css').read_text(encoding='utf-8')
+    approved_skin = (ROOT / 'assets/css/approved-skin-20260916.css').read_text(encoding='utf-8')
+    forbidden_home_surfaces = [
+        '.v2-stage-main,.v2-stage-side>a{transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;background:#fff!important}',
+        'body[data-page="home"] .hero-rotate-side img{width:100%;height:142px;object-fit:contain;background:#fff;padding:10px}',
+        'background: #eef0ed !important;',
+    ]
+    for forbidden in forbidden_home_surfaces:
+        if forbidden in home_bundle or forbidden in approved_skin:
+            errors.append('homepage product white-frame rule returned: ' + forbidden)
+
+    require_text(
+        'assets/css/approved-skin-20260916.css',
+        [
+            '/* 2026-09-18｜首頁商品圖白框防回歸',
+            'html body.fb-approved-skin-20260916[data-page="home"] .product-card-visual .real-product-media,',
+            'background: transparent !important;',
+        ],
+        errors,
+    )
+
     css_missing: list[str] = []
     for path in sorted((ROOT / 'assets' / 'css').glob('*.css')):
         text = path.read_text(encoding='utf-8', errors='ignore')
