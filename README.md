@@ -23,21 +23,33 @@
 - 正式主機遷移規劃與 301 Redirect 架構
 - GitHub Actions 自動語法、連結與視覺 Smoke Test
 
-## 測試後台
+## 後台與資料同步
 
 開啟 `admin.html`。
 
-GitHub Pages 不提供伺服器資料庫，因此目前編輯資料儲存在瀏覽器 localStorage，並可匯出 JSON。正式部署時會把相同資料模型接到 MySQL / MariaDB，並加入登入、權限、檔案上傳與後端 API。
+目前資料流程不是單純 localStorage：
+
+1. `data.js` 以 localStorage 作為瀏覽器端資料快取與離線 fallback。
+2. `cloud-sync.js` 透過 Supabase Edge Function `site-state` 讀寫共用資料。
+3. 後台編輯並發布後，資料會送到 Supabase；成功後同步更新版本資訊。
+4. 公開頁載入時會拉取共用資料，並在非後台頁面每 30 秒檢查一次更新。
+5. 若雲端暫時無法連線，前端保留目前可用的本地資料，不因同步失敗而讓網站無法顯示。
+6. JSON 匯入／匯出仍保留作為管理與備份工具。
+
+Supabase 目前同時承擔共用資料、Auth、權限、Edge Functions、詢問單、備份與稽核等正式架構能力；詳細上線架構請見 `PRODUCTION.md`。
 
 ## 正式部署方向
 
-- 前台：保留目前網站結構與視覺元件
-- 後台：PHP / Laravel 或等價伺服器框架
-- 資料庫：MySQL / MariaDB
-- 檔案：主機 storage 或獨立物件儲存
+- 前台：保留目前靜態 HTML / CSS / JavaScript，可部署到公司正式主機或 CDN
+- 雲端資料：Supabase `site_state`
+- 後台驗證與權限：Supabase Auth / RLS / permissions
+- Server actions：Supabase Edge Functions
+- 檔案：公司控制的正式 storage 或合適的物件儲存
 - SSL：Let's Encrypt / 主機商 SSL
 - SEO：canonical、sitemap、robots、Open Graph、結構化資料
 - 舊站轉移：建立舊網址對應表並設 301 Redirect
+
+未來若公司 IT 規範要求 MySQL / MariaDB，可另開第二階段遷移，不是目前正式站運作的必要前提。
 
 ## 目前定位
 
