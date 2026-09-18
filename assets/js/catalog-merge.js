@@ -7,6 +7,18 @@
   const CATEGORY_SLUG={printers:'printer',scanners:'scanner',rfid:'rfid',mobile:'mobile',labels:'labels',printing:'printing',software:'software',parts:'parts'};
   const FASTECH_FALLBACK={labels:'label',printing:'label-printing',software:'label-software',parts:'printer-parts',rfid:'rfid',mobile:'mobile',printers:'printer',scanners:'scanner'};
   const CURATED_IDS=new Set(['software-bartender','software-codesoft','urovo-dt66-ct48c-dt50-dt40-rt40s']);
+  function resolveProduct(products,id){
+    const key=String(id||'').trim();
+    if(!key)return null;
+    return (products||[]).find(p=>[
+      p.id,
+      p.slug,
+      p.curatedId,
+      p.sourceId,
+      p.publicId
+    ].some(v=>String(v||'').trim()===key))||null;
+  }
+  window.FBFindProduct=resolveProduct;
   const VERIFIED_PATH_IDS={
     '/product/1/22/33/181':'tsc-da210-da220',
     '/product/1/22/93/180':'tsc-alpha-3r-alpha-30r-alpha-30l-alpha-30lhc'
