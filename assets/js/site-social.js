@@ -92,7 +92,7 @@ window.FBSocialLinks=window.FBSocialLinks||{youtube:'https://www.youtube.com/@Fa
    自動補上目前 build，避免瀏覽器沿用先前白底或舊壓縮圖片。 */
 (function(){
   'use strict';
-  const BUILD='20260918-1454';
+  const BUILD='20260918-1455';
   const LOCAL_IMAGE=/\/assets\/images\/(?:catalog|products)\//i;
 
   function normalize(img){
