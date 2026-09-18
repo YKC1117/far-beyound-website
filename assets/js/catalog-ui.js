@@ -14,7 +14,7 @@
     const cats=(d.categories||[]).map(c=>c.id),map=window.FBOfficialOrder?.brandOrder?.()||{};
     return list.slice().sort((a,b)=>{const ca=cats.indexOf(a.category),cb=cats.indexOf(b.category);if(ca!==cb)return(ca<0?999:ca)-(cb<0?999:cb);const bo=map[a.category]||[],ba=Number.isFinite(a.brandOrder)?a.brandOrder:bo.indexOf(a.brand),bb=Number.isFinite(b.brandOrder)?b.brandOrder:bo.indexOf(b.brand);if(ba!==bb)return(ba<0?999:ba)-(bb<0?999:bb);return(Number.isFinite(a.legacyOrder)?a.legacyOrder:9999)-(Number.isFinite(b.legacyOrder)?b.legacyOrder:9999)})
   }
-  function patchProductCards(d){document.querySelectorAll('.product-card').forEach(card=>{const p=d.products.find(x=>x.id===idFromCard(card)),holder=card.querySelector('.product-card-visual');if(p?.image&&holder)holder.innerHTML=imageMarkup(p)})}
+  function patchProductCards(d){document.querySelectorAll('.product-card').forEach(card=>{const id=idFromCard(card),p=window.FBFindProduct?FBFindProduct(d.products,id):d.products.find(x=>x.id===id),holder=card.querySelector('.product-card-visual');if(p?.image&&holder)holder.innerHTML=imageMarkup(p)})}
   function productsPage(){
     if(document.body.dataset.page!=='products')return;
     const d=FBStore.getData(),active=qs('category')||'all',brand=qs('brand')||'all',order=getBrandOrder(active,d);
@@ -29,7 +29,7 @@
   }
   function productPage(){
     if(document.body.dataset.page!=='product')return;
-    const d=FBStore.getData(),id=qs('id'),p=d.products.find(x=>x.id===id);if(!p)return;
+    const d=FBStore.getData(),id=qs('id'),p=window.FBFindProduct?FBFindProduct(d.products,id):d.products.find(x=>x.id===id);if(!p)return;
     const holder=document.querySelector('.product-detail-visual');if(p.image&&holder)holder.innerHTML=imageMarkup(p);patchProductCards(d);
     const hi=document.getElementById('productHighlights');
     if(hi&&(!p.highlights||!p.highlights.length))hi.innerHTML='';
