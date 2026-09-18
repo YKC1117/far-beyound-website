@@ -90,8 +90,8 @@
     ? FB.escapeHtml(v==null?'':String(v))
     : String(v==null?'':v).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]));
 
-  function productPhoto(src,alt,brand=''){
-    return `<div class="real-product-media"><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer"><span>${esc(brand)}</span></div>`;
+  function productPhoto(src,alt,brand='',id=''){
+    return `<div class="real-product-media${id==='fastech-ft-yx510'?' is-fastech':''}"><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer"><span>${esc(brand)}</span></div>`;
   }
 
   function fallbackVisual(p){
@@ -100,7 +100,7 @@
 
   function homeProductCard(p){
     const src=IMAGES[p.id];
-    return `<a class="product-card" href="product.html?id=${encodeURIComponent(p.id)}"><div class="product-card-visual">${src?productPhoto(src,p.name,p.brand):fallbackVisual(p)}</div><div class="product-card-body"><div class="product-meta"><span>${esc(p.brand)}</span><span>${esc(p.type)}</span></div><h3>${esc(p.name)}</h3><p>${esc(p.subtitle)}</p><div class="card-link">查看產品 ${FB.icon('arrow')}</div></div></a>`;
+    return `<a class="product-card" href="product.html?id=${encodeURIComponent(p.id)}"><div class="product-card-visual">${src?productPhoto(src,p.name,p.brand,p.id):fallbackVisual(p)}</div><div class="product-card-body"><div class="product-meta"><span>${esc(p.brand)}</span><span>${esc(p.type)}</span></div><h3>${esc(p.name)}</h3><p>${esc(p.subtitle)}</p><div class="card-link">查看產品 ${FB.icon('arrow')}</div></div></a>`;
   }
 
   function injectStyle(){
@@ -110,6 +110,8 @@
     st.textContent=`
       .real-product-media{position:relative;width:100%;height:100%;display:grid;place-items:center;background:linear-gradient(145deg,#fff,#f4f7f9);overflow:hidden}
       .real-product-media img{width:88%;height:88%;object-fit:contain;transition:transform .22s ease;mix-blend-mode:multiply}
+      .real-product-media.is-fastech{background:#fff}
+      .real-product-media.is-fastech img{mix-blend-mode:normal}
       .product-card:hover .real-product-media img{transform:scale(1.045)}
       .real-product-media span{position:absolute;left:14px;bottom:12px;background:rgba(7,24,45,.9);color:white;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:900;letter-spacing:.08em}
       @media(max-width:680px){.real-product-media img{width:92%;height:92%}}
