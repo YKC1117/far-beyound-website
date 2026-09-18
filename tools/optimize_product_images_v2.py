@@ -79,13 +79,13 @@ for path in sorted(ROOT.rglob("*")):
     except Exception: continue
     new=pattern.sub(lambda m:f"{m.group(1)}?v={BUILD}",text)
     # Move CSS/JS release token off the stale 1010 cache key.
-    new=new.replace("20260918-1010",BUILD)
+    new=new.replace("20260918-1454",BUILD)
     if new!=text:
         path.write_text(new,encoding="utf-8")
         text_changed.append(str(path.relative_to(ROOT)))
 
 # Explicit audit for the known disguised PNG.
-f=ROOT/"assets/images/products/fastech-ft-yx510.jpg"
+f=ROOT/"assets/images/products/fastech-ft-yx510.jpg?v=20260918-1454"
 with Image.open(f) as im:
     print(f"FASTECH_FORMAT={im.format}")
     print(f"FASTECH_MODE={im.mode}")
