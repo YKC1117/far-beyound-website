@@ -11,31 +11,10 @@
       if(/新版網站|PREVIEW|v0\.|網站提案預覽環境/i.test(el.textContent))el.textContent='企業條碼與自動識別整合服務';
     });
   }
-  function syncCurrentNav(){
-    const page=document.body.dataset.page||'';
-    const targets={
-      products:['products.html'],product:['products.html'],
-      downloads:['downloads.html'],solutions:['solutions.html'],cases:['cases.html'],
-      news:['news.html'],'news-detail':['news.html'],
-      about:['about.html'],locations:['locations.html','about.html'],contact:['contact.html','about.html'],'preview-guide':['about.html']
-    }[page]||[];
-    const nav=document.querySelector('.desktop-nav');
-    if(!nav)return;
-    const nodes=[...nav.children];
-    nodes.forEach(node=>{
-      const a=node.matches('a')?node:node.querySelector(':scope > a');
-      const href=(a?.getAttribute('href')||'').split('?')[0].split('#')[0];
-      const active=targets.includes(href);
-      node.classList.toggle('current',active);
-      a?.classList.toggle('current',active);
-      if(active)a?.setAttribute('aria-current','page');else a?.removeAttribute('aria-current');
-    });
-  }
   function run(){
     document.querySelectorAll('.proposal-chip,.home-capability-band,.brand-band').forEach(el=>el.remove());
     document.querySelectorAll('.brand-mark').forEach(el=>{if(!el.querySelector('img'))el.innerHTML=`<img src="${LOGO}" alt="" decoding="sync">`});
     cleanPreviewArtifacts();
-    syncCurrentNav();
   }
   document.addEventListener('click',e=>{
     const b=e.target.closest?.('.demo-download');
@@ -43,7 +22,7 @@
     e.preventDefault();e.stopImmediatePropagation();
     if(window.FB?.toast)window.FB.toast('檔案連結正在移轉整理中');
   },true);
-  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,120);setTimeout(run,350);setTimeout(syncCurrentNav,1000)});
+  document.addEventListener('DOMContentLoaded',()=>{run();setTimeout(run,120);setTimeout(run,350)});
   if(document.readyState!=='loading')setTimeout(run,0);
   window.addEventListener('farbeyound:datachange',()=>setTimeout(run,40));
 })();
