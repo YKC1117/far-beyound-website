@@ -6,7 +6,7 @@
 
     const id = new URLSearchParams(location.search).get('id');
     const products = FBStore.getData().products || [];
-    const product = products.find(item => String(item.id) === String(id));
+    const product = window.FBFindProduct ? FBFindProduct(products,id) : products.find(item => String(item.id) === String(id));
     if(product) return;
 
     document.title = '找不到產品｜萬里資訊';
