@@ -33,9 +33,20 @@
   }
 
   function products(){
-    const d=FBStore.getData(); const active=qs('category')||'all'; const brand=qs('brand')||'all';
+    const d=FBStore.getData();
+    const params=new URLSearchParams(location.search);
+    const requestedCategory=params.get('category')||'all';
+    const validCategory=requestedCategory==='all'||d.categories.some(c=>c.id===requestedCategory);
+    const active=validCategory?requestedCategory:'all';
+    const requestedBrand=params.get('brand')||'all';
+    const validBrands=new Set(d.products.filter(p=>active==='all'||p.category===active).map(p=>p.brand));
+    const brand=requestedBrand==='all'||validBrands.has(requestedBrand)?requestedBrand:'all';
+    let changed=false;
+    if(!validCategory&&params.has('category')){params.delete('category');changed=true}
+    if(brand==='all'&&requestedBrand!=='all'&&params.has('brand')){params.delete('brand');changed=true}
+    if(changed){const query=params.toString();history.replaceState(null,'',`products.html${query?`?${query}`:''}${location.hash||''}`)}
     $('#categoryTabs').innerHTML=[`<a class="filter-chip ${active==='all'?'active':''}" href="products.html">全部產品</a>`,...d.categories.map(c=>`<a class="filter-chip ${active===c.id?'active':''}" href="products.html?category=${enc(c.id)}">${e(c.name)}</a>`)].join('');
-    const brands=[...new Set(d.products.filter(p=>active==='all'||p.category===active).map(p=>p.brand))].sort();
+    const brands=[...validBrands].sort();
     $('#brandTabs').innerHTML=[`<a class="brand-chip ${brand==='all'?'active':''}" href="products.html${active!=='all'?`?category=${enc(active)}`:''}">全部品牌</a>`,...brands.map(b=>{const sp=new URLSearchParams(); if(active!=='all')sp.set('category',active);sp.set('brand',b);return `<a class="brand-chip ${brand===b?'active':''}" href="products.html?${sp}">${e(b)}</a>`})].join('');
     const list=d.products.filter(p=>(active==='all'||p.category===active)&&(brand==='all'||p.brand===brand));
     const cat=d.categories.find(c=>c.id===active);
@@ -129,40 +140,30 @@
       const btn=$('#contactForm button[type="submit"]');
       if(btn){btn.disabled=true;btn.textContent='開啟郵件程式…'}
       const box=$('#formSuccess');
-      if(box){box.textContent=`已建立寄給 ${d.site.email} 的詢問郵件草稿，請在郵件程式中確認後按「寄出」。`;box.classList.add('show')}
-      location.href=`mailto:${d.site.email}?subject=${enc(mailSubject)}&body=${enc(body)}`;
+      if(box){box.textContent='已整理好詢問內容，正在開啟您的郵件程式。';box.classList.add('show')}
+      location.href=`mailto:service@far-beyound.com.tw?subject=${enc(mailSubject)}&body=${enc(body)}`;
       setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent='送出詢問'}},1200);
     });
   }
 
-  function admin(){
-    let d=FBStore.getData(); let editing=null;
-    const fields=['id','brand','family','type','name','subtitle','status','intro'];
-    function refresh(){
-      d=FBStore.getData();
-      $('#adminStats').innerHTML=`<div class="stat-card"><small>產品</small><b>${d.products.length}</b><span>PRODUCTS</span></div><div class="stat-card"><small>分類</small><b>${d.categories.length}</b><span>CATEGORIES</span></div><div class="stat-card"><small>下載項目</small><b>${d.downloads.length}</b><span>DOWNLOADS</span></div><div class="stat-card"><small>最新消息</small><b>${d.news.length}</b><span>NEWS</span></div>`;
-      $('#adminProductRows').innerHTML=d.products.map(p=>`<tr><td><span class="admin-brand">${e(p.brand)}</span></td><td><b>${e(p.name)}</b><small>${e(p.subtitle)}</small></td><td>${e(d.categories.find(c=>c.id===p.category)?.name||p.category)}</td><td><span class="status-badge">${e(p.status)}</span></td><td><button class="icon-text edit-product" data-id="${e(p.id)}">編輯</button><button class="icon-text danger delete-product" data-id="${e(p.id)}">刪除</button></td></tr>`).join('');
-      $('#adminCategory').innerHTML=d.categories.map(c=>`<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
-      $$('.edit-product').forEach(b=>b.onclick=()=>startEdit(b.dataset.id));
-      $$('.delete-product').forEach(b=>b.onclick=()=>deleteProduct(b.dataset.id));
-    }
-    function startEdit(id){editing=id; const p=d.products.find(x=>x.id===id); if(!p)return; fields.forEach(f=>{const el=$(`#admin_${f}`); if(el)el.value=p[f]||''}); $('#adminCategory').value=p.category; $('#adminFeatured').checked=!!p.featured; $('#formTitle').textContent='編輯產品'; $('#adminFormPanel').classList.add('open'); $('#admin_name').focus();}
-    function newProduct(){editing=null; $('#productAdminForm').reset(); $('#admin_id').value=`product-${Date.now()}`; $('#admin_status').value='販售中'; $('#formTitle').textContent='新增產品'; $('#adminFormPanel').classList.add('open'); $('#admin_name').focus();}
-    function closeForm(){$('#adminFormPanel').classList.remove('open')}
-    function deleteProduct(id){if(!confirm('確定刪除此測試產品？'))return; d.products=d.products.filter(x=>x.id!==id);FBStore.saveData(d);refresh();toast('產品已從此瀏覽器測試資料刪除')}
-    $('#productAdminForm').onsubmit=ev=>{ev.preventDefault();const form={};fields.forEach(f=>form[f]=$(`#admin_${f}`).value.trim());form.category=$('#adminCategory').value;form.featured=$('#adminFeatured').checked;form.device=d.categories.find(c=>c.id===form.category)?.icon||'box';form.highlights=editing?(d.products.find(x=>x.id===editing)?.highlights||[]):['可由正式後台維護產品特色','支援產品分類與品牌管理','資料結構可移植至正式資料庫'];form.specs=editing?(d.products.find(x=>x.id===editing)?.specs||[]):[['品牌',form.brand],['系列',form.family],['類型',form.type]];form.files=editing?(d.products.find(x=>x.id===editing)?.files||[]):[];if(editing){const idx=d.products.findIndex(x=>x.id===editing);d.products[idx]={...d.products[idx],...form}}else d.products.unshift(form);FBStore.saveData(d);closeForm();refresh();toast('已儲存，可回前台查看變更')};
-    $('#newProductBtn').onclick=newProduct; $('#adminFormClose').onclick=closeForm; $('#adminFormPanel').onclick=ev=>{if(ev.target.id==='adminFormPanel')closeForm()};
-    $('#exportBtn').onclick=()=>{const blob=new Blob([FBStore.exportData()],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='far-beyound-site-data.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('JSON 已匯出')};
-    $('#importInput').onchange=async ev=>{const file=ev.target.files[0];if(!file)return;try{FBStore.importData(await file.text());refresh();toast('JSON 已匯入')}catch(err){toast('匯入失敗：'+err.message)}ev.target.value=''};
-    $('#resetBtn').onclick=()=>{if(!confirm('確定恢復內建測試資料？'))return;FBStore.resetData();refresh();toast('已恢復預設資料')};
-    refresh();
+  function about(){
+    const d=FBStore.getData();
+    $('#timeline').innerHTML=d.timeline.map(x=>`<div class="timeline-item"><b>${e(x.year)}</b><span>${e(x.text)}</span></div>`).join('');
   }
 
-  function toast(text){let t=$('#siteToast');if(!t){t=document.createElement('div');t.id='siteToast';t.className='site-toast';document.body.appendChild(t)}t.textContent=text;t.classList.add('show');clearTimeout(window.__fbtoast);window.__fbtoast=setTimeout(()=>t.classList.remove('show'),2600)}
+  function cases(){
+    const d=FBStore.getData(); const industries=['全部',...new Set(d.cases.map(x=>x.industry))]; let active='全部';
+    $('#caseFilters').innerHTML=industries.map(t=>`<button class="filter-chip ${t===active?'active':''}" data-industry="${e(t)}">${e(t)}</button>`).join('');
+    function draw(){const list=d.cases.filter(x=>active==='全部'||x.industry===active);$('#caseGrid').innerHTML=list.map(c=>`<article class="case-card"><div class="case-card-top"><span class="case-industry">${e(c.industry)}</span><span class="case-system">${e(c.system)}</span></div><h3>${e(c.name)}</h3><p>${e(c.desc)}</p><div class="case-tags">${c.tags.map(t=>`<span>${e(t)}</span>`).join('')}</div></article>`).join('')}
+    $$('#caseFilters button').forEach(b=>b.onclick=()=>{active=b.dataset.industry;$$('#caseFilters button').forEach(x=>x.classList.toggle('active',x===b));draw()});draw();
+  }
 
-  document.addEventListener('DOMContentLoaded',()=>{
-    const page=document.body.dataset.page;
-    if(page==='home')home(); if(page==='products')products(); if(page==='product')product(); if(page==='downloads')downloads(); if(page==='solutions')solutions(); if(page==='news')news(); if(page==='contact')contact(); if(page==='admin')admin();
-  });
-  window.FBPages={toast};
+  function locations(){
+    const d=FBStore.getData();
+    $('#locationGrid').innerHTML=d.site.offices.map(o=>`<article class="location-card"><div class="location-head"><span class="location-mark">${icon('pin')}</span><span><small>${e(o.region)}</small><h2>${e(o.name)}</h2></span></div><div class="location-info"><p>${icon('pin')}<span>${e(o.address)}</span></p><p>${icon('phone')}<a href="tel:${e(String(o.phone||'').replace(/[^0-9+]/g,''))}">${e(o.phone)}</a></p><p>${icon('clock')}<span>週一至週五 08:30–12:00、13:30–17:30</span></p></div><a class="btn btn-secondary" href="${e(o.map)}" target="_blank" rel="noopener">Google 導航</a></article>`).join('');
+  }
+
+  const page=document.body.dataset.page;
+  const routes={home,products,product,downloads,solutions,news,contact,about,cases,locations};
+  if(routes[page]) routes[page]();
 })();
