@@ -6,7 +6,7 @@
   function render(){
     if(!window.FBStore)return;
     const id=new URLSearchParams(location.search).get('id')||'';
-    const product=(FBStore.getData().products||[]).find(item=>String(item.id)===id&&item.published!==false);
+    const products=FBStore.getData().products||[];const product=(window.FBFindProduct?FBFindProduct(products,id):products.find(item=>String(item.id)===id));if(product?.published===false)return;
     if(!product)return;
 
     if(product.image){
