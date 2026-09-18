@@ -7,7 +7,7 @@
     if(document.body?.dataset.page!=='product'||!window.FBStore)return null;
     const id=new URLSearchParams(location.search).get('id');
     if(!id)return null;
-    return (FBStore.getData().products||[]).find(p=>String(p.id)===String(id))||null;
+    const products=FBStore.getData().products||[];return window.FBFindProduct?FBFindProduct(products,id):(products.find(p=>String(p.id)===String(id))||null);
   }
 
   function sourceInfo(){
