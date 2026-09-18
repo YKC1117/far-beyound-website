@@ -85,3 +85,42 @@ window.FBSocialLinks=window.FBSocialLinks||{youtube:'https://www.youtube.com/@Fa
   window.addEventListener('load',()=>setTimeout(sync,120),{once:true});
   window.addEventListener('farbeyound:datachange',()=>setTimeout(sync,60));
 })();
+
+
+/* 2026-09-18｜產品圖片快取版本保護
+   Supabase/動態渲染若仍回傳未帶版本的 catalog/products 圖片路徑，
+   自動補上目前 build，避免瀏覽器沿用先前白底或舊壓縮圖片。 */
+(function(){
+  'use strict';
+  const BUILD='20260918-1454';
+  const LOCAL_IMAGE=/\/assets\/images\/(?:catalog|products)\//i;
+
+  function normalize(img){
+    const raw=img?.getAttribute?.('src')||'';
+    if(!raw||raw.startsWith('data:')||raw.startsWith('blob:'))return;
+    let url;
+    try{url=new URL(raw,location.href)}catch(_){return}
+    if(url.origin!==location.origin||!LOCAL_IMAGE.test(url.pathname))return;
+    if(url.searchParams.get('v')===BUILD)return;
+    url.searchParams.set('v',BUILD);
+    img.setAttribute('src',url.href);
+  }
+
+  function scan(root=document){
+    if(root instanceof HTMLImageElement)normalize(root);
+    root.querySelectorAll?.('img[src]').forEach(normalize);
+  }
+
+  const start=()=>{
+    scan();
+    new MutationObserver(records=>{
+      records.forEach(record=>{
+        if(record.type==='attributes')normalize(record.target);
+        record.addedNodes.forEach(node=>{if(node.nodeType===1)scan(node)});
+      });
+    }).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});
+  };
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
