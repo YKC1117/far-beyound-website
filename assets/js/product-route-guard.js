@@ -12,7 +12,7 @@
     if(document.body?.dataset.page!=='product')return;
     const data=window.FBStore?.getData?.();if(!data){if(attempt<30)setTimeout(()=>run(attempt+1),60);return}
     const id=new URLSearchParams(location.search).get('id')||'';
-    const found=(data.products||[]).some(p=>String(p.id||'')===id);
+    const products=data.products||[];const found=window.FBFindProduct?!!FBFindProduct(products,id):products.some(p=>String(p.id||'')===id);
     if(!found)renderMissing();
   }
   document.addEventListener('DOMContentLoaded',()=>setTimeout(run,40),{once:true});
