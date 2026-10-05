@@ -1,11 +1,10 @@
-name: Source backup package
+name: Offline demo source package
 
 on:
   push:
-    branches: [ main ]
+    branches: [ offline-demo-package-20261005 ]
     paths:
       - '.github/workflows/source-backup.yml'
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,16 +13,19 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout exact temporary branch
         uses: actions/checkout@v4
+        with:
+          ref: offline-demo-package-20261005
+          fetch-depth: 1
 
-      - name: Create full website package
+      - name: Create exact website package
         run: |
-          zip -r far-beyound-website-full-backup-20260915.zip . -x '.git/*'
+          zip -r far-beyound-website-eb45a30b-offline-source.zip . -x '.git/*'
 
-      - name: Upload backup package
+      - name: Upload exact source package
         uses: actions/upload-artifact@v4
         with:
-          name: far-beyound-website-full-backup-20260915
-          path: far-beyound-website-full-backup-20260915.zip
-          retention-days: 30
+          name: far-beyound-website-eb45a30b-offline-source
+          path: far-beyound-website-eb45a30b-offline-source.zip
+          retention-days: 7
