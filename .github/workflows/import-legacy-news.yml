@@ -1,13 +1,7 @@
 name: Import official news
 
 on:
-  push:
-    paths:
-      - 'tools/import_legacy_news.py'
-      - '.github/workflows/import-legacy-news.yml'
   workflow_dispatch:
-  schedule:
-    - cron: '20 3 * * *'
 
 permissions:
   contents: write
@@ -18,7 +12,7 @@ concurrency:
 
 jobs:
   import-news:
-    if: github.actor != 'github-actions[bot]' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
