@@ -1,0 +1,47 @@
+name: Public release cache sync
+
+on:
+  push:
+    paths:
+      - 'tools/bump_public_release.py'
+      - 'tools/finalize_public_renderers.py'
+      - '.github/workflows/public-release-cache.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-release-cache
+  cancel-in-progress: true
+
+jobs:
+  sync-public-cache:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Finalize public renderers
+        run: python tools/finalize_public_renderers.py
+      - name: Update public release loader versions
+        run: python tools/bump_public_release.py
+      - name: Commit public release updates
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          find . -maxdepth 1 -type f -name '*.html' -print0 | xargs -0 -r git add --
+          git add -- assets/js/pages.js assets/js/data.js assets/js/app.js
+          if git diff --cached --quiet; then
+            echo 'Public release files already current.'
+          else
+            git commit -m 'Sync public release source and copy'
+            git pull --rebase origin main
+            git push origin main
+          fi

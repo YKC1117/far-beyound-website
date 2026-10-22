@@ -1,0 +1,45 @@
+name: Install V3 corporate and catalog layer
+
+on:
+  push:
+    paths:
+      - '.github/workflows/install-v3-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Attach V3 styles and catalog scripts to public pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in Path('.').glob('*.html'):
+              s=p.read_text(encoding='utf-8')
+              if 'assets/css/v2-corporate.css' in s and 'assets/css/v3-refinement.css' not in s:
+                  s=s.replace('<link rel="stylesheet" href="assets/css/v2-corporate.css">','<link rel="stylesheet" href="assets/css/v2-corporate.css"><link rel="stylesheet" href="assets/css/v3-refinement.css">')
+              if 'assets/js/media-patch.js' in s and 'assets/js/catalog-merge.js' not in s:
+                  s=s.replace('<script src="assets/js/media-patch.js"></script>','<script src="assets/js/media-patch.js"></script><script src="assets/js/legacy-catalog.js"></script><script src="assets/js/catalog-merge.js"></script>')
+              if 'assets/js/nav-menu.js' in s and 'assets/js/catalog-ui.js' not in s:
+                  s=s.replace('<script src="assets/js/nav-menu.js"></script>','<script src="assets/js/nav-menu.js"></script><script src="assets/js/catalog-ui.js"></script>')
+              if 'assets/js/v2-corporate.js' in s and 'assets/js/v3-refinement.js' not in s:
+                  s=s.replace('<script src="assets/js/v2-corporate.js"></script>','<script src="assets/js/v2-corporate.js"></script><script src="assets/js/v3-refinement.js"></script>')
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit V3 page installation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add '*.html'
+          if git diff --cached --quiet; then
+            echo 'All pages already current.'
+          else
+            git commit -m 'Apply V3 brand and official catalog layer across pages'
+            git push
+          fi

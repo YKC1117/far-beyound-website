@@ -1,0 +1,48 @@
+name: Switch website to mirrored local assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/switch-local-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  switch-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace remote asset URLs with repository paths
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('assets/js/media-patch.js')
+          s=p.read_text()
+          repl={
+            'https://s.web66.com.tw/_file/C8/85993/org/logo.png':'assets/images/brand/far-beyound-logo.png',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2026-08-26/aQDEslOFT5jrf9kqbOOoDuN45aPDEUbndzwjmiEy.jpg':'assets/images/products/zebra-zt610-zt620.jpg',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2021-10-08/0rZkyA4qrjSbsC7y9RLWNggSnpJiY7WW8odVoINr.png':'assets/images/products/zebra-zt411-zt421.png',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2025-02-20/ULR5vobTGwpeUnwI6Qn8BlqcpFal2ZmKG7y5vxyH.jpg':'assets/images/products/zebra-ds4678-xd.jpg',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2021-09-22/umU419E5q2zysD3uCSxchjeuXgaG6kIG3C2XoKlq.png':'assets/images/products/honeywell-xenon-1900-1902.png',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2022-09-21/AALcQJ8WNLtm6OlspQF6W2XKAUPYP0CIAnnYVbV4.png':'assets/images/products/tsc-mh241-mh341-mh641.png',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2022-08-11/q3wKnC3jmDoQQoc5F1GmE9AcBxUQlZOjl1Urn0vF.png':'assets/images/products/tsc-tx610.png',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2024-07-18/KnWbEeXs4ZDRszWxdDm5whvGqtRtmgWx44H8ZCYi.jpg':'assets/images/products/argox-cx3140-pro.jpg',
+            'https://www.far-beyound.com.tw/storage/upload/product/image/2023-12-28/qGRyclx23UP7fnRH7ZsoVoOuZD3YBD37RXdIWC4D.png':'assets/images/products/godex-g500-g530.png'
+          }
+          for a,b in repl.items(): s=s.replace(a,b)
+          p.write_text(s)
+          PY
+      - name: Commit local asset references
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/media-patch.js
+          if git diff --cached --quiet; then
+            echo 'No URL replacements needed.'
+          else
+            git commit -m 'Use mirrored local logo and product images'
+            git push
+          fi

@@ -1,0 +1,60 @@
+name: Complete site navigation and official data
+
+on:
+  push:
+    paths:
+      - '.github/workflows/connect-site-pages.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Connect pages and enrich official data
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          app=Path('assets/js/app.js')
+          s=app.read_text()
+          s=s.replace('''            <a href="downloads.html">下載服務</a>\n            <a href="solutions.html">系統方案</a>\n            <a href="news.html">最新消息</a>\n            <a href="contact.html">聯絡我們</a>''','''            <a href="downloads.html">下載服務</a>\n            <a href="solutions.html">系統方案</a>\n            <a href="cases.html">客戶案例</a>\n            <a href="news.html">最新消息</a>\n            <a href="contact.html">聯絡我們</a>''')
+          s=s.replace('''<a href="index.html">首頁</a><a href="products.html">產品資訊</a><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="news.html">最新消息</a><a href="contact.html">聯絡我們</a>''','''<a href="index.html">首頁</a><a href="products.html">產品資訊</a><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="cases.html">客戶案例</a><a href="news.html">最新消息</a><a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">聯絡我們</a>''')
+          s=s.replace('''<div><h4>支援資源</h4><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="news.html">最新消息</a><a href="contact.html">免費諮詢</a></div>''','''<div><h4>支援資源</h4><a href="downloads.html">下載服務</a><a href="solutions.html">系統方案</a><a href="cases.html">客戶案例</a><a href="news.html">最新消息</a><a href="about.html">關於我們</a><a href="locations.html">服務據點</a><a href="contact.html">免費諮詢</a></div>''')
+          app.write_text(s)
+
+          pages=Path('assets/js/pages.js')
+          s=pages.read_text()
+          s=s.replace('''$('#caseStrip').innerHTML=d.cases.map(c=>`<div class="case-pill"><span>${c.name}</span><b>${c.system}</b></div>`).join('');''','''$('#caseStrip').innerHTML=d.cases.map(c=>`<a href="cases.html" class="case-pill"><span>${c.name}</span><b>${c.system}</b></a>`).join('');''')
+          pages.write_text(s)
+
+          data=Path('assets/js/data.js')
+          s=data.read_text().replace("Far-beyound Informational Co., Ltd.","FAR-BEYOUND INFORMATION CO.")
+          data.write_text(s)
+
+          media=Path('assets/js/media-patch.js')
+          s=media.read_text()
+          old="""      specs:[['系列','GoDEX GX 系列'],['定位','工業型條碼列印機'],['應用','製造、倉儲、物流、產品標示']],"""
+          new="""      specs:[['型號','GX4200i / GX4300i / GX4600i'],['尺寸','465 × 263 × 310 mm'],['重量','13.6 kg'],['列印模式','熱轉列印 / 熱感列印'],['解析度','GX4200i 203 dpi / GX4300i 300 dpi / GX4600i 600 dpi'],['最大列印速度','406.4 / 304.8 / 203.2 mm/s'],['最大列印寬度','108 / 105.7 / 105.6 mm'],['紙張寬度','25.4 – 118 mm'],['碳帶長度','450 m，1 吋軸心'],['記憶體','256 MB Flash / 256 MB SDRAM；顯示螢幕 16 GB'],['通訊介面','USB 2.0、RS-232、10/100 Mbps Ethernet、USB Host ×3']],"""
+          s=s.replace(old,new)
+          anchor="""      const d=rawGet();\n      EXTRA_PRODUCTS.forEach(p=>{if(!d.products.some(x=>x.id===p.id)) d.products.push(JSON.parse(JSON.stringify(p)))});"""
+          replacement="""      const d=rawGet();\n      EXTRA_PRODUCTS.forEach(p=>{if(!d.products.some(x=>x.id===p.id)) d.products.push(JSON.parse(JSON.stringify(p)))});\n      if(!d.solutions.some(x=>x.id==='barcode')) d.solutions.push({id:'barcode',name:'條碼整合系統',en:'Barcode Integration System',icon:'scanner',desc:'整合條碼列印、掃描設備與企業作業流程，建立資料採集、標示與追蹤的一致入口。',points:['條碼列印與掃描設備整合','與 ERP / WMS / 生產流程串接','降低人工輸入與作業錯誤']});"""
+          s=s.replace(anchor,replacement)
+          media.write_text(s)
+          PY
+
+      - name: Commit connected site
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/app.js assets/js/pages.js assets/js/data.js assets/js/media-patch.js
+          if git diff --cached --quiet; then
+            echo 'No changes required.'
+          else
+            git commit -m 'Connect cases, company pages and barcode integration system'
+            git push
+          fi

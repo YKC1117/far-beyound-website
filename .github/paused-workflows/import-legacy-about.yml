@@ -1,0 +1,39 @@
+name: Import official company profile
+
+on:
+  push:
+    paths:
+      - 'tools/import_legacy_about.py'
+      - '.github/workflows/import-legacy-about.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: official-about-import-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  import-about:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --disable-pip-version-check requests beautifulsoup4
+      - run: python tools/import_legacy_about.py
+      - name: Commit imported company profile
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/legacy-about.js
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Sync company profile from current company website [skip ci]'
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
