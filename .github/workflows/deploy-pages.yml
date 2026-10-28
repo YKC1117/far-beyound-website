@@ -29,6 +29,8 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Configure clean Pages artifact
         run: echo "Preparing clean deployment artifact for this commit"
