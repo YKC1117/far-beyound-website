@@ -1,6 +1,6 @@
 # 萬里資訊新版官網（展示版）
 
-這個 repository 是萬里資訊新版官網的前台、內容模型與正式部署基礎。GitHub Pages 僅作為目前預覽環境；可移植到公司租用的主機、網域與 MySQL / MariaDB。
+這個 repository 是萬里資訊TEST官網的前台、內容模型與正式部署基礎。GitHub Pages 僅作為目前預覽環境；可移植到公司租用的主機、網域與 MySQL / MariaDB。
 
 ## 目前已完成
 
